@@ -119,18 +119,18 @@ class SmtpClientHandlerTest {
                 "host", 25,
                 new DefaultSmtpRequest(SmtpCommand.MAIL, "from"));
         SmtpClientHandler handler = new SmtpClientHandler(session);
-        MessageToMessageEncoder encoder = new MessageToMessageEncoder<Object>() {
+        MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
             @Override
-            public boolean acceptOutboundMessage(Object msg) throws Exception {
+            public boolean acceptOutboundMessage(Object msg) {
                 return true;
             }
 
             @Override
-            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) throws Exception {
+            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) {
                 throw new RuntimeException("ee");
             }
         };
-        EmbeddedChannel channel = new EmbeddedChannel(encoder,handler);
+        EmbeddedChannel channel = new EmbeddedChannel(encoder, handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertFalse(channel.finish());
     }
@@ -141,18 +141,18 @@ class SmtpClientHandlerTest {
                 "host", 25,
                 new DefaultSmtpContent(Unpooled.copiedBuffer("dd".getBytes(StandardCharsets.UTF_8))));
         SmtpClientHandler handler = new SmtpClientHandler(session);
-        MessageToMessageEncoder encoder = new MessageToMessageEncoder<Object>() {
+        MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
             @Override
-            public boolean acceptOutboundMessage(Object msg) throws Exception {
+            public boolean acceptOutboundMessage(Object msg) {
                 return true;
             }
 
             @Override
-            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) throws Exception {
+            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) {
                 throw new RuntimeException("ee");
             }
         };
-        EmbeddedChannel channel = new EmbeddedChannel(encoder,handler);
+        EmbeddedChannel channel = new EmbeddedChannel(encoder, handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertFalse(channel.finish());
     }
@@ -163,18 +163,18 @@ class SmtpClientHandlerTest {
                 "host", 25,
                 new DefaultLastSmtpContent(Unpooled.copiedBuffer("dd".getBytes(StandardCharsets.UTF_8))));
         SmtpClientHandler handler = new SmtpClientHandler(session);
-        MessageToMessageEncoder encoder = new MessageToMessageEncoder<Object>() {
+        MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
             @Override
-            public boolean acceptOutboundMessage(Object msg) throws Exception {
+            public boolean acceptOutboundMessage(Object msg) {
                 return true;
             }
 
             @Override
-            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) throws Exception {
+            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) {
                 throw new RuntimeException("ee");
             }
         };
-        EmbeddedChannel channel = new EmbeddedChannel(encoder,handler);
+        EmbeddedChannel channel = new EmbeddedChannel(encoder, handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertFalse(channel.finish());
     }
