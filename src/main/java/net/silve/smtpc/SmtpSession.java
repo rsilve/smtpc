@@ -13,7 +13,7 @@ public class SmtpSession {
     private static final SmtpSessionListener defaultListener = new DefaultSmtpSessionListener();
 
     private final String host;
-    private int port = 25;
+    private final int port;
     private final Iterator<Object> requests;
     private SmtpSessionListener listener;
 

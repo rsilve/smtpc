@@ -4,18 +4,21 @@ import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.DefaultSmtpSessionListener;
 
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LogListener extends DefaultSmtpSessionListener {
 
+    private static final Logger logger = Logger.getLogger(LogListener.class.getName());
+
     @Override
     public void onConnect(String host, int port) {
-        System.out.println(String.format("=== connected to %s:%d", host, port));
+        logger.log(Level.INFO, () -> String.format("=== connected to %s:%d", host, port));
     }
 
     @Override
     public void onStart(String host, int port, String id) {
-        System.out.println(String.format("=== start session %s", id));
+        logger.log(Level.INFO, () -> String.format("=== start session %s", id));
     }
 
     @Override
@@ -25,28 +28,28 @@ public class LogListener extends DefaultSmtpSessionListener {
 
     @Override
     public void onRequest(SmtpRequest request) {
-        System.out.println(
+        logger.log(Level.INFO, () ->
                 String.format(">>> %s %s",
                         request.command().name(),
-                        request.parameters().stream().collect(Collectors.joining(" ")))
+                        String.join(" ", request.parameters()))
         );
     }
 
     @Override
     public void onData(int size) {
-        System.out.println(">>> ... (hidden content)");
-        System.out.println(String.format("=== message size %d", size));
+        logger.log(Level.INFO, () -> ">>> ... (hidden content)");
+        logger.log(Level.INFO, () -> String.format("=== message size %d", size));
     }
 
     @Override
     public void onCompleted(String id) {
-        System.out.println(String.format("=== transaction completed for %s", id));
+        logger.log(Level.INFO, () -> String.format("=== transaction completed for %s", id));
     }
 
     @Override
     public void onResponse(SmtpResponse response) {
-        System.out.println(String.format("<<< %s %s",
+        logger.log(Level.INFO, () -> String.format("<<< %s %s",
                 response.code(),
-                response.details().stream().collect(Collectors.joining("\r\n"))));
+                        String.join("\r\n",  response.details())));
     }
 }

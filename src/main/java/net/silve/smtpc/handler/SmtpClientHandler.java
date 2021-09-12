@@ -36,7 +36,6 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
         super.channelActive(ctx);
     }
 
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SmtpResponse response) {
         session.notifyResponse(response);
@@ -53,7 +52,7 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
             ctx.close();
         }
     }
-    
+
     private int getDataSize(SmtpContent content) {
         return content.content().readableBytes();
     }

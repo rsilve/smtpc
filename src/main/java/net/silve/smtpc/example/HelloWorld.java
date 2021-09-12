@@ -12,21 +12,20 @@ import java.io.IOException;
  */
 public class HelloWorld {
 
-    private static final String host = "localhost";
-    private static final int port = 2525;
-    private static final String sender = "sender@domain.tld";
-    private static final String recipient = "recipient@example.domain";
-
+    private static final String HOST = "localhost";
+    private static final int PORT = 2525;
+    private static final String SENDER = "sender@domain.tld";
+    private static final String RECIPIENT = "recipient@example.domain";
 
     public static void main(String[] args) throws IOException {
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();
         SmtpSession session = new SmtpSession.Builder()
-                .setHost(host)
-                .setPort(port)
-                .setSender(sender)
-                .setReceiver(recipient)
+                .setHost(HOST)
+                .setPort(PORT)
+                .setSender(SENDER)
+                .setReceiver(RECIPIENT)
                 .useEhlo(false)
                 .setContent(contentBytes)
                 .setListener(new LogListener())
