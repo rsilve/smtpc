@@ -178,4 +178,20 @@ class SmtpClientHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertFalse(channel.finish());
     }
+
+    @Test
+    void shouldHandleException() {
+        SmtpSession session = new SmtpSession(
+                "host", 25,
+                new DefaultSmtpRequest(SmtpCommand.MAIL, "from")) {
+            @Override
+            public Object next() {
+                throw new RuntimeException("ee");
+            }
+        };
+        SmtpClientHandler handler = new SmtpClientHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.finish());
+    }
 }

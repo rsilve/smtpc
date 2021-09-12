@@ -53,12 +53,7 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
             ctx.close();
         }
     }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        session.notifyError(cause);
-    }
-
+    
     private int getDataSize(SmtpContent content) {
         return content.content().readableBytes();
     }

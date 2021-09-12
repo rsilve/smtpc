@@ -10,8 +10,7 @@ public class SmtpSessionException extends Exception {
         this.response = response;
     }
 
-    @Override
-    public String toString() {
-        return String.format("SmtpSessionException{response=%s}", response);
+    public SmtpResponse getResponse() {
+        return response;
     }
 }
