@@ -56,6 +56,26 @@ class SmtpClientHandlerTest {
     }
 
     @Test
+    void shouldHandleLastContentRequest002() {
+        SmtpSession session = new SmtpSession(
+                "host", 25,
+                new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
+                new DefaultLastSmtpContent(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))));
+        SmtpClientHandler handler = new SmtpClientHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertTrue(channel.finish());
+
+        SmtpContent outbound = channel.readOutbound();
+        assertEquals("bb", outbound.content().toString(StandardCharsets.UTF_8));
+
+        outbound = channel.readOutbound();
+        assertEquals("ee", outbound.content().toString(StandardCharsets.UTF_8));
+
+        assertFalse(channel.finish());
+    }
+
+    @Test
     void shouldHandle221Response() {
         SmtpSession session = new SmtpSession(
                 "host", 25,
