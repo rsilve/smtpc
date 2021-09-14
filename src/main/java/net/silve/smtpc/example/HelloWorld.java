@@ -2,6 +2,7 @@ package net.silve.smtpc.example;
 
 import net.silve.smtpc.SmtpClient;
 import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.Builder;
 
 import java.io.IOException;
 
@@ -21,12 +22,13 @@ public class HelloWorld {
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession.Builder()
+        SmtpSession session = new Builder()
                 .setHost(HOST)
                 .setPort(PORT)
                 .setSender(SENDER)
                 .setReceiver(RECIPIENT)
-                .useEhlo(false)
+                .useEhlo(true)
+                .useStartTLS(true)
                 .setContent(contentBytes)
                 .setListener(new LogListener())
                 .buildOne();
