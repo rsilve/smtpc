@@ -6,6 +6,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.*;
+import net.silve.smtpc.client.ConnectionListener;
 import net.silve.smtpc.handler.SmtpClientHandler;
 import net.silve.smtpc.handler.SmtpSessionException;
 import org.junit.jupiter.api.Test;
@@ -161,6 +162,36 @@ class SmtpSessionListenerTest {
         assertEquals("ee", listener.error.getMessage());
     }
 
+
+    @Test
+    void shouldHandleConnectNotification() {
+        TestSessionListener listener = new TestSessionListener();
+        DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
+        SmtpSession session = new SmtpSession(
+                "host", 25,
+                request);
+        session.setListener(listener);
+        EmbeddedChannel channel = new EmbeddedChannel();
+        channel.newSucceededFuture().addListener(new ConnectionListener(session));
+        assertTrue(listener.connect);
+    }
+
+
+    @Test
+    void shouldHandleConnectErrorNotification() {
+        TestSessionListener listener = new TestSessionListener();
+        DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
+        SmtpSession session = new SmtpSession(
+                "host", 25,
+                request);
+        session.setListener(listener);
+        EmbeddedChannel channel = new EmbeddedChannel();
+        channel.newFailedFuture(new RuntimeException("rr")).addListener(new ConnectionListener(session));
+        assertFalse(listener.connect);
+        assertTrue(listener.error instanceof RuntimeException);
+        assertEquals("rr", listener.error.getMessage());
+    }
+
     static class TestSessionListener extends DefaultSmtpSessionListener {
 
         private SmtpRequest request;
@@ -169,6 +200,7 @@ class SmtpSessionListenerTest {
         private boolean completed;
         private int data;
         private Throwable error;
+        private boolean connect;
 
         @Override
         public void onRequest(SmtpRequest request) {
@@ -198,6 +230,11 @@ class SmtpSessionListenerTest {
         @Override
         public void onError(Throwable throwable) {
             this.error = throwable;
+        }
+
+        @Override
+        public void onConnect(String host, int port) {
+            this.connect = true;
         }
     }
 }

@@ -1,7 +1,5 @@
 package net.silve.smtpc;
 
-import net.silve.smtpc.handler.SmtpChannelInitializer;
-import net.silve.smtpc.handler.SmtpClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -9,6 +7,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
+import net.silve.smtpc.client.ConnectionListener;
+import net.silve.smtpc.handler.SmtpChannelInitializer;
 
 import java.util.Objects;
 
@@ -35,14 +35,7 @@ public class SmtpClient {
             throw new IllegalArgumentException("Host must be defined");
         }
         ChannelFuture futureConnection = bootstrap.connect(session.getHost(), session.getPort());
-        futureConnection.addListener(future -> {
-            if (future.isSuccess()) {
-                session.notifyConnect();
-                futureConnection.channel().pipeline().addLast(new SmtpClientHandler(session));
-            } else {
-                session.notifyError(future.cause());
-            }
-        });
+        futureConnection.addListener(new ConnectionListener(session));
         return futureConnection.channel().closeFuture();
     }
 
