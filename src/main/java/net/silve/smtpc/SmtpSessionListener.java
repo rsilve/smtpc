@@ -17,4 +17,6 @@ public interface SmtpSessionListener {
     void onCompleted(String id);
 
     void onResponse(SmtpResponse response);
+
+    void onStartTls();
 }

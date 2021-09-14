@@ -52,4 +52,9 @@ public class LogListener extends DefaultSmtpSessionListener {
                 response.code(),
                         String.join("\r\n",  response.details())));
     }
+
+    @Override
+    public void onStartTls() {
+        logger.log(Level.INFO, "=== StartTLS handshake completed");
+    }
 }

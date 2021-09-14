@@ -1,5 +1,9 @@
 package net.silve.smtpc.handler;
 
+import io.netty.channel.Channel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.util.concurrent.Future;
 import net.silve.smtpc.SmtpSession;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,8 +12,13 @@ import io.netty.handler.codec.smtp.LastSmtpContent;
 import io.netty.handler.codec.smtp.SmtpContent;
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.smtpc.handler.ssl.SslUtils;
+import net.silve.smtpc.session.Builder;
 
+import javax.net.ssl.SSLEngine;
 import java.util.Objects;
+
+import static net.silve.smtpc.handler.SmtpClientCommand.STARTTLS;
 
 
 public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse> {
@@ -44,6 +53,16 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
                 closeImmediately(ctx);
             } else if (response.code() > 399) {
                 quitAndClose(ctx, response);
+            } else if (session.isStartTlsRequested() && response.code() == 220) {
+                handleStartTlsHandshake().addListener(future -> {
+                    if (future.isSuccess()) {
+                        session.setStartTlsRequested(false);
+                        session.notifyStartTls();
+                        nextRequest();
+                    } else {
+                        session.notifyError(future.cause());
+                    }
+                });
             } else {
                 nextRequest();
             }
@@ -59,7 +78,7 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
 
     private void quitAndClose(ChannelHandlerContext ctx, SmtpResponse response) {
         session.notifyError(new SmtpSessionException(response));
-        ctx.writeAndFlush(SmtpSession.Builder.QUIT).addListener(ChannelFutureListener.CLOSE);
+        ctx.writeAndFlush(Builder.QUIT).addListener(ChannelFutureListener.CLOSE);
     }
 
     private void closeImmediately(ChannelHandlerContext ctx) {
@@ -87,6 +106,7 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
 
     private void handleCommandRequest(Object request) {
         final SmtpRequest req = (SmtpRequest) request;
+        notifyStartTls(req);
         ctx.writeAndFlush(request).addListener(future -> {
             if (future.isSuccess()) {
                 session.notifyRequest(req);
@@ -95,6 +115,22 @@ public class SmtpClientHandler extends SimpleChannelInboundHandler<SmtpResponse>
                 ctx.close();
             }
         });
+    }
+
+    private void notifyStartTls(SmtpRequest req) {
+        if (req.command().equals(STARTTLS)) {
+            session.setStartTlsRequested(true);
+        }
+    }
+
+    private Future<Channel> handleStartTlsHandshake() {
+        SslContext sslCtx = SslUtils.getSslCtx();
+        final SSLEngine sslEngine = sslCtx.newEngine(ctx.channel().alloc());
+        sslEngine.setUseClientMode(true);
+        SslHandler sslHandler = new SslHandler(sslEngine, false);
+        Future<Channel> handshakeFuture = sslHandler.handshakeFuture();
+        ctx.pipeline().addFirst(sslHandler);
+        return handshakeFuture;
     }
 
     private void handleContentRequest(Object request) {

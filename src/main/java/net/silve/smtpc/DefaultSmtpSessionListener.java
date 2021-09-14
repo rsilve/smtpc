@@ -39,4 +39,9 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     public void onResponse(SmtpResponse response) {
         // default implementation : do nothing
     }
+
+    @Override
+    public void onStartTls() {
+        // default implementation : do nothing
+    }
 }
