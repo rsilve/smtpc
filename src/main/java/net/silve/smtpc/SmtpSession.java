@@ -129,7 +129,7 @@ public class SmtpSession {
 
     public static class Builder {
 
-        private static final String DEFAULT_SENDER = "sample-sender@letsignit.com";
+        private static final String DEFAULT_SENDER = "sample-sender@domain.tld";
         private static final String DEFAULT_RECEIVER = "sample-receiver@test.com";
         private static final String DEFAULT_EHLO = "localhost";
 
