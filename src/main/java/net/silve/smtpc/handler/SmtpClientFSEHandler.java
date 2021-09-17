@@ -53,7 +53,6 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
             return;
         }
         this.state = state;
-        System.out.println(this.state);
         SmtpCommandAction action = this.state.action(session);
         if (Objects.isNull(action)) {
             closeImmediately(ctx);

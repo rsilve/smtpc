@@ -1,10 +1,7 @@
 package net.silve.smtpc.fse;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import io.netty.util.concurrent.GenericFutureListener;
 import net.silve.smtpc.SmtpSession;
-
-import java.nio.channels.Channel;
 
 public class TlsHandshakeState implements State {
 

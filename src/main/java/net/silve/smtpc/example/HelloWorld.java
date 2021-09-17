@@ -23,7 +23,7 @@ public class HelloWorld {
 
         SmtpClient client = new SmtpClient();
         SmtpSession session = new SmtpSession(HOST, PORT, Builder.zz(contentBytes).iterator());
-        session.setGreeting("localhost")
+        session.setGreeting("greeting.tld")
                 .setSender(SENDER)
                 .setRecipient(RECIPIENT)
                 .setExtendedHelo(false)

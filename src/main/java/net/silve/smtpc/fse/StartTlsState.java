@@ -8,12 +8,12 @@ public class StartTlsState extends AbstractState {
     @Override
     public State nextState(SmtpResponse response) {
         int code = response.code();
-        switch (code) {
-            case 220:
-                return new TlsHandshakeState();
-            default: /* 501 | 454 */
-                return new QuitAndCloseState();
+
+        if (code == 220) {
+            return new TlsHandshakeState();
         }
+        /* code = 501 | 454 */
+        return new QuitAndCloseState();
     }
 
     @Override
