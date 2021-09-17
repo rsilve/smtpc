@@ -3,7 +3,7 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.SmtpSession;
 
-public class CloseTransmissionState implements State {
+class CloseTransmissionState implements State {
 
     @Override
     public State nextStateFromResponse(SmtpResponse response) {

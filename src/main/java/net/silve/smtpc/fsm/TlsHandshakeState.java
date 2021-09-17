@@ -7,7 +7,7 @@ public class TlsHandshakeState implements State {
 
     @Override
     public State nextStateFromResponse(SmtpResponse response) {
-        return new GreetingState().withTlsActive();
+        return new GreetingTLSState();
     }
 
     @Override

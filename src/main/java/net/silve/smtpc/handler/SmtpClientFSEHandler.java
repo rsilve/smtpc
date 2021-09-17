@@ -6,13 +6,14 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.smtp.*;
 import net.silve.smtpc.SmtpSession;
 import net.silve.smtpc.client.StartTlsHandler;
-import net.silve.smtpc.fsm.InitState;
-import net.silve.smtpc.fsm.QuitAndCloseState;
 import net.silve.smtpc.fsm.SmtpCommandAction;
 import net.silve.smtpc.fsm.State;
 import net.silve.smtpc.session.Builder;
 
 import java.util.Objects;
+
+import static net.silve.smtpc.fsm.States.INIT_STATE;
+import static net.silve.smtpc.fsm.States.QUIT_AND_CLOSE_STATE;
 
 
 public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> {
@@ -22,7 +23,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     private ChannelHandlerContext ctx;
     private int size = 0;
 
-    private State state = new InitState();
+    private State state = INIT_STATE;
 
     public SmtpClientFSEHandler(SmtpSession session)  {
         this.session = session;
@@ -49,13 +50,13 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private void applyNewState(ChannelHandlerContext ctx, State state, SmtpResponse response) {
         if (Objects.isNull(state)) {
-            closeImmediately(ctx);
+            closeImmediately();
             return;
         }
         this.state = state;
         SmtpCommandAction action = this.state.action(session);
         if (Objects.isNull(action)) {
-            closeImmediately(ctx);
+            closeImmediately();
             return;
         }
         switch (action) {
@@ -69,7 +70,6 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
             case STARTTLS:
                 handleCommandRequest(new DefaultSmtpRequest(SmtpClientCommand.STARTTLS));
                 break;
-
             case TLS_HANDSHAKE:
                 StartTlsHandler.handleStartTlsHandshake(ctx).addListener(future -> {
                     if (future.isSuccess()) {
@@ -77,7 +77,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                         applyNewState(ctx, this.state.nextStateFromResponse(null), response);
                     } else {
                         session.notifyError(future.cause());
-                        applyNewState(ctx, new QuitAndCloseState(), response);
+                        applyNewState(ctx, QUIT_AND_CLOSE_STATE, response);
                     }
                 });
                 break;
@@ -106,13 +106,13 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case QUIT_AND_CLOSE:
-                quitAndClose(ctx, response); break;
+                quitAndClose(response); break;
 
             case CLOSE_TRANSMISSION:
-                closeImmediately(ctx); break;
+                this.ctx.close(); break;
 
             default:
-                closeImmediately(ctx); break;
+                this.ctx.close(); break;
         }
     }
 
@@ -120,13 +120,13 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
         return content.content().readableBytes();
     }
 
-    private void quitAndClose(ChannelHandlerContext ctx, SmtpResponse response) {
+    private void quitAndClose(SmtpResponse response) {
         session.notifyError(new SmtpSessionException(response));
-        ctx.writeAndFlush(Builder.QUIT).addListener(ChannelFutureListener.CLOSE);
+        this.ctx.writeAndFlush(Builder.QUIT).addListener(ChannelFutureListener.CLOSE);
     }
 
-    private void closeImmediately(ChannelHandlerContext ctx) {
-        ctx.close();
+    private void closeImmediately() {
+        this.ctx.close();
     }
 
     private void handleCommandRequest(Object request) {

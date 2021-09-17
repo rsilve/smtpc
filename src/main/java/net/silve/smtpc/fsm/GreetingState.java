@@ -3,16 +3,22 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.SmtpSession;
 
+import java.util.Objects;
 
-public class GreetingState extends AbstractState {
 
-    private boolean tlsActive = false;
+class GreetingState extends AbstractState {
+
+    protected boolean checkStartTls;
+
+    public GreetingState() {
+        this.checkStartTls = true;
+    }
 
     @Override
     public State nextState(SmtpResponse response) {
-        final boolean startTlsSupported = String.join(" ", response.details()).contains("STARTTLS");
-        if (startTlsSupported && ! tlsActive) {
-            return new StartTlsState();
+        State stateFromExtensions = stateFromExtensions(response);
+        if (Objects.nonNull(stateFromExtensions)) {
+            return stateFromExtensions;
         }
         return new MailState();
     }
@@ -23,8 +29,15 @@ public class GreetingState extends AbstractState {
     }
 
 
-    public GreetingState withTlsActive() {
-        this.tlsActive = true;
-        return this;
+    public State stateFromExtensions(SmtpResponse response) {
+        if (checkStartTls) {
+            final boolean startTlsSupported = String.join(" ", response.details()).contains("STARTTLS");
+            if (startTlsSupported) {
+                return new StartTlsState();
+            }
+        }
+        return null;
     }
+
+
 }
