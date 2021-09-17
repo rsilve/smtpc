@@ -3,7 +3,7 @@ package net.silve.smtpc.client;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.silve.smtpc.SmtpSession;
-import net.silve.smtpc.handler.SmtpClientHandler;
+import net.silve.smtpc.handler.SmtpClientFSEHandler;
 
 public class ConnectionListener implements GenericFutureListener<ChannelFuture> {
 
@@ -19,7 +19,7 @@ public class ConnectionListener implements GenericFutureListener<ChannelFuture> 
     public void operationComplete(ChannelFuture future) {
         if (future.isSuccess()) {
             session.notifyConnect();
-            future.channel().pipeline().addLast(SMTP_HANDLER_HANDLER_NAME, new SmtpClientHandler(session));
+            future.channel().pipeline().addLast(SMTP_HANDLER_HANDLER_NAME, new SmtpClientFSEHandler(session));
         } else {
             session.notifyError(future.cause());
         }

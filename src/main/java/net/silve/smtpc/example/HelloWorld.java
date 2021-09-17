@@ -16,22 +16,19 @@ public class HelloWorld {
     private static final String HOST = "localhost";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
-    private static final String RECIPIENT = "recipient@example.domain";
+    private static final String RECIPIENT = "devnull@silve.net";
 
     public static void main(String[] args) throws IOException {
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new Builder()
-                .setHost(HOST)
-                .setPort(PORT)
+        SmtpSession session = new SmtpSession(HOST, PORT, Builder.zz(contentBytes).iterator());
+        session.setGreeting("localhost")
                 .setSender(SENDER)
-                .setReceiver(RECIPIENT)
-                .useEhlo(true)
-                .useStartTLS(true)
-                .setContent(contentBytes)
-                .setListener(new LogListener())
-                .buildOne();
+                .setRecipient(RECIPIENT)
+                .setExtendedHelo(false)
+
+                .setListener(new LogListener());
 
         client.run(session).addListener(future -> client.shutdownGracefully());
     }

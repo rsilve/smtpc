@@ -11,6 +11,13 @@ public class SmtpSession {
 
     private final String host;
     private final int port;
+
+    private boolean extendedHelo;
+    private String greeting = "localhost";
+
+    private String sender;
+    private String recipient;
+
     private final Iterator<Object> requests;
     private SmtpSessionListener listener;
 
@@ -20,7 +27,6 @@ public class SmtpSession {
     private boolean dataCompleted = false;
     private boolean error = false;
     private boolean success = false;
-    private boolean startTlsRequested = false;
 
     public SmtpSession(String host, int port, Object... requests) {
         this(host, port, Arrays.asList(requests).iterator());
@@ -48,6 +54,7 @@ public class SmtpSession {
         return dataCompleted;
     }
 
+
     public String getId() {
         return id;
     }
@@ -61,6 +68,43 @@ public class SmtpSession {
         return port;
     }
 
+    public boolean useExtendedHelo() {
+        return extendedHelo;
+    }
+
+    public SmtpSession setExtendedHelo(boolean extendedHelo) {
+        this.extendedHelo = extendedHelo;
+        return this;
+    }
+
+    public String getGreeting() {
+        return greeting;
+    }
+
+    public SmtpSession setGreeting(String greeting) {
+        this.greeting = greeting;
+        return this;
+    }
+
+
+    public String getSender() {
+        return sender;
+    }
+
+    public SmtpSession setSender(String sender) {
+        this.sender = sender;
+        return this;
+    }
+
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public SmtpSession setRecipient(String recipient) {
+        this.recipient = recipient;
+        return this;
+    }
+
     public SmtpSession setError() {
         this.error = true;
         return this;
@@ -72,14 +116,6 @@ public class SmtpSession {
 
     public boolean isSuccess() {
         return success;
-    }
-
-    public boolean isStartTlsRequested() {
-        return startTlsRequested;
-    }
-
-    public void setStartTlsRequested(boolean startTlsRequested) {
-        this.startTlsRequested = startTlsRequested;
     }
 
     public SmtpCommand getLasRequestCommand() {

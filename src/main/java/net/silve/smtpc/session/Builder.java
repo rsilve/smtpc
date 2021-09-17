@@ -10,6 +10,7 @@ import net.silve.smtpc.SmtpSessionListener;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class Builder {
@@ -80,13 +81,6 @@ public class Builder {
         return this;
     }
 
-    public static byte[][] chunk(byte[] input, int chunkSize) {
-        return IntStream.iterate(0, i -> i + chunkSize)
-                .limit((long) Math.ceil((double) input.length / chunkSize))
-                .mapToObj(j -> Arrays.copyOfRange(input, j, Math.min(j + chunkSize, input.length)))
-                .toArray(byte[][]::new);
-    }
-
     public Builder buildPartial() {
 
         objects.add(greetingSmtpRequest());
@@ -127,6 +121,23 @@ public class Builder {
         } else {
             return new DefaultSmtpRequest(SmtpCommand.HELO, this.greeting);
         }
+    }
+
+    public static byte[][] chunk(byte[] input, int chunkSize) {
+        return IntStream.iterate(0, i -> i + chunkSize)
+                .limit((long) Math.ceil((double) input.length / chunkSize))
+                .mapToObj(j -> Arrays.copyOfRange(input, j, Math.min(j + chunkSize, input.length)))
+                .toArray(byte[][]::new);
+    }
+
+    public static List<Object> zz(byte[] input) {
+        ArrayList<Object> chunks = new ArrayList<>();
+        byte[][] chunked = chunk(input, 4096);
+        IntStream.iterate(0, i -> i++).limit(chunked.length)
+                .mapToObj(value -> new DefaultSmtpContent(Unpooled.copiedBuffer(chunked[value])))
+                .forEach(chunks::add);
+        chunks.add(new DefaultLastSmtpContent(Unpooled.copiedBuffer("\r\n".getBytes(StandardCharsets.UTF_8))));
+        return chunks;
     }
 
 
