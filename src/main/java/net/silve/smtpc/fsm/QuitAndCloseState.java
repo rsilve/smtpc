@@ -1,17 +1,17 @@
-package net.silve.smtpc.fse;
+package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.SmtpSession;
 
-public class QuitState extends AbstractState {
+public class QuitAndCloseState extends AbstractState {
+
     @Override
     public State nextState(SmtpResponse response) {
-
-        return new CloseTransmissionState();
+        return null;
     }
 
     @Override
     public SmtpCommandAction action(SmtpSession session) {
-        return SmtpCommandAction.QUIT;
+        return SmtpCommandAction.QUIT_AND_CLOSE;
     }
 }

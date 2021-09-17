@@ -6,10 +6,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.smtp.*;
 import net.silve.smtpc.SmtpSession;
 import net.silve.smtpc.client.StartTlsHandler;
-import net.silve.smtpc.fse.InitState;
-import net.silve.smtpc.fse.QuitAndCloseState;
-import net.silve.smtpc.fse.SmtpCommandAction;
-import net.silve.smtpc.fse.State;
+import net.silve.smtpc.fsm.InitState;
+import net.silve.smtpc.fsm.QuitAndCloseState;
+import net.silve.smtpc.fsm.SmtpCommandAction;
+import net.silve.smtpc.fsm.State;
 import net.silve.smtpc.session.Builder;
 
 import java.util.Objects;

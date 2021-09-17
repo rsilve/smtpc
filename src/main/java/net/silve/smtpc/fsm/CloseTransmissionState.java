@@ -1,18 +1,17 @@
-package net.silve.smtpc.fse;
+package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.SmtpSession;
 
-public class TlsHandshakeState implements State {
+public class CloseTransmissionState implements State {
 
     @Override
     public State nextStateFromResponse(SmtpResponse response) {
-        return new GreetingState().withTlsActive();
+        return null;
     }
 
     @Override
     public SmtpCommandAction action(SmtpSession session) {
-        return SmtpCommandAction.TLS_HANDSHAKE;
+        return SmtpCommandAction.CLOSE_TRANSMISSION;
     }
-
 }

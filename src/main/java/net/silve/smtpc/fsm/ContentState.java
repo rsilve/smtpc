@@ -1,19 +1,19 @@
-package net.silve.smtpc.fse;
+package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.SmtpSession;
 
-public class MailState  extends AbstractState {
+public class ContentState extends AbstractState {
     @Override
-    public State nextState(SmtpResponse response) {
+    protected State nextState(SmtpResponse response) {
         if (response.code() == 250) {
-            return new RcptState();
+            return new QuitState();
         }
         return new QuitAndCloseState();
     }
 
     @Override
     public SmtpCommandAction action(SmtpSession session) {
-        return SmtpCommandAction.MAIL;
+        return SmtpCommandAction.DATA_CONTENT;
     }
 }

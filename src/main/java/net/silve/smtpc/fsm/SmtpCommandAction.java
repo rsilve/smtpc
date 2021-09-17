@@ -1,4 +1,4 @@
-package net.silve.smtpc.fse;
+package net.silve.smtpc.fsm;
 
 public enum SmtpCommandAction {
 
