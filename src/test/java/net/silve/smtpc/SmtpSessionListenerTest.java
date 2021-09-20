@@ -1,20 +1,5 @@
 package net.silve.smtpc;
 
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.embedded.EmbeddedChannel;
-import io.netty.handler.codec.EncoderException;
-import io.netty.handler.codec.MessageToMessageEncoder;
-import io.netty.handler.codec.smtp.*;
-import net.silve.smtpc.client.ConnectionListener;
-import net.silve.smtpc.handler.SmtpSessionException;
-import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class SmtpSessionListenerTest {
     /*
     @Test

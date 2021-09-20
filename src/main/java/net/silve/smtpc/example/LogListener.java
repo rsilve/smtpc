@@ -2,7 +2,7 @@ package net.silve.smtpc.example;
 
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.DefaultSmtpSessionListener;
+import net.silve.smtpc.session.DefaultSmtpSessionListener;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -7,8 +7,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
-import net.silve.smtpc.client.ConnectionListener;
+import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.SmtpChannelInitializer;
+import net.silve.smtpc.session.SmtpSession;
 
 import java.util.Objects;
 

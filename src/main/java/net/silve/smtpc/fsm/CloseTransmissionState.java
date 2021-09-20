@@ -1,7 +1,6 @@
 package net.silve.smtpc.fsm;
 
-import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.SmtpSession;
 
 class CloseTransmissionState implements State {
 

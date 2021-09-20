@@ -1,7 +1,7 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.SmtpSession;
 
 import java.util.Objects;
 
@@ -52,7 +52,7 @@ public class FsmEngine {
        void onAction(SmtpCommandAction action, SmtpResponse response);
     }
 
-    private class NoopActionListener implements FSMActionListener {
+    private static class NoopActionListener implements FSMActionListener {
         @Override
         public void onAction(SmtpCommandAction action, SmtpResponse response) {
             // do nothing

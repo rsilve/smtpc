@@ -1,6 +1,6 @@
 package net.silve.smtpc.fsm;
 
-import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.SmtpSession;
 
 class QuitAndCloseState implements State {
 

@@ -10,6 +10,5 @@ public enum SmtpCommandAction {
     DATA_CONTENT,
     QUIT,
     CLOSE_TRANSMISSION
-    ;
 
 }

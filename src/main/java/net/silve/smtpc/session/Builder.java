@@ -3,9 +3,6 @@ package net.silve.smtpc.session;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.smtp.*;
 import io.netty.util.AsciiString;
-import net.silve.smtpc.DefaultSmtpSessionListener;
-import net.silve.smtpc.SmtpSession;
-import net.silve.smtpc.SmtpSessionListener;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

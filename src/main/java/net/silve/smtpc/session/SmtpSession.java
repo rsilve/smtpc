@@ -1,7 +1,6 @@
-package net.silve.smtpc;
+package net.silve.smtpc.session;
 
 import io.netty.handler.codec.smtp.*;
-import net.silve.smtpc.session.Builder;
 
 import java.util.*;
 

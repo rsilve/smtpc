@@ -1,7 +1,7 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.SmtpSession;
 
 import static net.silve.smtpc.fsm.States.GREETING_STATE;
 import static net.silve.smtpc.fsm.States.QUIT_AND_CLOSE_STATE;

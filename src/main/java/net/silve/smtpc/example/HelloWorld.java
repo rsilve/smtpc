@@ -1,7 +1,7 @@
 package net.silve.smtpc.example;
 
 import net.silve.smtpc.SmtpClient;
-import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.SmtpSession;
 import net.silve.smtpc.session.Builder;
 
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.SmtpSession;
+import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.fsm.States.*;
