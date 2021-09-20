@@ -5,7 +5,7 @@ import net.silve.smtpc.SmtpSession;
 
 public class ContentState extends AbstractState {
     @Override
-    protected State nextState(SmtpResponse response) {
+    protected State nextState(SmtpResponse response, FsmEngineContext context) {
         if (response.code() == 250) {
             return new QuitState();
         }

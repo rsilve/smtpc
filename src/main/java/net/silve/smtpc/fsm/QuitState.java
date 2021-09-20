@@ -7,7 +7,7 @@ import static net.silve.smtpc.fsm.States.CLOSING_TRANSMISSION_STATE;
 
 public class QuitState extends AbstractState {
     @Override
-    public State nextState(SmtpResponse response) {
+    public State nextState(SmtpResponse response, FsmEngineContext context) {
         return CLOSING_TRANSMISSION_STATE;
     }
 

@@ -2,22 +2,20 @@ package net.silve.smtpc.fsm;
 
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.SmtpCommandAction.CLOSE_TRANSMISSION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class CloseTransmissionStateTest {
+class QuitAndCloseStateTest {
 
     @Test
     void shouldReturnNextState() {
-        State state = new CloseTransmissionState();
+        State state = new QuitAndCloseState();
         assertNull(state.nextStateFromEvent(new FsmEvent(), new FsmEngineContext()));
     }
 
     @Test
     void shouldReturnAction() {
-        State state = new CloseTransmissionState();
-        assertEquals(CLOSE_TRANSMISSION, state.action(null));
+        State state = new QuitAndCloseState();
+        assertEquals(SmtpCommandAction.QUIT_AND_CLOSE, state.action(null));
     }
-
 }

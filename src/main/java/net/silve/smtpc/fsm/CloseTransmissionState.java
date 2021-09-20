@@ -6,7 +6,7 @@ import net.silve.smtpc.SmtpSession;
 class CloseTransmissionState implements State {
 
     @Override
-    public State nextStateFromResponse(SmtpResponse response) {
+    public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
         return null;
     }
 

@@ -1,10 +1,9 @@
 package net.silve.smtpc.fsm;
 
-import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.SmtpSession;
 
 public interface State {
-    State nextStateFromResponse(SmtpResponse response);
+    State nextStateFromEvent(FsmEvent event, FsmEngineContext context);
 
     SmtpCommandAction action(SmtpSession session);
 }

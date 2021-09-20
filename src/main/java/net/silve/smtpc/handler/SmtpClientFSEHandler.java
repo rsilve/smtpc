@@ -6,27 +6,26 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.smtp.*;
 import net.silve.smtpc.SmtpSession;
 import net.silve.smtpc.client.StartTlsHandler;
+import net.silve.smtpc.fsm.FsmEngine;
+import net.silve.smtpc.fsm.FsmEvent;
 import net.silve.smtpc.fsm.SmtpCommandAction;
-import net.silve.smtpc.fsm.State;
 import net.silve.smtpc.session.Builder;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.fsm.States.INIT_STATE;
-import static net.silve.smtpc.fsm.States.QUIT_AND_CLOSE_STATE;
 
-
-public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> {
+public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmEngine.FSMActionListener {
 
 
     private final SmtpSession session;
     private ChannelHandlerContext ctx;
     private int size = 0;
 
-    private State state = INIT_STATE;
+    private final FsmEngine engine = new FsmEngine();
 
     public SmtpClientFSEHandler(SmtpSession session)  {
         this.session = session;
+        engine.setSession(session).setActionListener(this);
     }
 
     @Override
@@ -45,75 +44,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SmtpResponse response) {
         session.notifyResponse(response);
-        applyNewState(ctx, state.nextStateFromResponse(response), response);
-    }
-
-    private void applyNewState(ChannelHandlerContext ctx, State state, SmtpResponse response) {
-        if (Objects.isNull(state)) {
-            closeImmediately();
-            return;
-        }
-        this.state = state;
-        SmtpCommandAction action = this.state.action(session);
-        if (Objects.isNull(action)) {
-            closeImmediately();
-            return;
-        }
-        switch (action) {
-            case HELO:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.HELO, this.session.getGreeting()));
-                break;
-            case EHLO:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.EHLO, this.session.getGreeting()));
-                break;
-
-            case STARTTLS:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpClientCommand.STARTTLS));
-                break;
-            case TLS_HANDSHAKE:
-                StartTlsHandler.handleStartTlsHandshake(ctx).addListener(future -> {
-                    if (future.isSuccess()) {
-                        session.notifyStartTls();
-                        applyNewState(ctx, this.state.nextStateFromResponse(null), response);
-                    } else {
-                        session.notifyError(future.cause());
-                        applyNewState(ctx, QUIT_AND_CLOSE_STATE, response);
-                    }
-                });
-                break;
-
-            case MAIL:
-                String sender = String.format("FROM:<%s>", this.session.getSender());
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.MAIL, sender));
-                break;
-
-            case RCPT:
-                String recipient = String.format("TO:<%s>", this.session.getRecipient());
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.RCPT, recipient));
-                break;
-
-            case DATA:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.DATA));
-                break;
-
-
-            case DATA_CONTENT:
-                handleContentRequest();
-                break;
-
-            case QUIT:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.QUIT));
-                break;
-
-            case QUIT_AND_CLOSE:
-                quitAndClose(response); break;
-
-            case CLOSE_TRANSMISSION:
-                this.ctx.close(); break;
-
-            default:
-                this.ctx.close(); break;
-        }
+        engine.notify(response);
     }
 
     private int getDataSize(SmtpContent content) {
@@ -171,4 +102,66 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
         }
     }
 
+    @Override
+    public void onAction(SmtpCommandAction action, SmtpResponse response) {
+        if (Objects.isNull(action)) {
+            closeImmediately();
+            return;
+        }
+        switch (action) {
+            case HELO:
+                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.HELO, this.session.getGreeting()));
+                break;
+            case EHLO:
+                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.EHLO, this.session.getGreeting()));
+                break;
+
+            case STARTTLS:
+                handleCommandRequest(new DefaultSmtpRequest(SmtpClientCommand.STARTTLS));
+                break;
+            case TLS_HANDSHAKE:
+                StartTlsHandler.handleStartTlsHandshake(ctx).addListener(future -> {
+                    if (future.isSuccess()) {
+                        engine.tlsActive();
+                        session.notifyStartTls();
+                    } else {
+                        session.notifyError(future.cause());
+                    }
+                    engine.notify(new FsmEvent().setCause(future.cause()));
+                });
+                break;
+
+            case MAIL:
+                String sender = String.format("FROM:<%s>", this.session.getSender());
+                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.MAIL, sender));
+                break;
+
+            case RCPT:
+                String recipient = String.format("TO:<%s>", this.session.getRecipient());
+                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.RCPT, recipient));
+                break;
+
+            case DATA:
+                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.DATA));
+                break;
+
+
+            case DATA_CONTENT:
+                handleContentRequest();
+                break;
+
+            case QUIT:
+                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.QUIT));
+                break;
+
+            case QUIT_AND_CLOSE:
+                quitAndClose(response); break;
+
+            case CLOSE_TRANSMISSION:
+                this.ctx.close(); break;
+
+            default:
+                this.ctx.close(); break;
+        }
+    }
 }

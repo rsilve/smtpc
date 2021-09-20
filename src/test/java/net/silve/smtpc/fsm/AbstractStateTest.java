@@ -13,7 +13,7 @@ class AbstractStateTest {
     final static State NOOP_STATE = new State() {
 
         @Override
-        public State nextStateFromResponse(SmtpResponse response) {
+        public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
             return null;
         }
 
@@ -27,7 +27,7 @@ class AbstractStateTest {
     void shouldHandleCloseCode() {
         AbstractState state = new AbstractState() {
             @Override
-            protected State nextState(SmtpResponse response) {
+            protected State nextState(SmtpResponse response, FsmEngineContext context) {
                 return NOOP_STATE;
             }
 
@@ -36,10 +36,14 @@ class AbstractStateTest {
                 return null;
             }
         };
-        assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromResponse(new DefaultSmtpResponse(221)));
-        assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromResponse(new DefaultSmtpResponse(421)));
-        assertEquals(NOOP_STATE, state.nextStateFromResponse(new DefaultSmtpResponse(100)));
-        assertEquals(NOOP_STATE, state.nextStateFromResponse(null));
+        assertEquals(CLOSING_TRANSMISSION_STATE,
+                state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(221)), null));
+        assertEquals(CLOSING_TRANSMISSION_STATE,
+                state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(421)), null));
+        assertEquals(NOOP_STATE,
+                state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(100)), null));
+        assertEquals(NOOP_STATE,
+                state.nextStateFromEvent(new FsmEvent(), null));
     }
 
 

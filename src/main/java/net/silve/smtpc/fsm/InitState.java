@@ -9,7 +9,7 @@ import static net.silve.smtpc.fsm.States.QUIT_AND_CLOSE_STATE;
 class InitState extends AbstractState {
 
     @Override
-    public State nextState(SmtpResponse response) {
+    public State nextState(SmtpResponse response, FsmEngineContext context) {
         if (response.code() > 499) {
             return QUIT_AND_CLOSE_STATE;
         }
