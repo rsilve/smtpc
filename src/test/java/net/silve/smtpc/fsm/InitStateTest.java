@@ -22,6 +22,12 @@ class InitStateTest {
         assertEquals(QUIT_AND_CLOSE_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(500)), null
         ));
+        assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromEvent(
+                new FsmEvent(), null
+        ));
+        assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromEvent(
+                null, null
+        ));
     }
 
     @Test

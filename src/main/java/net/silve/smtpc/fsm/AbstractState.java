@@ -10,18 +10,22 @@ public abstract class AbstractState implements State {
 
     @Override
     public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
+        if (Objects.isNull(event)) {
+            return CLOSING_TRANSMISSION_STATE;
+        }
         SmtpResponse response = event.getResponse();
+        if (Objects.isNull(response)) {
+            return CLOSING_TRANSMISSION_STATE;
+        }
         State closingTransmissionState = handleClosingTransmissionCode(response);
         if (closingTransmissionState != null) return closingTransmissionState;
         return nextState(response, context);
     }
 
     private State handleClosingTransmissionCode(SmtpResponse response) {
-        if (Objects.nonNull(response)) {
-            int code = response.code();
-            if (code == 221 || code == 421) {
-                return CLOSING_TRANSMISSION_STATE;
-            }
+        int code = response.code();
+        if (code == 221 || code == 421) {
+            return CLOSING_TRANSMISSION_STATE;
         }
         return null;
     }

@@ -42,8 +42,10 @@ class AbstractStateTest {
                 state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(421)), null));
         assertEquals(NOOP_STATE,
                 state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(100)), null));
-        assertEquals(NOOP_STATE,
+        assertEquals(CLOSING_TRANSMISSION_STATE,
                 state.nextStateFromEvent(new FsmEvent(), null));
+        assertEquals(CLOSING_TRANSMISSION_STATE,
+                state.nextStateFromEvent(null, null));
     }
 
 

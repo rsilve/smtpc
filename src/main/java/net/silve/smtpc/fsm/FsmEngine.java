@@ -15,6 +15,14 @@ public class FsmEngine {
     private SmtpSession session;
     private final FsmEngineContext context = new FsmEngineContext();
 
+    public FsmEngine() {
+        this(INIT_STATE);
+    }
+
+    public FsmEngine(State state) {
+        this.state = state;
+    }
+
     public void notify(SmtpResponse response) {
         FsmEvent event = new FsmEvent().setResponse(response);
         state = state.nextStateFromEvent(event, context);
@@ -37,10 +45,6 @@ public class FsmEngine {
     public FsmEngine setActionListener(FSMActionListener actionListener) {
         this.actionListener = actionListener;
         return this;
-    }
-
-    public FsmEngineContext getContext() {
-        return context;
     }
 
     public FsmEngine tlsActive() {
