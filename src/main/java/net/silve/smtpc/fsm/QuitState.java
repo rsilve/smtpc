@@ -1,13 +1,13 @@
 package net.silve.smtpc.fsm;
 
-import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.session.SmtpSession;
 
 import static net.silve.smtpc.fsm.States.CLOSING_TRANSMISSION_STATE;
 
-public class QuitState extends AbstractState {
+public class QuitState implements State {
+
     @Override
-    public State nextState(SmtpResponse response, FsmEngineContext context) {
+    public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
         return CLOSING_TRANSMISSION_STATE;
     }
 

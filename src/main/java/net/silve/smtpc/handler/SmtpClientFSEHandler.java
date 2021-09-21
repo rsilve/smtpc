@@ -23,7 +23,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private final FsmEngine engine = new FsmEngine();
 
-    public SmtpClientFSEHandler(SmtpSession session)  {
+    public SmtpClientFSEHandler(SmtpSession session) {
         this.session = session;
         engine.setSession(session).setActionListener(this);
     }
@@ -49,11 +49,6 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private int getDataSize(SmtpContent content) {
         return content.content().readableBytes();
-    }
-
-    private void quitAndClose(SmtpResponse response) {
-        session.notifyError(new SmtpSessionException(response));
-        this.ctx.writeAndFlush(Builder.QUIT).addListener(ChannelFutureListener.CLOSE);
     }
 
     private void closeImmediately() {
@@ -145,7 +140,6 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.DATA));
                 break;
 
-
             case DATA_CONTENT:
                 handleContentRequest();
                 break;
@@ -153,15 +147,13 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
             case QUIT:
                 handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.QUIT));
                 break;
-
-            case QUIT_AND_CLOSE:
-                quitAndClose(response); break;
-
             case CLOSE_TRANSMISSION:
-                this.ctx.close(); break;
+                this.ctx.close();
+                break;
 
             default:
-                this.ctx.close(); break;
+                this.ctx.close();
+                break;
         }
     }
 }

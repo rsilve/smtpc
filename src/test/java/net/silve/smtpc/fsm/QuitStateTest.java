@@ -9,16 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QuitStateTest {
 
-    @Test
-    void shouldInheritFromAbstractState() {
-        assertTrue(new QuitState() instanceof AbstractState);
-    }
 
     @Test
     void shouldReturnNextState() {
         State state = new QuitState();
         assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromEvent(
-                new FsmEvent(), null
+               null, null
         ));
     }
 

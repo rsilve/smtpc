@@ -22,7 +22,7 @@ public class HelloWorld {
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession(HOST, PORT, Builder.zz(contentBytes).iterator());
+        SmtpSession session = new SmtpSession(HOST, PORT, Builder.chunks(contentBytes).iterator());
         session.setGreeting("greeting.tld")
                 .setSender(SENDER)
                 .setRecipient(RECIPIENT)

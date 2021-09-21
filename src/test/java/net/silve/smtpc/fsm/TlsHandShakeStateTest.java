@@ -2,8 +2,7 @@ package net.silve.smtpc.fsm;
 
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.States.GREETING_STATE;
-import static net.silve.smtpc.fsm.States.QUIT_AND_CLOSE_STATE;
+import static net.silve.smtpc.fsm.States.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TlsHandShakeStateTest {
@@ -15,7 +14,7 @@ class TlsHandShakeStateTest {
                 new FsmEvent(), null
         ));
 
-        assertEquals(QUIT_AND_CLOSE_STATE, state.nextStateFromEvent(
+        assertEquals(QUIT_STATE, state.nextStateFromEvent(
                 new FsmEvent().setCause(new RuntimeException("ee")), null
         ));
     }

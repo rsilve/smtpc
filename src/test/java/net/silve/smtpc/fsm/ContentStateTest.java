@@ -20,7 +20,7 @@ class ContentStateTest {
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(250)), null
         ));
-        assertEquals(QUIT_AND_CLOSE_STATE, state.nextStateFromEvent(
+        assertEquals(QUIT_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(501)), null
         ));
     }

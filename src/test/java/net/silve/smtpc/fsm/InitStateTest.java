@@ -19,7 +19,7 @@ class InitStateTest {
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(220)), null
         ));
-        assertEquals(QUIT_AND_CLOSE_STATE, state.nextStateFromEvent(
+        assertEquals(QUIT_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(500)), null
         ));
         assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromEvent(

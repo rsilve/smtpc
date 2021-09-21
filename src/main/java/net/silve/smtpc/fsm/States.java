@@ -12,7 +12,6 @@ public class States {
     public static final State CONTENT_STATE = new ContentState();
     public static final State QUIT_STATE = new QuitState();
 
-    public static final State QUIT_AND_CLOSE_STATE = new QuitAndCloseState();
     public static final State CLOSING_TRANSMISSION_STATE = new CloseTransmissionState();
 
     private States() {

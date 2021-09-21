@@ -1,21 +1,56 @@
-package net.silve.smtpc;
+package net.silve.smtpc.session;
+
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.smtp.*;
+import net.silve.smtpc.fsm.SmtpCommandAction;
+import net.silve.smtpc.handler.SmtpClientFSEHandler;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class SmtpSessionListenerTest {
-    /*
+    @Test
+    void shouldHandleStartNotification() {
+        TestSessionListener listener = new TestSessionListener();
+        SmtpSession session = new SmtpSession(
+                "host", 25);
+        session.setListener(listener);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        DefaultSmtpResponse response = new DefaultSmtpResponse(250, "Ok");
+        assertFalse(channel.writeInbound(response));
+        assertTrue(channel.finish());
+        assertTrue(listener.started);
+    }
+
+
     @Test
     void shouldHandleRequestNotification() {
         TestSessionListener listener = new TestSessionListener();
-        DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
         SmtpSession session = new SmtpSession(
-                "host", 25,
-                request);
+                "host", 25);
         session.setListener(listener);
-        SmtpClientHandler handler = new SmtpClientHandler(session);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertTrue(channel.finish());
-        assertEquals(request, listener.request);
+        assertEquals(SmtpCommand.HELO, listener.request.command());
     }
+
+    @Test
+    void shouldHandleRequestNotification002() {
+        TestSessionListener listener = new TestSessionListener();
+        SmtpSession session = new SmtpSession(
+                "host", 25);
+        session.setListener(listener);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        handler.onAction(SmtpCommandAction.MAIL, null);
+        assertTrue(channel.finish());
+        assertEquals(SmtpCommand.MAIL, listener.request.command());
+    }
+
+    /*
 
     @Test
     void shouldHandleResponseNotification() {
@@ -32,21 +67,6 @@ class SmtpSessionListenerTest {
         assertEquals(response, listener.response);
     }
 
-    @Test
-    void shouldHandleStartNotification() {
-        TestSessionListener listener = new TestSessionListener();
-        DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
-        SmtpSession session = new SmtpSession(
-                "host", 25,
-                request);
-        session.setListener(listener);
-        SmtpClientHandler handler = new SmtpClientHandler(session);
-        EmbeddedChannel channel = new EmbeddedChannel(handler);
-        DefaultSmtpResponse response = new DefaultSmtpResponse(250, "Ok");
-        assertFalse(channel.writeInbound(response));
-        assertTrue(channel.finish());
-        assertTrue(listener.started);
-    }
 
     @Test
     void shouldHandleCompleteNotification() {
@@ -175,7 +195,7 @@ class SmtpSessionListenerTest {
         assertTrue(listener.error instanceof RuntimeException);
         assertEquals("rr", listener.error.getMessage());
     }
-
+*/
     static class TestSessionListener extends DefaultSmtpSessionListener {
 
         private SmtpRequest request;
@@ -222,5 +242,5 @@ class SmtpSessionListenerTest {
         }
     }
 
-     */
+
 }

@@ -127,7 +127,7 @@ public class Builder {
                 .toArray(byte[][]::new);
     }
 
-    public static List<Object> zz(byte[] input) {
+    public static List<Object> chunks(byte[] input) {
         ArrayList<Object> chunks = new ArrayList<>();
         byte[][] chunked = chunk(input, 4096);
         IntStream.iterate(0, i -> i++).limit(chunked.length)

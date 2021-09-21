@@ -3,8 +3,7 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.session.SmtpSession;
 
-import static net.silve.smtpc.fsm.States.QUIT_AND_CLOSE_STATE;
-import static net.silve.smtpc.fsm.States.TLS_HANDSHAKE_STATE;
+import static net.silve.smtpc.fsm.States.*;
 
 public class StartTlsState extends AbstractState {
 
@@ -16,7 +15,7 @@ public class StartTlsState extends AbstractState {
             return TLS_HANDSHAKE_STATE;
         }
         /* code = 501 | 454 */
-        return QUIT_AND_CLOSE_STATE;
+        return QUIT_STATE;
     }
 
     @Override
