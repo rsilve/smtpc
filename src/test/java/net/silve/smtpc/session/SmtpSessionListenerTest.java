@@ -43,7 +43,7 @@ class SmtpSessionListenerTest {
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
-        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertTrue(channel.finish());
         assertEquals(SmtpCommand.HELO, listener.request.command());
         assertTrue(listener.completed);
@@ -66,7 +66,7 @@ class SmtpSessionListenerTest {
     void shouldHandleContentNotification() {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = new SmtpSession(
-                "host", 25,
+                "host", 25).setChunks(
                 new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
                 new DefaultLastSmtpContent(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))));
         session.setListener(listener);
@@ -82,7 +82,7 @@ class SmtpSessionListenerTest {
     void shouldHandleWriteErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = new SmtpSession(
-                "host", 25,
+                "host", 25).setChunks(
                 new DefaultSmtpRequest(SmtpCommand.MAIL, "from"));
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
@@ -109,7 +109,7 @@ class SmtpSessionListenerTest {
         TestSessionListener listener = new TestSessionListener();
         DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
         SmtpSession session = new SmtpSession(
-                "host", 25,
+                "host", 25).setChunks(
                 request);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
@@ -123,7 +123,7 @@ class SmtpSessionListenerTest {
         TestSessionListener listener = new TestSessionListener();
         DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
         SmtpSession session = new SmtpSession(
-                "host", 25,
+                "host", 25).setChunks(
                 request);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();

@@ -13,8 +13,8 @@ import java.io.IOException;
  */
 public class HelloWorld {
 
-    private static final String HOST = "home.silve.net";
-    private static final int PORT = 25;
+    private static final String HOST = "localhost";
+    private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
 
@@ -22,12 +22,12 @@ public class HelloWorld {
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession(HOST, PORT, Builder.chunks(contentBytes).iterator());
+        SmtpSession session = new SmtpSession(HOST, PORT);
         session.setGreeting("greeting.tld")
                 .setSender(SENDER)
                 .setRecipient(RECIPIENT)
+                .setChunks(Builder.chunks(contentBytes).iterator())
                 .setExtendedHelo(true)
-
                 .setListener(new LogListener());
 
         client.run(session).addListener(future -> client.shutdownGracefully());

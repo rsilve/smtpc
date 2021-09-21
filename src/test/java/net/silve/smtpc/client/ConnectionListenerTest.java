@@ -16,8 +16,7 @@ class ConnectionListenerTest {
     void shouldHandleRequestNotification() {
         DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
         SmtpSession session = new SmtpSession(
-                "host", 25,
-                request);
+                "host", 25).setChunks(request);
         EmbeddedChannel channel = new EmbeddedChannel();
         channel.newSucceededFuture().addListener(new ConnectionListener(session));
         assertEquals(2, channel.pipeline().names().size());

@@ -19,7 +19,7 @@ class ExtendedGreetingState extends AbstractState {
             return MAIL_STATE;
         }
 
-        if (response.code() == 504 || response.code() == 550) {
+        if (response.code() > 499) {
             return GREETING_STATE;
         }
 

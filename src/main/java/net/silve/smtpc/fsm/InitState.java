@@ -2,6 +2,8 @@ package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 
+import java.util.Objects;
+
 import static net.silve.smtpc.fsm.States.*;
 
 class InitState extends AbstractState {
@@ -12,7 +14,7 @@ class InitState extends AbstractState {
             return QUIT_STATE;
         }
 
-        return context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
+        return Objects.nonNull(context) && context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class SmtpSession {
     private String sender;
     private String recipient;
 
-    private final Iterator<Object> requests;
+    private Iterator<Object> chunks;
     private SmtpSessionListener listener;
 
     private final String id = UUID.randomUUID().toString();
@@ -27,24 +27,19 @@ public class SmtpSession {
     private boolean error = false;
     private boolean success = false;
 
-    public SmtpSession(String host, int port, Object... requests) {
-        this(host, port, Arrays.asList(requests).iterator());
+    public SmtpSession(String host, int port) {
+        this(host, port, null);
     }
 
-    public SmtpSession(String host, int port, Iterator<Object> requests) {
-        this(host, port, requests, null);
-    }
-
-    public SmtpSession(String host, int port, Iterator<Object> requests, SmtpSessionListener listener) {
+    public SmtpSession(String host, int port, SmtpSessionListener listener) {
         this.host = host;
         this.port = port;
-        this.requests = requests;
         this.listener = Objects.isNull(listener) ? defaultListener : listener;
     }
 
     public Object next() {
-        if (requests.hasNext()) {
-            return requests.next();
+        if (chunks.hasNext()) {
+            return chunks.next();
         }
         return null;
     }
@@ -102,6 +97,20 @@ public class SmtpSession {
     public SmtpSession setRecipient(String recipient) {
         this.recipient = recipient;
         return this;
+    }
+
+    public SmtpSession setChunks(Iterator<Object> chunks) {
+        this.chunks = chunks;
+        return this;
+    }
+
+    public SmtpSession setChunks(Object... chunks) {
+        this.chunks = Arrays.asList(chunks).iterator();
+        return this;
+    }
+
+    public Iterator<Object> getChunks() {
+        return chunks;
     }
 
     public SmtpSession setError() {

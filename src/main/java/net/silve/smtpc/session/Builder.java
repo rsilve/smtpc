@@ -100,7 +100,7 @@ public class Builder {
 
     public SmtpSession build() {
         objects.add(QUIT);
-        return new SmtpSession(this.host, this.port, objects.iterator(), listener);
+        return new SmtpSession(this.host, this.port, listener).setChunks(objects.iterator());
     }
 
     public SmtpSession buildOne() {
@@ -109,7 +109,7 @@ public class Builder {
         buildPartial();
         objects.add(QUIT);
 
-        return new SmtpSession(this.host, this.port, objects.iterator(), listener);
+        return new SmtpSession(this.host, this.port, listener).setChunks(objects.iterator());
     }
 
     public DefaultSmtpRequest greetingSmtpRequest() {
