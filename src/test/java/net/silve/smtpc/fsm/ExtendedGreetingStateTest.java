@@ -3,23 +3,25 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.States.MAIL_STATE;
-import static net.silve.smtpc.fsm.States.QUIT_STATE;
+import static net.silve.smtpc.fsm.States.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class GreetingStateTest {
+class ExtendedGreetingStateTest {
 
     @Test
     void shouldInheritFromAbstractState() {
-        assertTrue(new GreetingState() instanceof AbstractState);
+        assertTrue(new ExtendedGreetingState() instanceof AbstractState);
     }
 
     @Test
     void shouldReturnNextState() {
-        State state = new GreetingState();
+        State state = new ExtendedGreetingState();
         assertEquals(MAIL_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(250)), null
+        ));
+        assertEquals(GREETING_STATE, state.nextStateFromEvent(
+                new FsmEvent().setResponse(new DefaultSmtpResponse(502)), null
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
@@ -30,7 +32,7 @@ class GreetingStateTest {
 
     @Test
     void shouldReturnAction() {
-        State state = new GreetingState();
-        assertEquals(SmtpCommandAction.HELO, state.action());
+        State state = new ExtendedGreetingState();
+        assertEquals(SmtpCommandAction.EHLO, state.action());
     }
 }

@@ -3,7 +3,6 @@ package net.silve.smtpc.handler;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.*;
-import net.silve.smtpc.fsm.SmtpCommandAction;
 import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
@@ -101,7 +100,7 @@ class SmtpClientFSEHandlerTest {
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
-        assertFalse(channel.writeInbound(new DefaultSmtpResponse(504, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(502, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
@@ -162,6 +161,52 @@ class SmtpClientFSEHandlerTest {
         assertFalse(channel.isActive());
 
     }
+
+    @Test
+    void shouldHandleErrorAtConnectSession() {
+        DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = new SmtpSession("host", 25)
+                .setSender("sender")
+                .setRecipient("recipient")
+                .setChunks(content);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(554, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.QUIT, outbound.command());
+        outbound = channel.readOutbound();
+        assertNull(outbound);
+        assertFalse(channel.isActive());
+
+    }
+
+
+    @Test
+    void shouldHandleRejectAtHELO() {
+        DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = new SmtpSession("host", 25)
+                .setSender("sender")
+                .setRecipient("recipient")
+                .setChunks(content);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(550, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        assertEquals("localhost", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.QUIT, outbound.command());
+        outbound = channel.readOutbound();
+        assertNull(outbound);
+        assertFalse(channel.isActive());
+
+    }
+
 
 
     /*
