@@ -1,8 +1,7 @@
 package net.silve.smtpc.fsm;
 
-import net.silve.smtpc.session.SmtpSession;
-
-import static net.silve.smtpc.fsm.States.*;
+import static net.silve.smtpc.fsm.States.GREETING_STATE;
+import static net.silve.smtpc.fsm.States.QUIT_STATE;
 
 public class TlsHandshakeState implements State {
 
@@ -15,7 +14,7 @@ public class TlsHandshakeState implements State {
     }
 
     @Override
-    public SmtpCommandAction action(SmtpSession session) {
+    public SmtpCommandAction action() {
         return SmtpCommandAction.TLS_HANDSHAKE;
     }
 

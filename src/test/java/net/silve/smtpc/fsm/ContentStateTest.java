@@ -3,7 +3,7 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.States.*;
+import static net.silve.smtpc.fsm.States.QUIT_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,6 +28,6 @@ class ContentStateTest {
     @Test
     void shouldReturnAction() {
         State state = new ContentState();
-        assertEquals(SmtpCommandAction.DATA_CONTENT, state.action(null));
+        assertEquals(SmtpCommandAction.DATA_CONTENT, state.action());
     }
 }

@@ -17,7 +17,7 @@ class CloseTransmissionStateTest {
     @Test
     void shouldReturnAction() {
         State state = new CloseTransmissionState();
-        assertEquals(CLOSE_TRANSMISSION, state.action(null));
+        assertEquals(CLOSE_TRANSMISSION, state.action());
     }
 
 }

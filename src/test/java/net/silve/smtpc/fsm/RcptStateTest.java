@@ -3,7 +3,8 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.States.*;
+import static net.silve.smtpc.fsm.States.DATA_STATE;
+import static net.silve.smtpc.fsm.States.QUIT_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,6 +29,6 @@ class RcptStateTest {
     @Test
     void shouldReturnAction() {
         State state = new RcptState();
-        assertEquals(SmtpCommandAction.RCPT, state.action(null));
+        assertEquals(SmtpCommandAction.RCPT, state.action());
     }
 }

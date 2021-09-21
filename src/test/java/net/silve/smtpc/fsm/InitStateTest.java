@@ -33,6 +33,6 @@ class InitStateTest {
     @Test
     void shouldReturnAction() {
         InitState state = new InitState();
-        assertNull(state.action(null));
+        assertNull(state.action());
     }
 }

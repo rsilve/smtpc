@@ -3,6 +3,7 @@ package net.silve.smtpc.fsm;
 public class States {
 
     public static final State INIT_STATE = new InitState();
+    public static final State EXTENDED_GREETING_STATE = new ExtendedGreetingState();
     public static final State GREETING_STATE = new GreetingState();
     public static final State STARTTLS_STATE = new StartTlsState();
     public static final State TLS_HANDSHAKE_STATE = new TlsHandshakeState();

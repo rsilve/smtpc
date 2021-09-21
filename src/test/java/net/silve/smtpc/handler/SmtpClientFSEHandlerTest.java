@@ -1,6 +1,47 @@
 package net.silve.smtpc.handler;
 
-class SmtpClientHandlerTest {
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.smtp.DefaultSmtpResponse;
+import io.netty.handler.codec.smtp.SmtpCommand;
+import io.netty.handler.codec.smtp.SmtpRequest;
+import net.silve.smtpc.fsm.SmtpCommandAction;
+import net.silve.smtpc.session.SmtpSession;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class SmtpClientFSEHandlerTest {
+
+    @Test
+    void shouldHandleInitRequest() {
+        SmtpSession session = new SmtpSession(
+                "host", 25);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        assertEquals("localhost", outbound.parameters().get(0).toString());
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertTrue(channel.finish());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        assertEquals("localhost", outbound.parameters().get(0).toString());
+    }
+
+    @Test
+    void shouldHandleHeloRequest() {
+        SmtpSession session = new SmtpSession(
+                "host", 25);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        handler.onAction(SmtpCommandAction.MAIL, null);
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.MAIL, outbound.command());
+    }
+
     /*
     @Test
     void shouldHandleValidResponse() {

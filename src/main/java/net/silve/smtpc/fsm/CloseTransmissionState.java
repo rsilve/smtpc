@@ -1,7 +1,5 @@
 package net.silve.smtpc.fsm;
 
-import net.silve.smtpc.session.SmtpSession;
-
 class CloseTransmissionState implements State {
 
     @Override
@@ -10,7 +8,7 @@ class CloseTransmissionState implements State {
     }
 
     @Override
-    public SmtpCommandAction action(SmtpSession session) {
+    public SmtpCommandAction action() {
         return SmtpCommandAction.CLOSE_TRANSMISSION;
     }
 }

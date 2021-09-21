@@ -1,9 +1,9 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.session.SmtpSession;
 
-import static net.silve.smtpc.fsm.States.*;
+import static net.silve.smtpc.fsm.States.QUIT_STATE;
+import static net.silve.smtpc.fsm.States.RCPT_STATE;
 
 public class MailState  extends AbstractState {
     @Override
@@ -15,7 +15,7 @@ public class MailState  extends AbstractState {
     }
 
     @Override
-    public SmtpCommandAction action(SmtpSession session) {
+    public SmtpCommandAction action() {
         return SmtpCommandAction.MAIL;
     }
 }

@@ -11,8 +11,7 @@ public class FsmEngine {
 
     private FSMActionListener actionListener = new NoopActionListener();
 
-    private State state = INIT_STATE;
-    private SmtpSession session;
+    private State state;
     private final FsmEngineContext context = new FsmEngineContext();
 
     public FsmEngine() {
@@ -26,7 +25,7 @@ public class FsmEngine {
     public void notify(SmtpResponse response) {
         FsmEvent event = new FsmEvent().setResponse(response);
         state = state.nextStateFromEvent(event, context);
-        this.actionListener.onAction(state.action(session), response);
+        this.actionListener.onAction(state.action(), response);
     }
 
     public void notify(FsmEvent event) {
@@ -34,11 +33,13 @@ public class FsmEngine {
             throw new IllegalArgumentException("event cannot be null");
         }
         state = state.nextStateFromEvent(event, context);
-        this.actionListener.onAction(state.action(session), event.getResponse());
+        this.actionListener.onAction(state.action(), event.getResponse());
     }
 
     public FsmEngine setSession(SmtpSession session) {
-        this.session = session;
+        if (Objects.nonNull(session)) {
+            context.setExtendedGreeting(session.useExtendedHelo());
+        }
         return this;
     }
 
@@ -49,6 +50,11 @@ public class FsmEngine {
 
     public FsmEngine tlsActive() {
         context.setTlsActive(true);
+        return this;
+    }
+
+    public FsmEngine extendedGreeting() {
+        context.setExtendedGreeting(true);
         return this;
     }
 

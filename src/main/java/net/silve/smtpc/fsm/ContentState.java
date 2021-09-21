@@ -1,7 +1,6 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.session.SmtpSession;
 
 import static net.silve.smtpc.fsm.States.QUIT_STATE;
 
@@ -12,7 +11,7 @@ public class ContentState extends AbstractState {
     }
 
     @Override
-    public SmtpCommandAction action(SmtpSession session) {
+    public SmtpCommandAction action() {
         return SmtpCommandAction.DATA_CONTENT;
     }
 }

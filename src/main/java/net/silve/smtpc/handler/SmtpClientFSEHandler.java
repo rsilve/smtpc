@@ -1,15 +1,13 @@
 package net.silve.smtpc.handler;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.smtp.*;
-import net.silve.smtpc.session.SmtpSession;
-import net.silve.smtpc.handler.ssl.StartTlsHandler;
 import net.silve.smtpc.fsm.FsmEngine;
 import net.silve.smtpc.fsm.FsmEvent;
 import net.silve.smtpc.fsm.SmtpCommandAction;
-import net.silve.smtpc.session.Builder;
+import net.silve.smtpc.handler.ssl.StartTlsHandler;
+import net.silve.smtpc.session.SmtpSession;
 
 import java.util.Objects;
 
@@ -146,9 +144,6 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
             case QUIT:
                 handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.QUIT));
-                break;
-            case CLOSE_TRANSMISSION:
-                this.ctx.close();
                 break;
 
             default:

@@ -2,7 +2,6 @@ package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.fsm.States.CLOSING_TRANSMISSION_STATE;
@@ -18,7 +17,7 @@ class AbstractStateTest {
         }
 
         @Override
-        public SmtpCommandAction action(SmtpSession session) {
+        public SmtpCommandAction action() {
             return null;
         }
     };
@@ -32,7 +31,7 @@ class AbstractStateTest {
             }
 
             @Override
-            public SmtpCommandAction action(SmtpSession session) {
+            public SmtpCommandAction action() {
                 return null;
             }
         };

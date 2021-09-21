@@ -2,7 +2,8 @@ package net.silve.smtpc.fsm;
 
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.States.*;
+import static net.silve.smtpc.fsm.States.GREETING_STATE;
+import static net.silve.smtpc.fsm.States.QUIT_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TlsHandShakeStateTest {
@@ -22,6 +23,6 @@ class TlsHandShakeStateTest {
     @Test
     void shouldReturnAction() {
         State state = new TlsHandshakeState();
-        assertEquals(SmtpCommandAction.TLS_HANDSHAKE, state.action(null));
+        assertEquals(SmtpCommandAction.TLS_HANDSHAKE, state.action());
     }
 }

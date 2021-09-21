@@ -1,11 +1,12 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.fsm.States.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static net.silve.smtpc.fsm.States.MAIL_STATE;
+import static net.silve.smtpc.fsm.States.STARTTLS_STATE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GreetingStateTest {
 
@@ -39,8 +40,8 @@ class GreetingStateTest {
     @Test
     void shouldReturnAction() {
         State state = new GreetingState();
-        assertEquals(SmtpCommandAction.HELO, state.action(null));
-        assertEquals(SmtpCommandAction.HELO, state.action(new SmtpSession("host", 25)));
-        assertEquals(SmtpCommandAction.EHLO, state.action(new SmtpSession("host", 25).setExtendedHelo(true)));
+        assertEquals(SmtpCommandAction.HELO, state.action());
+        assertEquals(SmtpCommandAction.HELO, state.action());
+        assertEquals(SmtpCommandAction.EHLO, state.action());
     }
 }

@@ -1,7 +1,6 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -39,7 +38,7 @@ class FsmEngineTest {
             }
 
             @Override
-            public SmtpCommandAction action(SmtpSession session) {
+            public SmtpCommandAction action() {
                 return SmtpCommandAction.CLOSE_TRANSMISSION;
             }
         };
@@ -51,7 +50,7 @@ class FsmEngineTest {
             }
 
             @Override
-            public SmtpCommandAction action(SmtpSession session) {
+            public SmtpCommandAction action() {
                 return null;
             }
         };
