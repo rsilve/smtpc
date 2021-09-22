@@ -28,11 +28,11 @@ public class SmtpClient {
 
         bootstrap = new Bootstrap();
         bootstrap.group(group)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, config.getConnectTimeoutMillis())
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_LINGER, 0)
                 .channel(NioSocketChannel.class)
-                .handler(new SmtpChannelInitializer());
+                .handler(new SmtpChannelInitializer(config));
     }
 
 

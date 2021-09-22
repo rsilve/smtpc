@@ -1,6 +1,7 @@
 package net.silve.smtpc.handler;
 
 import io.netty.channel.embedded.EmbeddedChannel;
+import net.silve.smtpc.client.Config;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.handler.SmtpChannelInitializer.*;
@@ -10,7 +11,7 @@ class SmtpChannelInitializerTest {
 
     @Test
     void shouldInitHandlers() {
-        SmtpChannelInitializer handler = new SmtpChannelInitializer();
+        SmtpChannelInitializer handler = new SmtpChannelInitializer(new Config());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertEquals(6, channel.pipeline().names().size());
         assertEquals(WRITE_TIMEOUT_HANDLER_NAME, channel.pipeline().names().get(0));
