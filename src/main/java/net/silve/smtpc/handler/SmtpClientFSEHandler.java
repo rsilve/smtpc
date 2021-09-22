@@ -49,10 +49,6 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
         return content.content().readableBytes();
     }
 
-    private void closeImmediately() {
-        this.ctx.close();
-    }
-
     private void handleCommandRequest(Object request) {
         final SmtpRequest req = (SmtpRequest) request;
         ctx.writeAndFlush(request).addListener(future -> {
@@ -98,7 +94,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     @Override
     public void onAction(SmtpCommandAction action, SmtpResponse response) {
         if (Objects.isNull(action)) {
-            closeImmediately();
+            ctx.close();
             return;
         }
         switch (action) {

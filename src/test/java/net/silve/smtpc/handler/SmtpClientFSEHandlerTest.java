@@ -1,12 +1,15 @@
 package net.silve.smtpc.handler;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.*;
 import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +21,7 @@ class SmtpClientFSEHandlerTest {
         SmtpSession session = new SmtpSession("host", 25)
                 .setSender("sender")
                 .setRecipient("recipient")
+                .setExtendedHelo(false)
                 .setChunks(content);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -183,11 +187,88 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
+    void shouldHandleErrorAtWrite() {
+        DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = new SmtpSession("host", 25)
+                .setSender("sender")
+                .setRecipient("recipient")
+                .setChunks(content);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
+            @Override
+            public boolean acceptOutboundMessage(Object msg) {
+                return true;
+            }
+
+            @Override
+            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) {
+                throw new RuntimeException("ee");
+            }
+        };
+        EmbeddedChannel channel = new EmbeddedChannel(encoder, handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(554, "Ok")));
+        assertFalse(channel.finish());
+        Object outbound = channel.readOutbound();
+        assertNull(outbound);
+        assertFalse(channel.isActive());
+
+    }
+
+
+    @Test
+    void shouldHandleErrorAtWriteOnContent() {
+        DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = new SmtpSession("host", 25)
+                .setSender("sender")
+                .setRecipient("recipient")
+                .setExtendedHelo(false)
+                .setChunks(content);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
+            @Override
+            public boolean acceptOutboundMessage(Object msg) {
+                return true;
+            }
+
+            @Override
+            protected void encode(ChannelHandlerContext channelHandlerContext, Object o, List<Object> list) {
+                if (o instanceof SmtpContent) {
+                    throw new RuntimeException("ee");
+                }
+                list.add(o);
+            }
+        };
+        EmbeddedChannel channel = new EmbeddedChannel(encoder, handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(354, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        assertEquals("localhost", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.MAIL, outbound.command());
+        assertEquals("FROM:<sender>", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.RCPT, outbound.command());
+        assertEquals("TO:<recipient>", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.DATA, outbound.command());
+        SmtpContent c = channel.readOutbound();
+        assertNull(c);
+        assertFalse(channel.isActive());
+
+    }
+
+    @Test
     void shouldHandleRejectAtHELO() {
         DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = new SmtpSession("host", 25)
                 .setSender("sender")
                 .setRecipient("recipient")
+                .setExtendedHelo(false)
                 .setChunks(content);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
