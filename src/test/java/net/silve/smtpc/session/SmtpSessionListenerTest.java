@@ -45,7 +45,7 @@ class SmtpSessionListenerTest {
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertTrue(channel.finish());
-        assertEquals(SmtpCommand.HELO, listener.request.command());
+        assertEquals(SmtpCommand.EHLO, listener.request.command());
         assertTrue(listener.completed);
     }
 
