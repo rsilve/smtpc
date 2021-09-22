@@ -11,7 +11,7 @@ public class SmtpSession {
     private final String host;
     private final int port;
 
-    private boolean extendedHelo;
+    private boolean extendedHelo = true;
     private String greeting = "localhost";
 
     private String sender;

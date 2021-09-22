@@ -49,7 +49,6 @@ public class Concurrent {
                     .setSender(SENDER)
                     .setRecipient(RECIPIENT)
                     .setChunks(Builder.chunks(contentBytes).iterator())
-                    .setExtendedHelo(true)
                     .setListener(logListener);
             final long startedAt = System.nanoTime();
             client.run(session).addListener(future -> {

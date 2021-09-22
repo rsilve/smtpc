@@ -30,7 +30,6 @@ public class HelloWorld {
                 .setSender(SENDER)
                 .setRecipient(RECIPIENT)
                 .setChunks(Builder.chunks(contentBytes).iterator())
-                .setExtendedHelo(true)
                 .setListener(new LogListener());
 
         client.run(session).addListener(future -> client.shutdownGracefully());
