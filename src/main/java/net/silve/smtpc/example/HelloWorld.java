@@ -5,6 +5,7 @@ import net.silve.smtpc.session.SmtpSession;
 import net.silve.smtpc.session.Builder;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 
 /**
@@ -19,6 +20,8 @@ public class HelloWorld {
     private static final String RECIPIENT = "devnull@silve.net";
 
     public static void main(String[] args) throws IOException {
+        LoggerFactory.configure(Level.ALL);
+
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();

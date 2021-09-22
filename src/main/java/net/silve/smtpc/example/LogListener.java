@@ -9,26 +9,26 @@ import java.util.logging.Logger;
 
 public class LogListener extends DefaultSmtpSessionListener {
 
-    private static final Logger logger = Logger.getLogger(LogListener.class.getName());
+    private static final Logger logger = LoggerFactory.getInstance();
 
     @Override
     public void onConnect(String host, int port) {
-        logger.log(Level.INFO, () -> String.format("=== connected to %s:%d", host, port));
+        logger.log(Level.FINE, () -> String.format("=== connected to %s:%d", host, port));
     }
 
     @Override
     public void onStart(String host, int port, String id) {
-        logger.log(Level.INFO, () -> String.format("=== start session %s", id));
+        logger.log(Level.FINE, () -> String.format("=== start session %s", id));
     }
 
     @Override
     public void onError(Throwable throwable) {
-        throwable.printStackTrace();
+        logger.log(Level.WARNING, throwable, () -> String.format("!!! %s", throwable.getMessage()));
     }
 
     @Override
     public void onRequest(SmtpRequest request) {
-        logger.log(Level.INFO, () ->
+        logger.log(Level.FINE, () ->
                 String.format(">>> %s %s",
                         request.command().name(),
                         String.join(" ", request.parameters()))
@@ -37,8 +37,8 @@ public class LogListener extends DefaultSmtpSessionListener {
 
     @Override
     public void onData(int size) {
-        logger.log(Level.INFO, () -> ">>> ... (hidden content)");
-        logger.log(Level.INFO, () -> String.format("=== message size %d", size));
+        logger.log(Level.FINE, () -> ">>> ... (hidden content)");
+        logger.log(Level.FINE, () -> String.format("=== message size %d", size));
     }
 
     @Override
@@ -48,13 +48,13 @@ public class LogListener extends DefaultSmtpSessionListener {
 
     @Override
     public void onResponse(SmtpResponse response) {
-        logger.log(Level.INFO, () -> String.format("<<< %s %s",
+        logger.log(Level.FINE, () -> String.format("<<< %s %s",
                 response.code(),
                         String.join("\r\n",  response.details())));
     }
 
     @Override
     public void onStartTls() {
-        logger.log(Level.INFO, "=== StartTLS handshake completed");
+        logger.log(Level.FINE, "=== StartTLS handshake completed");
     }
 }

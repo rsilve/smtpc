@@ -140,10 +140,6 @@ public class SmtpSession {
         return listener;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public void notifyCompleted() {
         this.listener.onCompleted(this.getId());
     }

@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
+import net.silve.smtpc.client.Config;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.SmtpChannelInitializer;
 import net.silve.smtpc.session.SmtpSession;
@@ -18,12 +19,16 @@ public class SmtpClient {
     private final Bootstrap bootstrap;
 
     public SmtpClient() {
+        this(new Config());
+    }
 
-        EventLoopGroup group = new NioEventLoopGroup();
+    public SmtpClient(Config config) {
+
+        EventLoopGroup group = new NioEventLoopGroup(config.getNumberOfThread());
 
         bootstrap = new Bootstrap();
         bootstrap.group(group)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_LINGER, 0)
                 .channel(NioSocketChannel.class)
