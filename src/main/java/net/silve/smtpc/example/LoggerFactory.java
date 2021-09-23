@@ -15,6 +15,10 @@ public class LoggerFactory {
         logger.setUseParentHandlers(false);
     }
 
+    private LoggerFactory() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Logger getInstance() {
         return logger;
     }

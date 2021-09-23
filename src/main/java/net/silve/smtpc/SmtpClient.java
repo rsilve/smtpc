@@ -47,8 +47,8 @@ public class SmtpClient {
     }
 
 
-    public Future<?> shutdownGracefully() {
-        return this.bootstrap.config().group().shutdownGracefully();
+    public Future<Object> shutdownGracefully() {
+        return (Future<Object>) this.bootstrap.config().group().shutdownGracefully();
     }
 
 }
