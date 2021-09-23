@@ -13,16 +13,14 @@ Very basic example :
 byte[] contentBytes = /* get mime message as bytes */
 
 SmtpClient client = new SmtpClient();
-SmtpSession session = new SmtpSession.Builder()
-        .setHost(HOST)
-        .setPort(PORT)
-        .setSender(SENDER)
-        .setReceiver(RECIPIENT)
-        .setContent(contentBytes)
-        .buildOne();
+        SmtpSession session = new SmtpSession(HOST, PORT);
+        session.setGreeting("greeting.tld")
+                .setSender(SENDER)
+                .setRecipient(RECIPIENT)
+                .setChunks(Builder.chunks(contentBytes).iterator())
+                .setListener(new LogListener());
 
-client.run(session).addListener(future -> client.shutdownGracefully());
-
+        client.run(session).addListener(future -> client.shutdownGracefully());
 ```
 
 
@@ -31,6 +29,8 @@ See examples in the sources.
 
 ## START SSL
 
-no support for START SSL at this time
+STARTTLS is supported by default
+
+For now it is not possible to use a specific certificate
 
 
