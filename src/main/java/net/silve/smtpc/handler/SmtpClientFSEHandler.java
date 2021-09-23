@@ -3,6 +3,7 @@ package net.silve.smtpc.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.smtp.*;
+import net.silve.smtpc.fsm.FsmActionListener;
 import net.silve.smtpc.fsm.FsmEngine;
 import net.silve.smtpc.fsm.FsmEvent;
 import net.silve.smtpc.fsm.SmtpCommandAction;
@@ -12,7 +13,7 @@ import net.silve.smtpc.session.SmtpSession;
 import java.util.Objects;
 
 
-public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmEngine.FSMActionListener {
+public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
 
 
     public static final DefaultSmtpRequest SMTP_REQUEST_QUIT = new DefaultSmtpRequest(SmtpCommand.QUIT);

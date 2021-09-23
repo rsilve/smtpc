@@ -9,7 +9,7 @@ import static net.silve.smtpc.fsm.States.INIT_STATE;
 
 public class FsmEngine {
 
-    private FSMActionListener actionListener = new NoopActionListener();
+    private FsmActionListener actionListener = new NoopActionListener();
 
     private State state;
     private final FsmEngineContext context = new FsmEngineContext();
@@ -24,14 +24,10 @@ public class FsmEngine {
 
     public void notify(SmtpResponse response) {
         FsmEvent event = new FsmEvent().setResponse(response);
-        state = state.nextStateFromEvent(event, context);
-        this.actionListener.onAction(state.action(), response);
+        notify(event);
     }
 
     public void notify(FsmEvent event) {
-        if (Objects.isNull(event)) {
-            throw new IllegalArgumentException("event cannot be null");
-        }
         state = state.nextStateFromEvent(event, context);
         this.actionListener.onAction(state.action(), event.getResponse());
     }
@@ -43,7 +39,7 @@ public class FsmEngine {
         return this;
     }
 
-    public FsmEngine setActionListener(FSMActionListener actionListener) {
+    public FsmEngine setActionListener(FsmActionListener actionListener) {
         this.actionListener = actionListener;
         return this;
     }
@@ -53,16 +49,7 @@ public class FsmEngine {
         return this;
     }
 
-    public FsmEngine extendedGreeting() {
-        context.setExtendedGreeting(true);
-        return this;
-    }
-
-    public interface FSMActionListener {
-       void onAction(SmtpCommandAction action, SmtpResponse response);
-    }
-
-    private static class NoopActionListener implements FSMActionListener {
+    private static class NoopActionListener implements FsmActionListener {
         @Override
         public void onAction(SmtpCommandAction action, SmtpResponse response) {
             // do nothing

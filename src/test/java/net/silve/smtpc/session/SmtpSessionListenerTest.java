@@ -82,8 +82,7 @@ class SmtpSessionListenerTest {
     void shouldHandleWriteErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = new SmtpSession(
-                "host", 25).setChunks(
-                new DefaultSmtpRequest(SmtpCommand.MAIL, "from"));
+                "host", 25);
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
@@ -107,9 +106,8 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleConnectNotification() {
         TestSessionListener listener = new TestSessionListener();
-        DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
         SmtpSession session = new SmtpSession(
-                "host", 25).setChunks(request);
+                "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
         channel.newSucceededFuture().addListener(new ConnectionListener(session));
@@ -120,10 +118,8 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleConnectErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
-        DefaultSmtpRequest request = new DefaultSmtpRequest(SmtpCommand.MAIL, "from");
         SmtpSession session = new SmtpSession(
-                "host", 25).setChunks(
-                request);
+                "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
         channel.newFailedFuture(new RuntimeException("rr")).addListener(new ConnectionListener(session));

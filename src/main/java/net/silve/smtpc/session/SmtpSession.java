@@ -17,7 +17,7 @@ public class SmtpSession {
     private String sender;
     private String recipient;
 
-    private Iterator<Object> chunks;
+    private Iterator<SmtpContent> chunks;
     private SmtpSessionListener listener;
 
     private final String id = UUID.randomUUID().toString();
@@ -99,17 +99,16 @@ public class SmtpSession {
         return this;
     }
 
-    public SmtpSession setChunks(Iterator<Object> chunks) {
+    public SmtpSession setChunks(Iterator<SmtpContent> chunks) {
         this.chunks = chunks;
         return this;
     }
 
-    public SmtpSession setChunks(Object... chunks) {
-        this.chunks = Arrays.asList(chunks).iterator();
-        return this;
+    public SmtpSession setChunks(SmtpContent... chunks) {
+        return setChunks(Arrays.asList(chunks).iterator());
     }
 
-    public Iterator<Object> getChunks() {
+    public Iterator<SmtpContent> getChunks() {
         return chunks;
     }
 
