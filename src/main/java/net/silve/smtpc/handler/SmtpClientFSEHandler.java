@@ -15,6 +15,10 @@ import java.util.Objects;
 public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmEngine.FSMActionListener {
 
 
+    public static final DefaultSmtpRequest SMTP_REQUEST_QUIT = new DefaultSmtpRequest(SmtpCommand.QUIT);
+    public static final DefaultSmtpRequest SMTP_REQUEST_DATA = new DefaultSmtpRequest(SmtpCommand.DATA);
+    public static final DefaultSmtpRequest SMTP_REQUEST_STARTTLS = new DefaultSmtpRequest(SmtpClientCommand.STARTTLS);
+
     private final SmtpSession session;
     private ChannelHandlerContext ctx;
     private int size = 0;
@@ -106,7 +110,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case STARTTLS:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpClientCommand.STARTTLS));
+                handleCommandRequest(SMTP_REQUEST_STARTTLS);
                 break;
             case TLS_HANDSHAKE:
                 StartTlsHandler.handleStartTlsHandshake(ctx).addListener(future -> {
@@ -131,7 +135,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case DATA:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.DATA));
+                handleCommandRequest(SMTP_REQUEST_DATA);
                 break;
 
             case DATA_CONTENT:
@@ -139,7 +143,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case QUIT:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.QUIT));
+                handleCommandRequest(SMTP_REQUEST_QUIT);
                 break;
 
             default:
