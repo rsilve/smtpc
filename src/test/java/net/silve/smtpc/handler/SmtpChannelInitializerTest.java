@@ -4,13 +4,15 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import net.silve.smtpc.client.Config;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.SSLException;
+
 import static net.silve.smtpc.handler.SmtpChannelInitializer.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SmtpChannelInitializerTest {
 
     @Test
-    void shouldInitHandlers() {
+    void shouldInitHandlers() throws SSLException {
         SmtpChannelInitializer handler = new SmtpChannelInitializer(new Config());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertEquals(6, channel.pipeline().names().size());

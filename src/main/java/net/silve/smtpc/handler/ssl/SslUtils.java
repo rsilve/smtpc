@@ -13,12 +13,8 @@ public class SslUtils {
 
     private static SslContext sslCtx;
 
-    static {
-        try {
-            sslCtx = SslContextBuilder.forClient().build();
-        } catch (SSLException e) {
-            e.printStackTrace();
-        }
+    public static void configureSslCtx() throws SSLException {
+        sslCtx = SslContextBuilder.forClient().build();
     }
 
     public static SslContext getSslCtx() {

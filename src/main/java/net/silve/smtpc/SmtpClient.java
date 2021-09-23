@@ -10,19 +10,21 @@ import io.netty.util.concurrent.Future;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.SmtpChannelInitializer;
+import net.silve.smtpc.handler.ssl.SslUtils;
 import net.silve.smtpc.session.SmtpSession;
 
+import javax.net.ssl.SSLException;
 import java.util.Objects;
 
 public class SmtpClient {
 
     private final Bootstrap bootstrap;
 
-    public SmtpClient() {
+    public SmtpClient() throws SSLException {
         this(new Config());
     }
 
-    public SmtpClient(Config config) {
+    public SmtpClient(Config config) throws SSLException {
 
         EventLoopGroup group = new NioEventLoopGroup(config.getNumberOfThread());
 
