@@ -6,7 +6,7 @@ import javax.net.ssl.SSLException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SmtpClientTest {
+class SmtpClientTest {
 
     @Test
     void shouldHaveConstructor() throws SSLException {
