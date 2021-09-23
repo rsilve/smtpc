@@ -38,6 +38,10 @@ public class SmtpClient {
 
 
     public ChannelFuture run(final SmtpSession session) {
+        if (Objects.isNull(session) ) {
+            throw new IllegalArgumentException("Session must not be null");
+        }
+
         if (Objects.isNull(session.getHost()) || session.getHost().isBlank()) {
             throw new IllegalArgumentException("Host must be defined");
         }
