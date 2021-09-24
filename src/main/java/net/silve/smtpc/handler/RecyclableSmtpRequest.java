@@ -64,10 +64,10 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof io.netty.handler.codec.smtp.DefaultSmtpRequest)) {
+        if (!(o instanceof io.netty.handler.codec.smtp.SmtpRequest)) {
             return false;
         } else {
-            io.netty.handler.codec.smtp.DefaultSmtpRequest other = (io.netty.handler.codec.smtp.DefaultSmtpRequest)o;
+            SmtpRequest other = (SmtpRequest)o;
             return this.command().equals(other.command()) && this.parameters().equals(other.parameters());
         }
     }

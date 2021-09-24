@@ -2,6 +2,7 @@ package net.silve.smtpc.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.*;
 import net.silve.smtpc.fsm.FsmActionListener;
 import net.silve.smtpc.fsm.FsmEngine;
@@ -14,11 +15,6 @@ import java.util.Objects;
 
 
 public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
-
-
-    public static final DefaultSmtpRequest SMTP_REQUEST_QUIT = new DefaultSmtpRequest(SmtpCommand.QUIT);
-    public static final DefaultSmtpRequest SMTP_REQUEST_DATA = new DefaultSmtpRequest(SmtpCommand.DATA);
-    public static final DefaultSmtpRequest SMTP_REQUEST_STARTTLS = new DefaultSmtpRequest(SmtpClientCommand.STARTTLS);
 
     private final SmtpSession session;
     private ChannelHandlerContext ctx;
@@ -54,14 +50,16 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
         return content.content().readableBytes();
     }
 
-    private void handleCommandRequest(Object request) {
-        final SmtpRequest req = (SmtpRequest) request;
+    private void handleCommandRequest(RecyclableSmtpRequest request) {
         ctx.writeAndFlush(request).addListener(future -> {
             if (future.isSuccess()) {
-                session.notifyRequest(req);
+                session.notifyRequest(request);
             } else {
                 session.notifyError(future.cause());
                 ctx.close();
+            }
+            if (! (ctx.channel() instanceof EmbeddedChannel)) {
+                request.recycle();
             }
         });
     }
@@ -111,7 +109,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case STARTTLS:
-                handleCommandRequest(SMTP_REQUEST_STARTTLS);
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpClientCommand.STARTTLS));
                 break;
             case TLS_HANDSHAKE:
                 StartTlsHandler.handleStartTlsHandshake(ctx).addListener(future -> {
@@ -136,7 +134,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case DATA:
-                handleCommandRequest(SMTP_REQUEST_DATA);
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA));
                 break;
 
             case DATA_CONTENT:
@@ -144,7 +142,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case QUIT:
-                handleCommandRequest(SMTP_REQUEST_QUIT);
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.QUIT));
                 break;
 
             default:
