@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.*;
+import net.silve.smtpc.session.Builder;
 import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +19,12 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleBasicSession() {
         DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        DefaultSmtpContent content2 = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = new SmtpSession("host", 25)
                 .setSender("sender")
                 .setRecipient("recipient")
                 .setExtendedHelo(false)
-                .setChunks(content);
+                .setChunks(content, content2);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
@@ -45,6 +47,8 @@ class SmtpClientFSEHandlerTest {
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.DATA, outbound.command());
         SmtpContent c = channel.readOutbound();
+        assertEquals(content, c);
+        c = channel.readOutbound();
         assertEquals(content, c);
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.QUIT, outbound.command());

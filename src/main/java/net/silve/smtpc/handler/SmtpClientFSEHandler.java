@@ -74,7 +74,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
         }
 
         SmtpContent content = (SmtpContent) next;
-        size += getDataSize(content);
+        size += getDataSize(content.retain());
         if (content instanceof LastSmtpContent) {
             ctx.writeAndFlush(content).addListener(future -> {
                 if (future.isSuccess()) {
@@ -104,10 +104,10 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
         }
         switch (action) {
             case HELO:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.HELO, this.session.getGreeting()));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.session.getGreeting()));
                 break;
             case EHLO:
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.EHLO, this.session.getGreeting()));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, this.session.getGreeting()));
                 break;
 
             case STARTTLS:
@@ -127,12 +127,12 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
             case MAIL:
                 String sender = String.format("FROM:<%s>", this.session.getSender());
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.MAIL, sender));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, sender));
                 break;
 
             case RCPT:
                 String recipient = String.format("TO:<%s>", this.session.getRecipient());
-                handleCommandRequest(new DefaultSmtpRequest(SmtpCommand.RCPT, recipient));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, recipient));
                 break;
 
             case DATA:

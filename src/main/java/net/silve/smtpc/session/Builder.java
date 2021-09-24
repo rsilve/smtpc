@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 
 public class Builder {
 
-    public static final SmtpContent CRLF_DELIMITER = new DefaultLastSmtpContent(Unpooled.wrappedBuffer(new byte[]{13, 10}));
+    public static final SmtpContent CRLF_DELIMITER = new DefaultLastSmtpContent(Unpooled.copiedBuffer(new byte[]{13, 10}));
 
     public static byte[][] chunk(byte[] input, int chunkSize) {
         return IntStream.iterate(0, i -> i + chunkSize)
