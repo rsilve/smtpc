@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static net.silve.smtpc.fsm.States.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.fsm.States.INIT_STATE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FsmEngineTest {
@@ -102,6 +104,37 @@ class FsmEngineTest {
         FsmEngine engine = new FsmEngine(testState)
                 .applySession(new SmtpSession("host", 25).setExtendedHelo(true));
         engine.notify(new FsmEvent());
+
+    }
+
+    @Test
+    void shouldApplyNullSession() {
+        State testState = new State() {
+            @Override
+            public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
+                assertFalse(context.isExtendedGreeting());
+                return null;
+            }
+
+            @Override
+            public SmtpCommandAction action() {
+                return SmtpCommandAction.CLOSE_TRANSMISSION;
+            }
+        };
+
+        FsmEngine engine = new FsmEngine(testState)
+                .applySession(null);
+        engine.notify(new FsmEvent());
+
+    }
+
+
+    @Test
+    void shouldHaveDefaultActionListener() {
+        FsmEngine engine = new FsmEngine();
+        assertEquals(INIT_STATE, engine.getState());
+        engine.notify(new FsmEvent());
+        assertEquals(CLOSING_TRANSMISSION_STATE, engine.getState());
 
     }
 

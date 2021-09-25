@@ -34,6 +34,10 @@ public class FsmEngine {
         }
     }
 
+    public State getState() {
+        return state;
+    }
+
     public FsmEngine applySession(SmtpSession session) {
         if (Objects.nonNull(session)) {
             context.setExtendedGreeting(session.useExtendedHelo());
