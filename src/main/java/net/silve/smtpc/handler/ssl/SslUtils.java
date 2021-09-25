@@ -7,9 +7,7 @@ import javax.net.ssl.SSLException;
 
 public class SslUtils {
 
-    private SslUtils() {
-        throw new IllegalStateException("Utility class");
-    }
+    private SslUtils() {}
 
     private static SslContext sslCtx;
 

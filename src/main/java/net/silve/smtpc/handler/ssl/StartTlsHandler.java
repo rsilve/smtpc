@@ -21,8 +21,6 @@ public class StartTlsHandler {
         return handshakeFuture;
     }
 
-    private StartTlsHandler() {
-        throw new IllegalStateException("Utility class");
-    }
+    private StartTlsHandler() {}
 
 }
