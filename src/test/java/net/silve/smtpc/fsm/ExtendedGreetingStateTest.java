@@ -28,6 +28,23 @@ class ExtendedGreetingStateTest {
                 new FsmEvent().setResponse(new DefaultSmtpResponse(500)), null
         ));
 
+        assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
+                new FsmEvent()
+                        .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
+                new FsmEngineContext().setTlsActive(false)
+        ));
+
+        assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
+                new FsmEvent()
+                        .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
+                null
+        ));
+
+        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+                new FsmEvent()
+                        .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
+                new FsmEngineContext().setTlsActive(true)
+        ));
     }
 
     @Test
