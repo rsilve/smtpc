@@ -15,7 +15,5 @@ public class States {
 
     public static final State CLOSING_TRANSMISSION_STATE = new CloseTransmissionState();
 
-    private States() {
-        throw new IllegalStateException("Utility class");
-    }
+    private States() {}
 }

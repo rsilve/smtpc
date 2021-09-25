@@ -5,9 +5,7 @@ import io.netty.util.AsciiString;
 
 public class SmtpClientCommand {
 
-    private SmtpClientCommand() {
-        throw new IllegalStateException("Utility class");
-    }
+    private SmtpClientCommand() {}
 
     public static final SmtpCommand STARTTLS = SmtpCommand.valueOf(AsciiString.cached("STARTTLS"));
 

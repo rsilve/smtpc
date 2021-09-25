@@ -35,8 +35,6 @@ public class Builder {
         return chunks(input, 4096);
     }
 
-    private Builder() {
-        throw new IllegalStateException("Utility class");
-    }
+    private Builder() {}
 
 }
