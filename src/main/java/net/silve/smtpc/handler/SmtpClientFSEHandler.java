@@ -24,7 +24,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     public SmtpClientFSEHandler(SmtpSession session) {
         this.session = session;
-        engine.setSession(session).setActionListener(this);
+        engine.applySession(session).setActionListener(this);
     }
 
     @Override

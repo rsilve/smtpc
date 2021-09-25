@@ -29,10 +29,12 @@ public class FsmEngine {
 
     public void notify(FsmEvent event) {
         state = state.nextStateFromEvent(event, context);
-        this.actionListener.onAction(state.action(), event.getResponse());
+        if (Objects.nonNull(state)) {
+            this.actionListener.onAction(state.action(), event.getResponse());
+        }
     }
 
-    public FsmEngine setSession(SmtpSession session) {
+    public FsmEngine applySession(SmtpSession session) {
         if (Objects.nonNull(session)) {
             context.setExtendedGreeting(session.useExtendedHelo());
         }
