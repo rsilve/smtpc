@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.*;
-import net.silve.smtpc.session.Builder;
 import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 

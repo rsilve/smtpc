@@ -22,11 +22,6 @@ public class SmtpSession {
 
     private final String id = UUID.randomUUID().toString();
 
-    private SmtpCommand lasRequestCommand = null;
-    private boolean dataCompleted = false;
-    private boolean error = false;
-    private boolean success = false;
-
     public SmtpSession(String host, int port) {
         this(host, port, null);
     }
@@ -43,11 +38,6 @@ public class SmtpSession {
         }
         return null;
     }
-
-    public boolean isDataCompleted() {
-        return dataCompleted;
-    }
-
 
     public String getId() {
         return id;
@@ -108,35 +98,9 @@ public class SmtpSession {
         return setChunks(Arrays.asList(chunks).iterator());
     }
 
-    public Iterator<SmtpContent> getChunks() {
-        return chunks;
-    }
-
-    public SmtpSession setError() {
-        this.error = true;
-        return this;
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public SmtpCommand getLasRequestCommand() {
-        return lasRequestCommand;
-    }
-
-
     public SmtpSession setListener(SmtpSessionListener listener) {
         this.listener = listener;
         return this;
-    }
-
-    public SmtpSessionListener getListener() {
-        return listener;
     }
 
     public void notifyCompleted() {
@@ -152,12 +116,10 @@ public class SmtpSession {
     }
 
     public void notifyRequest(SmtpRequest request) {
-        this.lasRequestCommand = request.command();
         this.listener.onRequest(request);
     }
 
     public void notifyError(Throwable throwable) {
-        this.error = true;
         this.listener.onError(throwable);
     }
 
@@ -167,10 +129,7 @@ public class SmtpSession {
 
     public void notifyData(int size) {
         this.listener.onData(size);
-        this.success = true;
-        this.dataCompleted = true;
     }
-
 
     public void notifyStartTls() {
         this.listener.onStartTls();

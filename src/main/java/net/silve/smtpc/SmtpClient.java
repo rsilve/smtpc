@@ -15,6 +15,8 @@ import net.silve.smtpc.session.SmtpSession;
 import javax.net.ssl.SSLException;
 import java.util.Objects;
 
+import static net.silve.smtpc.client.Shutdown.GRACEFULLY;
+
 public class SmtpClient {
 
     private final Bootstrap bootstrap;
@@ -48,6 +50,10 @@ public class SmtpClient {
         ChannelFuture futureConnection = bootstrap.connect(session.getHost(), session.getPort());
         futureConnection.addListener(new ConnectionListener(session));
         return futureConnection.channel().closeFuture();
+    }
+
+    public ChannelFuture runAndClose(final SmtpSession session) {
+        return run(session).addListener(GRACEFULLY);
     }
 
 

@@ -1,5 +1,7 @@
 package net.silve.smtpc;
 
+import net.silve.smtpc.example.HelloWorld;
+import net.silve.smtpc.session.Builder;
 import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
@@ -30,5 +32,20 @@ class SmtpClientTest {
         assertThrows(IllegalArgumentException.class, () -> client.run(session));
 
     }
+
+
+    @Test
+    void shouldSendEmail() throws Exception {
+        byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
+        SmtpSession session = new SmtpSession("home.silve.net", 25)
+                .setSender("smtpc.test@domain.tld")
+                .setRecipient("devnull@silve.net")
+                .setChunks(Builder.chunks(contentBytes).iterator());
+        SmtpClient client = new SmtpClient();
+
+        client.runAndClose(session).await();
+        assertNotNull(client);
+    }
+
 
 }
