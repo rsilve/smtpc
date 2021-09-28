@@ -1,9 +1,13 @@
 package net.silve.smtpc.session;
 
-import io.netty.handler.codec.smtp.SmtpRequest;
-import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.handler.codec.smtp.SmtpCommand;
+
+import java.util.List;
 
 public class DefaultSmtpSessionListener implements SmtpSessionListener {
+
+    private SmtpCommand lastCommand;
+    private boolean dataCompleted;
 
     @Override
     public void onConnect(String host, int port) {
@@ -21,7 +25,8 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onRequest(SmtpRequest request) {
+    public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
+        lastCommand = command;
         // default implementation : do nothing
     }
 
@@ -36,12 +41,19 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onResponse(SmtpResponse response) {
+    public void onResponse(int code, List<CharSequence> details) {
+        if (SmtpCommand.DATA.equals(lastCommand) && code == 250) {
+            dataCompleted = true;
+        }
         // default implementation : do nothing
     }
 
     @Override
     public void onStartTls() {
         // default implementation : do nothing
+    }
+
+    public boolean isDataCompleted() {
+        return dataCompleted;
     }
 }

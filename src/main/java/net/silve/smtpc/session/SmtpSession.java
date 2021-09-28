@@ -116,7 +116,7 @@ public class SmtpSession {
     }
 
     public void notifyRequest(SmtpRequest request) {
-        this.listener.onRequest(request);
+        this.listener.onRequest(request.command(), request.parameters());
     }
 
     public void notifyError(Throwable throwable) {
@@ -124,7 +124,7 @@ public class SmtpSession {
     }
 
     public void notifyResponse(SmtpResponse response) {
-        this.listener.onResponse(response);
+        this.listener.onResponse(response.code(), response.details());
     }
 
     public void notifyData(int size) {

@@ -1,7 +1,8 @@
 package net.silve.smtpc.session;
 
-import io.netty.handler.codec.smtp.SmtpRequest;
-import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.handler.codec.smtp.SmtpCommand;
+
+import java.util.List;
 
 public interface SmtpSessionListener {
     void onConnect(String host, int port);
@@ -10,13 +11,13 @@ public interface SmtpSessionListener {
 
     void onError(Throwable throwable);
 
-    void onRequest(SmtpRequest request);
+    void onRequest(SmtpCommand command, List<CharSequence> parameters);
 
     void onData(int size);
 
     void onCompleted(String id);
 
-    void onResponse(SmtpResponse response);
+    void onResponse(int code, List<CharSequence> details);
 
     void onStartTls();
 }

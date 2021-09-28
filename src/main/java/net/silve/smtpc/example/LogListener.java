@@ -1,9 +1,9 @@
 package net.silve.smtpc.example;
 
-import io.netty.handler.codec.smtp.SmtpRequest;
-import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.smtpc.session.DefaultSmtpSessionListener;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,11 +27,11 @@ public class LogListener extends DefaultSmtpSessionListener {
     }
 
     @Override
-    public void onRequest(SmtpRequest request) {
+    public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
         logger.log(Level.FINE, () ->
                 String.format(">>> %s %s",
-                        request.command().name(),
-                        String.join(" ", request.parameters()))
+                        command.name(),
+                        String.join(" ", parameters))
         );
     }
 
@@ -47,10 +47,10 @@ public class LogListener extends DefaultSmtpSessionListener {
     }
 
     @Override
-    public void onResponse(SmtpResponse response) {
+    public void onResponse(int code, List<CharSequence> details) {
         logger.log(Level.FINE, () -> String.format("<<< %s %s",
-                response.code(),
-                        String.join("\r\n",  response.details())));
+                code,
+                String.join("\r\n", details)));
     }
 
     @Override
