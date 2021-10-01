@@ -74,7 +74,6 @@ public class SmtpTestServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
-                        System.out.println("INIT");
                         ch.pipeline().addLast(new DelimiterBasedFrameDecoder(998, false, CRLF_DELIMITER))
                                 .addLast(new SmtpRequestDecoder())
                                 .addLast(new SmtpResponseEncoder())

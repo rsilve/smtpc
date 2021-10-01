@@ -86,7 +86,7 @@ class SmtpClientTest {
         Config config = new Config().setTrustManager(new TrustAllX509TrustManager());
         SmtpClient client = new SmtpClient(config);
 
-        client.runAndClose(session).await();
+        client.runAndClose(session).sync();
         assertTrue(listener.isDataCompleted());
     }
 

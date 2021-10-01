@@ -6,6 +6,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.util.concurrent.Promise;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.SmtpChannelInitializer;
@@ -14,19 +16,24 @@ import net.silve.smtpc.session.SmtpSession;
 import javax.net.ssl.SSLException;
 import java.util.Objects;
 
-import static net.silve.smtpc.client.Shutdown.GRACEFULLY;
-
 public class SmtpClient {
 
     private final Bootstrap bootstrap;
+    private final Promise<Void> promise;
+    private final Promise<Void> promiseCompleted;
 
     public SmtpClient() throws SSLException {
         this(new Config());
     }
 
     public SmtpClient(Config config) throws SSLException {
-
         EventLoopGroup group = new NioEventLoopGroup(config.getNumberOfThread());
+
+        promise = GlobalEventExecutor.INSTANCE.next().newPromise();
+        promiseCompleted = GlobalEventExecutor.INSTANCE.next().newPromise();
+        promise.addListener(future -> group.shutdownGracefully());
+
+        group.terminationFuture().addListener(future -> promiseCompleted.setSuccess(null));
 
         bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -51,12 +58,13 @@ public class SmtpClient {
         return futureConnection.channel().closeFuture();
     }
 
-    public ChannelFuture runAndClose(final SmtpSession session) {
-        return run(session).addListener(GRACEFULLY);
+    public Promise<Void> runAndClose(final SmtpSession session) {
+        run(session).addListener(future -> shutdownGracefully());
+        return promiseCompleted;
     }
 
     public void shutdownGracefully() {
-        this.bootstrap.config().group().shutdownGracefully();
+        promise.setSuccess(null);
     }
 
 }
