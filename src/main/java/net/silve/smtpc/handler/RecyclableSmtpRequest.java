@@ -64,7 +64,7 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof io.netty.handler.codec.smtp.SmtpRequest)) {
+        if (!(o instanceof RecyclableSmtpRequest)) {
             return false;
         } else {
             SmtpRequest other = (SmtpRequest) o;

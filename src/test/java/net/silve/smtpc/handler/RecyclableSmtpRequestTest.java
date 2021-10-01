@@ -46,39 +46,20 @@ class RecyclableSmtpRequestTest {
     @Test
     void shouldHaveEqualMethod000() {
         SmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO);
-        assertEquals(instance, new DefaultSmtpRequest(SmtpCommand.EHLO));
+        assertEquals(instance, RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO));
     }
 
     @Test
     void shouldHaveEqualMethod001() {
         SmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee");
-        assertEquals(instance, new DefaultSmtpRequest(SmtpCommand.EHLO, "ee"));
-    }
-
-    @Test
-    void shouldHaveEqualMethod002() {
-        RecyclableSmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO);
-        assertEquals(instance, RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO));
-    }
-
-    @Test
-    void shouldHaveEqualMethod003() {
-        RecyclableSmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee");
         assertEquals(instance, RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee"));
     }
 
     @Test
-    void shouldHaveEqualMethod004() {
+    void shouldHaveEqualMethod002() {
         RecyclableSmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee");
         assertNotEquals(new ArrayList<String>(), instance);
     }
-
-    @Test
-    void shouldHaveEqualMethod005() {
-        RecyclableSmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee");
-        assertEquals(instance, new DefaultSmtpRequest(SmtpCommand.EHLO, "ee"));
-    }
-
 
     @Test
     void shouldHaveHashMethod() {
