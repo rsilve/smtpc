@@ -3,8 +3,6 @@ package net.silve.smtpc;
 import io.netty.channel.ChannelFuture;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.example.HelloWorld;
-import net.silve.smtpc.example.LogListener;
-import net.silve.smtpc.example.LoggerFactory;
 import net.silve.smtpc.session.Builder;
 import net.silve.smtpc.session.DefaultSmtpSessionListener;
 import net.silve.smtpc.session.SmtpSession;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.SSLException;
 import java.net.ConnectException;
-import java.util.logging.Level;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,6 +47,14 @@ class SmtpClientTest {
     void shouldAvoidInvalidSession() throws SSLException {
         SmtpClient client = new SmtpClient();
         SmtpSession session = new SmtpSession("", 25);
+        assertThrows(IllegalArgumentException.class, () -> client.run(session));
+    }
+
+
+    @Test
+    void shouldAvoidInvalidSession002() throws SSLException {
+        SmtpClient client = new SmtpClient();
+        SmtpSession session = new SmtpSession(null, 25);
         assertThrows(IllegalArgumentException.class, () -> client.run(session));
     }
 
