@@ -27,7 +27,7 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
     public static RecyclableSmtpRequest newInstance(SmtpCommand command, CharSequence... parameters) {
         RecyclableSmtpRequest obj = RECYCLER.get();
         obj.command = ObjectUtil.checkNotNull(command, "command");
-        obj.parameters =toUnmodifiableList(parameters);
+        obj.parameters = toUnmodifiableList(parameters);
         return obj;
     }
 
@@ -67,7 +67,7 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
         if (!(o instanceof io.netty.handler.codec.smtp.SmtpRequest)) {
             return false;
         } else {
-            SmtpRequest other = (SmtpRequest)o;
+            SmtpRequest other = (SmtpRequest) o;
             return this.command().equals(other.command()) && this.parameters().equals(other.parameters());
         }
     }

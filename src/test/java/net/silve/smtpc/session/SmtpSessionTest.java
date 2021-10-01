@@ -11,7 +11,7 @@ class SmtpSessionTest {
     @Test
     void shouldHaveDefaultValues() {
         SmtpSession session = new SmtpSession("host", 25);
-        assertEquals("localhost", session.getGreeting());
+        assertEquals("localhost", session.getGreeting().toString());
         assertTrue(session.useExtendedHelo());
         assertNull(session.getSender());
         assertNull(session.getRecipient());
@@ -28,6 +28,13 @@ class SmtpSessionTest {
         assertFalse(session.useExtendedHelo());
         assertEquals("sender", session.getSender());
         assertEquals("recipient", session.getRecipient());
+    }
 
+    @Test
+    void shouldHaveDefaultListener() {
+        SmtpSession session = new SmtpSession("host", 25);
+        session.setListener(null);
+        assertNotNull(session.getListener());
+        assertTrue(session.getListener() instanceof DefaultSmtpSessionListener);
     }
 }

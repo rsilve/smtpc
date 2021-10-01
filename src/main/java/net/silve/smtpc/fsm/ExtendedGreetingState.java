@@ -1,6 +1,7 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.util.AsciiString;
 
 import java.util.Objects;
 
@@ -8,6 +9,8 @@ import static net.silve.smtpc.fsm.States.*;
 
 
 class ExtendedGreetingState extends AbstractState {
+
+    private static final CharSequence STARTTLS = AsciiString.cached("STARTTLS");
 
     @Override
     public State nextState(SmtpResponse response, FsmEngineContext context) {
@@ -34,7 +37,7 @@ class ExtendedGreetingState extends AbstractState {
 
     public State stateFromExtensions(SmtpResponse response, FsmEngineContext context) {
         if (Objects.isNull(context) || !context.isTlsActive()) {
-            final boolean startTlsSupported = String.join(" ", response.details()).contains("STARTTLS");
+            final boolean startTlsSupported = AsciiString.containsContentEqualsIgnoreCase(response.details(), STARTTLS);
             if (startTlsSupported) {
                 return STARTTLS_STATE;
             }

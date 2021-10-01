@@ -1,6 +1,7 @@
 package net.silve.smtpc.session;
 
 import io.netty.handler.codec.smtp.*;
+import io.netty.util.AsciiString;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ public class SmtpSession {
     private final int port;
 
     private boolean extendedHelo = true;
-    private String greeting = "localhost";
+    private CharSequence greeting = AsciiString.cached("localhost");
 
     private String sender;
     private String recipient;
@@ -29,7 +30,8 @@ public class SmtpSession {
     public SmtpSession(String host, int port, SmtpSessionListener listener) {
         this.host = host;
         this.port = port;
-        this.listener = Objects.isNull(listener) ? defaultListener : listener;
+        setListener(listener);
+
     }
 
     public Object next() {
@@ -61,7 +63,7 @@ public class SmtpSession {
         return this;
     }
 
-    public String getGreeting() {
+    public CharSequence getGreeting() {
         return greeting;
     }
 
@@ -99,8 +101,12 @@ public class SmtpSession {
     }
 
     public SmtpSession setListener(SmtpSessionListener listener) {
-        this.listener = listener;
+        this.listener = Objects.isNull(listener) ? defaultListener : listener;
         return this;
+    }
+
+    public SmtpSessionListener getListener() {
+        return listener;
     }
 
     public void notifyCompleted() {

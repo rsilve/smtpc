@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.*;
+import io.netty.util.AsciiString;
 import net.silve.smtpc.fsm.FsmActionListener;
 import net.silve.smtpc.fsm.FsmEngine;
 import net.silve.smtpc.fsm.FsmEvent;
@@ -127,12 +128,12 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
             case MAIL:
                 String sender = String.format("FROM:<%s>", this.session.getSender());
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, sender));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, AsciiString.of(sender)));
                 break;
 
             case RCPT:
                 String recipient = String.format("TO:<%s>", this.session.getRecipient());
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, recipient));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, AsciiString.of(recipient)));
                 break;
 
             case DATA:

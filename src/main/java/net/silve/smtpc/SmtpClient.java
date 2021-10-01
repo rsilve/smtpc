@@ -6,7 +6,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.Future;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.SmtpChannelInitializer;
@@ -40,7 +39,7 @@ public class SmtpClient {
 
 
     public ChannelFuture run(final SmtpSession session) {
-        if (Objects.isNull(session) ) {
+        if (Objects.isNull(session)) {
             throw new IllegalArgumentException("Session must not be null");
         }
 
@@ -56,9 +55,8 @@ public class SmtpClient {
         return run(session).addListener(GRACEFULLY);
     }
 
-
-    public Future<Object> shutdownGracefully() {
-        return (Future<Object>) this.bootstrap.config().group().shutdownGracefully();
+    public void shutdownGracefully() {
+        this.bootstrap.config().group().shutdownGracefully();
     }
 
 }
