@@ -8,6 +8,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     private SmtpCommand lastCommand;
     private boolean dataCompleted;
+    private Throwable lastError;
 
     @Override
     public void onConnect(String host, int port) {
@@ -21,7 +22,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     @Override
     public void onError(Throwable throwable) {
-        // default implementation : do nothing
+        this.lastError = throwable;
     }
 
     @Override
@@ -55,5 +56,9 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     public boolean isDataCompleted() {
         return dataCompleted;
+    }
+
+    public Throwable getLastError() {
+        return lastError;
     }
 }

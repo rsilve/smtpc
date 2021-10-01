@@ -1,5 +1,7 @@
 package net.silve.smtpc.client;
 
+import javax.net.ssl.TrustManager;
+
 public class Config {
 
     private int numberOfThread = 0;
@@ -9,6 +11,8 @@ public class Config {
     private int readTimeoutMillis = 5 * 60 * 1000;
 
     private int maxLineLength = 998;
+
+    private TrustManager trustManager;
 
     public int getNumberOfThread() {
         return numberOfThread;
@@ -52,6 +56,15 @@ public class Config {
 
     public Config setMaxLineLength(int maxLineLength) {
         this.maxLineLength = maxLineLength;
+        return this;
+    }
+
+    public TrustManager getTrustManager() {
+        return trustManager;
+    }
+
+    public Config setTrustManager(TrustManager trustManager) {
+        this.trustManager = trustManager;
         return this;
     }
 }
