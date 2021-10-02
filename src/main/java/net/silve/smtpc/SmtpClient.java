@@ -63,8 +63,9 @@ public class SmtpClient {
         return promiseCompleted;
     }
 
-    public void shutdownGracefully() {
+    public Promise<Void> shutdownGracefully() {
         promise.setSuccess(null);
+        return promiseCompleted;
     }
 
 }

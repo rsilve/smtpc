@@ -36,8 +36,15 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
+        logger.log(Level.INFO, () -> "=== connected");
         nextResponse(ctx);
+    }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        ctx.pipeline().remove(SslHandler.class);
+        logger.log(Level.INFO, () -> "=== disconnected");
     }
 
     @Override

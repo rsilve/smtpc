@@ -13,10 +13,13 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.AsciiString;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -74,7 +77,10 @@ public class SmtpTestServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast(new DelimiterBasedFrameDecoder(998, false, CRLF_DELIMITER))
+                        ch.pipeline()
+                                .addLast(new WriteTimeoutHandler(1000, TimeUnit.MILLISECONDS))
+                                .addLast(new ReadTimeoutHandler(1000, TimeUnit.MILLISECONDS))
+                                .addLast(new DelimiterBasedFrameDecoder(998, false, CRLF_DELIMITER))
                                 .addLast(new SmtpRequestDecoder())
                                 .addLast(new SmtpResponseEncoder())
                                 .addLast(new SmtpRequestHandler(responseSupplier.get()));

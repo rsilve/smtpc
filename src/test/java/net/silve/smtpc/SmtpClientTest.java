@@ -8,11 +8,10 @@ import net.silve.smtpc.session.DefaultSmtpSessionListener;
 import net.silve.smtpc.session.SmtpSession;
 import net.silve.smtpc.tools.SmtpTestServer;
 import net.silve.smtpc.tools.TrustAllX509TrustManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import java.net.ConnectException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,8 +26,8 @@ class SmtpClientTest {
     }
 
     @AfterAll
-    static void dispose() {
-        channelFuture.channel().eventLoop().shutdownGracefully();
+    static void dispose() throws InterruptedException {
+        channelFuture.channel().eventLoop().shutdownGracefully().sync();
     }
 
     @Test
@@ -88,6 +87,22 @@ class SmtpClientTest {
 
         client.runAndClose(session).sync();
         assertTrue(listener.isDataCompleted());
+    }
+
+    @Test
+    void shouldHandleTLSError() throws Exception {
+        DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
+        byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
+        SmtpSession session = new SmtpSession("localhost", 2525)
+                .setSender("smtpc.test@domain.tld")
+                .setRecipient("devnull@silve.net")
+                .setChunks(Builder.chunks(contentBytes).iterator())
+                .setListener(listener);
+        SmtpClient client = new SmtpClient();
+
+        client.runAndClose(session).sync();
+        assertTrue(listener.getLastError() instanceof SSLHandshakeException);
+        assertFalse(listener.isDataCompleted());
     }
 
 
