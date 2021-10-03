@@ -78,8 +78,8 @@ public class SmtpTestServer {
                     @Override
                     protected void initChannel(SocketChannel ch) {
                         ch.pipeline()
-                                .addLast(new WriteTimeoutHandler(1000, TimeUnit.MILLISECONDS))
-                                .addLast(new ReadTimeoutHandler(1000, TimeUnit.MILLISECONDS))
+                                .addLast(new WriteTimeoutHandler(10000, TimeUnit.MILLISECONDS))
+                                .addLast(new ReadTimeoutHandler(10000, TimeUnit.MILLISECONDS))
                                 .addLast(new DelimiterBasedFrameDecoder(998, false, CRLF_DELIMITER))
                                 .addLast(new SmtpRequestDecoder())
                                 .addLast(new SmtpResponseEncoder())

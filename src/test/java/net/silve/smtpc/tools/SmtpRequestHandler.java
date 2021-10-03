@@ -25,6 +25,16 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = Logger.getLogger("SmtpTestServer");
     private static final SmtpCommand STARTTLS = SmtpCommand.valueOf(AsciiString.cached("STAR"));
+    private static SslContext sslCtx;
+
+    static {
+        try {
+            SelfSignedCertificate ssc = new SelfSignedCertificate();
+            sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e, e::getMessage);
+        }
+    }
 
     private final Iterator<SmtpResponse> responses;
 
@@ -70,7 +80,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void readRequest(ChannelHandlerContext ctx, SmtpRequest msg) throws CertificateException, SSLException {
+    private void readRequest(ChannelHandlerContext ctx, SmtpRequest msg) {
         SmtpCommand command = msg.command();
         logger.log(Level.INFO, () ->
                 String.format(">>> %s",
@@ -87,10 +97,8 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    private void handleStartTls(ChannelHandlerContext ctx) throws CertificateException, SSLException {
-        SelfSignedCertificate ssc = new SelfSignedCertificate();
-        SslContext sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-        final SSLEngine sslEngine = sslCtx.newEngine(ctx.channel().alloc());
+    private void handleStartTls(ChannelHandlerContext ctx) {
+        SSLEngine sslEngine = sslCtx.newEngine(ctx.channel().alloc());
         ctx.pipeline().addFirst(new SslHandler(sslEngine, true));
     }
 

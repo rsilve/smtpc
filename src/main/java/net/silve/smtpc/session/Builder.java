@@ -12,8 +12,6 @@ import java.util.stream.IntStream;
 
 public class Builder {
 
-    public static final SmtpContent CRLF_DELIMITER = new DefaultLastSmtpContent(Unpooled.copiedBuffer(new byte[]{13, 10}));
-
     public static byte[][] chunk(byte[] input, int chunkSize) {
         return IntStream.iterate(0, i -> i + chunkSize)
                 .limit((long) Math.ceil((double) input.length / chunkSize))
@@ -27,7 +25,7 @@ public class Builder {
         IntStream.iterate(0, i -> i++).limit(chunked.length)
                 .mapToObj(value -> new DefaultSmtpContent(Unpooled.copiedBuffer(chunked[value])))
                 .forEach(chunks::add);
-        chunks.add(CRLF_DELIMITER);
+        chunks.add(new DefaultLastSmtpContent(Unpooled.copiedBuffer(new byte[]{13, 10})));
         return chunks;
     }
 

@@ -1,13 +1,14 @@
 package net.silve.smtpc.session;
 
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.smtp.DefaultLastSmtpContent;
 import io.netty.handler.codec.smtp.SmtpContent;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static net.silve.smtpc.session.Builder.CRLF_DELIMITER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BuilderTest {
 
@@ -16,7 +17,7 @@ class BuilderTest {
         List<SmtpContent> chunks = Builder.chunks("ee".getBytes(StandardCharsets.UTF_8));
         assertEquals(2, chunks.size());
         assertEquals("ee", chunks.get(0).content().toString(StandardCharsets.UTF_8));
-        assertEquals(CRLF_DELIMITER, chunks.get(1));
+        assertEquals(new DefaultLastSmtpContent(Unpooled.copiedBuffer(new byte[]{13, 10})), chunks.get(1));
     }
 
 }
