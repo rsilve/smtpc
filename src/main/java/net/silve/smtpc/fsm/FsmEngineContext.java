@@ -4,7 +4,7 @@ public class FsmEngineContext {
 
     private boolean tlsActive;
     private boolean extendedGreeting;
-
+    private int rcptCount;
 
     public boolean isTlsActive() {
         return tlsActive;
@@ -23,5 +23,19 @@ public class FsmEngineContext {
     public FsmEngineContext setExtendedGreeting(boolean extendedGreeting) {
         this.extendedGreeting = extendedGreeting;
         return this;
+    }
+
+
+    public int getRcptCount() {
+        return rcptCount;
+    }
+
+    public FsmEngineContext setRcptCount(int rcptCount) {
+        this.rcptCount = rcptCount;
+        return this;
+    }
+
+    public void decrRcptCount() {
+        this.rcptCount --;
     }
 }

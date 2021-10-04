@@ -58,6 +58,53 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
+    void shouldHandleBasicSessionWith2Rcpt() {
+        DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        DefaultSmtpContent content2 = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = new SmtpSession("host", 25)
+                .setSender("sender")
+                .setRecipient("recipient")
+                .addRecipient("recipient2")
+                .setExtendedHelo(false)
+                .setChunks(content, content2);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(354, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        assertEquals("localhost", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.MAIL, outbound.command());
+        assertEquals("FROM:<sender>", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.RCPT, outbound.command());
+        assertEquals("TO:<recipient>", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.RCPT, outbound.command());
+        assertEquals("TO:<recipient2>", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.DATA, outbound.command());
+        SmtpContent c = channel.readOutbound();
+        assertEquals(content, c);
+        c = channel.readOutbound();
+        assertEquals(content, c);
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.QUIT, outbound.command());
+        outbound = channel.readOutbound();
+        assertNull(outbound);
+        assertFalse(channel.isActive());
+
+    }
+
+    @Test
     void shouldHandleSessionWithExtendedGreeting() {
         DefaultSmtpContent content = new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = new SmtpSession("host", 25)

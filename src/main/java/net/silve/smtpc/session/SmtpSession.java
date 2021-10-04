@@ -16,7 +16,8 @@ public class SmtpSession {
     private CharSequence greeting = AsciiString.cached("localhost");
 
     private String sender;
-    private String recipient;
+    private String[] recipient = new String[]{};
+    private int lastRecipientIndex = -1;
 
     private Iterator<SmtpContent> chunks;
     private SmtpSessionListener listener;
@@ -39,6 +40,16 @@ public class SmtpSession {
             return chunks.next();
         }
         return null;
+    }
+
+
+    public String nextRecipient() {
+        if (lastRecipientIndex + 1 < recipient.length) {
+            lastRecipientIndex++;
+            return recipient[lastRecipientIndex];
+        } else {
+            return null;
+        }
     }
 
     public String getId() {
@@ -82,12 +93,28 @@ public class SmtpSession {
         return this;
     }
 
-    public String getRecipient() {
+    public String[] getRecipient() {
         return recipient;
     }
 
     public SmtpSession setRecipient(String recipient) {
-        this.recipient = recipient;
+        this.recipient = new String[]{recipient};
+        return this;
+    }
+
+    public SmtpSession setRecipient(String[] recipient) {
+        if (Objects.isNull(recipient)) {
+            this.recipient = new String[]{};
+        } else {
+            this.recipient = recipient;
+        }
+        return this;
+    }
+
+    public SmtpSession addRecipient(String recipient) {
+        List<String> list = new ArrayList<>(Arrays.asList(this.recipient));
+        list.add(recipient);
+        this.recipient = list.toArray(this.recipient);
         return this;
     }
 

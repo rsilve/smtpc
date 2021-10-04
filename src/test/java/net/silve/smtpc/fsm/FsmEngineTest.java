@@ -92,6 +92,7 @@ class FsmEngineTest {
             @Override
             public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
                 assertTrue(context.isExtendedGreeting());
+                assertEquals(0, context.getRcptCount());
                 return null;
             }
 
@@ -102,8 +103,12 @@ class FsmEngineTest {
         };
 
         FsmEngine engine = new FsmEngine(testState)
-                .applySession(new SmtpSession("host", 25).setExtendedHelo(true));
+                .applySession(new SmtpSession("host", 25)
+                        .setExtendedHelo(true)
+                        .addRecipient("recipient"));
+        engine.notifyRcpt();
         engine.notify(new FsmEvent());
+
 
     }
 

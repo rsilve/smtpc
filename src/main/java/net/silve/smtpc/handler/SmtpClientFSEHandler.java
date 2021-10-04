@@ -132,7 +132,9 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case RCPT:
-                String recipient = String.format("TO:<%s>", this.session.getRecipient());
+                String rcpt = this.session.nextRecipient();
+                engine.notifyRcpt();
+                String recipient = String.format("TO:<%s>", rcpt);
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, AsciiString.of(recipient)));
                 break;
 

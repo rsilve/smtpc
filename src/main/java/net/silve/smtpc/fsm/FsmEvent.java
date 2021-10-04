@@ -22,10 +22,6 @@ public class FsmEvent {
         return this;
     }
 
-    public Throwable getCause() {
-        return cause;
-    }
-
     public FsmEvent setCause(Throwable cause) {
         this.cause = cause;
         return this;

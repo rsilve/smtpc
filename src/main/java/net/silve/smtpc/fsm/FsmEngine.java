@@ -41,6 +41,7 @@ public class FsmEngine {
     public FsmEngine applySession(SmtpSession session) {
         if (Objects.nonNull(session)) {
             context.setExtendedGreeting(session.useExtendedHelo());
+            context.setRcptCount(session.getRecipient().length);
         }
         return this;
     }
@@ -53,6 +54,10 @@ public class FsmEngine {
     public FsmEngine tlsActive() {
         context.setTlsActive(true);
         return this;
+    }
+
+    public void notifyRcpt() {
+        context.decrRcptCount();
     }
 
     private static class NoopActionListener implements FsmActionListener {
