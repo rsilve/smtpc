@@ -29,6 +29,7 @@ public class HelloWorld {
         session.setGreeting("greeting.tld")
                 .setSender(SENDER)
                 .setRecipient(RECIPIENT)
+                .addRecipient("devnull+copie@silve.net")
                 .setChunks(Builder.chunks(contentBytes).iterator())
                 .setListener(new LogListener());
 
