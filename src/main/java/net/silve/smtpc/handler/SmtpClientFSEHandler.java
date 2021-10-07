@@ -11,6 +11,7 @@ import net.silve.smtpc.fsm.FsmEvent;
 import net.silve.smtpc.fsm.SmtpCommandAction;
 import net.silve.smtpc.handler.ssl.StartTlsHandler;
 import net.silve.smtpc.session.SmtpSession;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -98,11 +99,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     }
 
     @Override
-    public void onAction(SmtpCommandAction action, SmtpResponse response) {
-        if (Objects.isNull(action)) {
-            ctx.close();
-            return;
-        }
+    public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
         switch (action) {
             case HELO:
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.session.getGreeting()));

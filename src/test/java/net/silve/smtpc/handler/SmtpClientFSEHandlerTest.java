@@ -362,8 +362,6 @@ class SmtpClientFSEHandlerTest {
 
     }
 
-
-
     /*
     @Test
     void shouldHandleValidResponse() {
