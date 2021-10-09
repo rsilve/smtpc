@@ -57,7 +57,8 @@ class RecyclableSmtpRequestTest {
     @Test
     void shouldHaveEqualMethod002() {
         RecyclableSmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee");
-        assertNotEquals(new ArrayList<String>(), instance);
+        boolean equals = instance.equals("e");
+        assertFalse(equals);
     }
 
     @Test
@@ -69,8 +70,22 @@ class RecyclableSmtpRequestTest {
     @Test
     void shouldHaveEqualMethod004() {
         SmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO);
-        assertNotEquals(null, instance);
+        boolean equals = instance.equals(null);
+        assertFalse(equals);
     }
+
+    @Test
+    void shouldHaveEqualMethod005() {
+        SmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO);
+        assertNotEquals(instance, RecyclableSmtpRequest.newInstance(SmtpCommand.HELO));
+    }
+
+    @Test
+    void shouldHaveEqualMethod006() {
+        SmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "ee");
+        assertNotEquals(instance, RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, "eee"));
+    }
+
 
     @Test
     void shouldHaveHashMethod() {
