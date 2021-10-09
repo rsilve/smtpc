@@ -81,10 +81,8 @@ public final class RecyclableLastSmtpContent extends RecyclableSmtpContent imple
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RecyclableLastSmtpContent)) return false;
-        if (!super.equals(o)) return false;
-        RecyclableLastSmtpContent that = (RecyclableLastSmtpContent) o;
-        return Objects.equals(handle, that.handle);
+        if (o == null || getClass() != o.getClass()) return false;
+        return super.equals(o);
     }
 
     @Override
