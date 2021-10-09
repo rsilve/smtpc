@@ -79,12 +79,14 @@ public class RecyclableByteBufHolder implements ByteBufHolder {
         return StringUtil.simpleClassName(this) + '(' + this.contentToString() + ')';
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else {
-            return o != null && this.getClass() == o.getClass() && this.data.equals(((RecyclableByteBufHolder) o).data);
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RecyclableByteBufHolder that = (RecyclableByteBufHolder) o;
+
+        return data.equals(that.data);
     }
 
     public int hashCode() {

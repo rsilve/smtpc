@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.SmtpContent;
 import io.netty.util.Recycler;
 
-import java.util.Objects;
 
 
 public class RecyclableSmtpContent extends RecyclableByteBufHolder implements SmtpContent {
@@ -81,11 +80,8 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RecyclableSmtpContent)) return false;
-        if (!super.equals(o)) return false;
-
-        RecyclableSmtpContent that = (RecyclableSmtpContent) o;
-        return Objects.equals(handle, that.handle);
+        if (o == null || getClass() != o.getClass()) return false;
+       return super.equals(o);
     }
 
     @Override

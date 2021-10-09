@@ -8,6 +8,7 @@ import io.netty.util.internal.ObjectUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class RecyclableSmtpRequest implements SmtpRequest {
 
@@ -63,13 +64,15 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
         return this.command.hashCode() * 31 + this.parameters.hashCode();
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (!(o instanceof RecyclableSmtpRequest)) {
-            return false;
-        } else {
-            SmtpRequest other = (SmtpRequest) o;
-            return this.command().equals(other.command()) && this.parameters().equals(other.parameters());
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RecyclableSmtpRequest that = (RecyclableSmtpRequest) o;
+
+        if (!command.equals(that.command)) return false;
+        return Objects.equals(parameters, that.parameters);
     }
 
     public String toString() {

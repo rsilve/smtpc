@@ -1,5 +1,6 @@
 package net.silve.smtpc.handler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.smtp.SmtpContent;
 import io.netty.util.IllegalReferenceCountException;
@@ -29,9 +30,7 @@ class RecyclableSmtpContentTest {
         RecyclableSmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
         assertNotNull(instance);
         instance.recycle();
-        Assertions.assertThrows(IllegalReferenceCountException.class, () -> {
-            instance.content();
-        });
+        Assertions.assertThrows(IllegalReferenceCountException.class, instance::content);
     }
 
     @Test
@@ -119,7 +118,21 @@ class RecyclableSmtpContentTest {
     @Test
     void shouldHaveEqualMethod001() {
         SmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
-        assertNotEquals(instance, RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes())));
+        assertEquals(instance, RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes())));
+    }
+
+    @Test
+    void shouldHaveEqualMethod003() {
+        SmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
+        assertNotEquals("e", instance);
+    }
+
+    @Test
+    void shouldHaveEqualMethod004() {
+        ByteBuf buf = Unpooled.copiedBuffer("b".getBytes());
+        SmtpContent instance = RecyclableSmtpContent.newInstance(buf);
+        SmtpContent instance2 = RecyclableSmtpContent.newInstance(buf);
+        assertEquals(instance, instance2);
     }
 
     @Test

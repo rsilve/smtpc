@@ -1,5 +1,6 @@
 package net.silve.smtpc.handler;
 
+import io.netty.buffer.ByteBufHolder;
 import io.netty.buffer.Unpooled;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,17 @@ class RecyclableByteBufHolderTest {
         RecyclableByteBufHolder holder = new RecyclableByteBufHolder();
         holder.content(Unpooled.copiedBuffer("b".getBytes()));
         assertEquals("RecyclableByteBufHolder(UnpooledHeapByteBuf(ridx: 0, widx: 1, cap: 1/1))", holder.toString());
+    }
+
+
+    @Test
+    void shouldHaveReplacerMethod() {
+        RecyclableByteBufHolder holder = new RecyclableByteBufHolder();
+        holder.content(Unpooled.copiedBuffer("b".getBytes()));
+        assertEquals(Unpooled.copiedBuffer("b".getBytes()), holder.content());
+        ByteBufHolder replace = holder.replace(Unpooled.copiedBuffer("d".getBytes()));
+        assertEquals(Unpooled.copiedBuffer("d".getBytes()), replace.content());
+        assertNotEquals(replace, holder);
     }
 
     @Test

@@ -29,9 +29,7 @@ class RecyclableLastSmtpContentTest {
         RecyclableLastSmtpContent instance = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
         assertNotNull(instance);
         instance.recycle();
-        Assertions.assertThrows(IllegalReferenceCountException.class, () -> {
-            instance.content();
-        });
+        Assertions.assertThrows(IllegalReferenceCountException.class, instance::content);
     }
 
     @Test
@@ -120,6 +118,12 @@ class RecyclableLastSmtpContentTest {
     void shouldHaveEqualMethod001() {
         SmtpContent instance = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
         assertNotEquals(instance, RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes())));
+    }
+
+    @Test
+    void shouldHaveEqualMethod002() {
+        SmtpContent instance = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
+        assertNotEquals("e", instance);
     }
 
     @Test
