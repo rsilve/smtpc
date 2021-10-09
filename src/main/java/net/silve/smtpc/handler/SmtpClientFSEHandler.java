@@ -75,7 +75,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
             return;
         }
 
-        SmtpContent content = (SmtpContent) next;
+        RecyclableSmtpContent content = (RecyclableSmtpContent) next;
         size += getDataSize(content.retain());
         if (content instanceof LastSmtpContent) {
             ctx.writeAndFlush(content).addListener(future -> {
@@ -95,6 +95,9 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                     ctx.close();
                 }
             });
+        }
+        if (! (ctx.channel() instanceof EmbeddedChannel)) {
+            content.recycle();
         }
     }
 

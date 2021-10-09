@@ -1,9 +1,9 @@
 package net.silve.smtpc.session;
 
 import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.smtp.DefaultLastSmtpContent;
-import io.netty.handler.codec.smtp.DefaultSmtpContent;
 import io.netty.handler.codec.smtp.SmtpContent;
+import net.silve.smtpc.handler.RecyclableLastSmtpContent;
+import net.silve.smtpc.handler.RecyclableSmtpContent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +23,9 @@ public class Builder {
         ArrayList<SmtpContent> chunks = new ArrayList<>();
         byte[][] chunked = chunk(input, chunkSize);
         IntStream.iterate(0, i -> i++).limit(chunked.length)
-                .mapToObj(value -> new DefaultSmtpContent(Unpooled.copiedBuffer(chunked[value])))
+                .mapToObj(value -> RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer(chunked[value])))
                 .forEach(chunks::add);
-        chunks.add(new DefaultLastSmtpContent(Unpooled.copiedBuffer(new byte[]{13, 10})));
+        chunks.add(RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer(new byte[]{13, 10})));
         return chunks;
     }
 

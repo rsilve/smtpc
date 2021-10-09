@@ -5,12 +5,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import io.netty.handler.codec.smtp.DefaultLastSmtpContent;
-import io.netty.handler.codec.smtp.DefaultSmtpContent;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.smtpc.fsm.SmtpCommandAction;
 import net.silve.smtpc.handler.ConnectionListener;
+import net.silve.smtpc.handler.RecyclableLastSmtpContent;
+import net.silve.smtpc.handler.RecyclableSmtpContent;
 import net.silve.smtpc.handler.SmtpClientFSEHandler;
 import org.junit.jupiter.api.Test;
 
@@ -70,8 +70,8 @@ class SmtpSessionListenerTest {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = new SmtpSession(
                 "host", 25).setChunks(
-                new DefaultSmtpContent(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
-                new DefaultLastSmtpContent(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))));
+                RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
+                RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))));
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);

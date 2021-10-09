@@ -1,7 +1,5 @@
 package net.silve.smtpc.session;
 
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.smtp.DefaultLastSmtpContent;
 import io.netty.handler.codec.smtp.SmtpContent;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +15,7 @@ class BuilderTest {
         List<SmtpContent> chunks = Builder.chunks("ee".getBytes(StandardCharsets.UTF_8));
         assertEquals(2, chunks.size());
         assertEquals("ee", chunks.get(0).content().toString(StandardCharsets.UTF_8));
-        assertEquals(new DefaultLastSmtpContent(Unpooled.copiedBuffer(new byte[]{13, 10})), chunks.get(1));
+        assertEquals(new String(new byte[]{13, 10}), chunks.get(1).content().toString(StandardCharsets.UTF_8));
     }
 
 }

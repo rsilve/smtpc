@@ -1,6 +1,5 @@
 package net.silve.smtpc.handler;
 
-import io.netty.handler.codec.smtp.DefaultSmtpRequest;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpRequest;
 import org.junit.jupiter.api.Test;
