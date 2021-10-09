@@ -70,7 +70,7 @@ class SmtpClientTest {
 
         client.runAndClose(session).await();
         assertFalse(listener.isDataCompleted());
-        assertTrue(listener.getLastError() instanceof ConnectException);
+        assertTrue(listener.getLastError().getCause() instanceof ConnectException);
     }
 
     @Test
@@ -85,7 +85,7 @@ class SmtpClientTest {
         Config config = new Config().setTrustManager(new TrustAllX509TrustManager());
         SmtpClient client = new SmtpClient(config);
 
-        client.runAndClose(session).sync();
+        client.runAndClose(session).await();
         assertTrue(listener.isDataCompleted());
     }
 
@@ -101,7 +101,7 @@ class SmtpClientTest {
         SmtpClient client = new SmtpClient();
 
         client.runAndClose(session).sync();
-        assertTrue(listener.getLastError() instanceof SSLHandshakeException);
+        assertTrue(listener.getLastError().getCause() instanceof SSLHandshakeException);
         assertFalse(listener.isDataCompleted());
     }
 

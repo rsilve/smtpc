@@ -94,7 +94,7 @@ public class SmtpSession {
     }
 
     public String[] getRecipient() {
-        return recipient;
+        return Arrays.copyOf(recipient, recipient.length);
     }
 
     public SmtpSession setRecipient(String recipient) {
@@ -106,7 +106,7 @@ public class SmtpSession {
         if (Objects.isNull(recipient)) {
             this.recipient = new String[]{};
         } else {
-            this.recipient = recipient;
+            this.recipient = Arrays.copyOf(recipient, recipient.length);
         }
         return this;
     }

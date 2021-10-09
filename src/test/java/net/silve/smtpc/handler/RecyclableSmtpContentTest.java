@@ -33,6 +33,15 @@ class RecyclableSmtpContentTest {
         Assertions.assertThrows(IllegalReferenceCountException.class, instance::content);
     }
 
+
+    @Test
+    void shouldHaveRecycleMethod002() {
+        RecyclableSmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
+        instance.retain();
+        assertNotNull(instance);
+        Assertions.assertThrows(SmtpHandlerException.class, instance::recycle);
+    }
+
     @Test
     void shouldHaveCopyMethod() {
         RecyclableSmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
@@ -62,8 +71,9 @@ class RecyclableSmtpContentTest {
         SmtpContent duplicate = instance.retainedDuplicate();
         assertEquals(instance.refCnt(), duplicate.refCnt());
         assertEquals(instance.content(), duplicate.content());
+        instance.release();
         instance.recycle();
-        assertEquals(1, duplicate.refCnt());
+        assertEquals(0, duplicate.refCnt());
     }
 
     @Test

@@ -29,8 +29,11 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
     }
 
     public void recycle() {
-        this.release();
-        handle.recycle(this);
+        if (this.release()) {
+            handle.recycle(this);
+        } else {
+            throw new SmtpHandlerException();
+        }
     }
 
     @Override

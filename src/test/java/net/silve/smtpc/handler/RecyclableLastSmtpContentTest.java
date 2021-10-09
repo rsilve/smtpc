@@ -33,6 +33,14 @@ class RecyclableLastSmtpContentTest {
     }
 
     @Test
+    void shouldHaveRecycleMethod002() {
+        RecyclableLastSmtpContent instance = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
+        instance.retain();
+        assertNotNull(instance);
+        Assertions.assertThrows(SmtpHandlerException.class, instance::recycle);
+    }
+
+    @Test
     void shouldHaveCopyMethod() {
         RecyclableLastSmtpContent instance = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
         assertNotNull(instance);
@@ -61,8 +69,9 @@ class RecyclableLastSmtpContentTest {
         SmtpContent duplicate = instance.retainedDuplicate();
         assertEquals(instance.refCnt(), duplicate.refCnt());
         assertEquals(instance.content(), duplicate.content());
+        instance.release();
         instance.recycle();
-        assertEquals(1, duplicate.refCnt());
+        assertEquals(0, duplicate.refCnt());
     }
 
     @Test

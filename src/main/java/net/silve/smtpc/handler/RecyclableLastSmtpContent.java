@@ -28,8 +28,11 @@ public final class RecyclableLastSmtpContent extends RecyclableSmtpContent imple
 
     @Override
     public void recycle() {
-        this.release();
-        handle.recycle(this);
+        if (this.release()) {
+            handle.recycle(this);
+        } else {
+            throw new SmtpHandlerException();
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     @Override
     public void onError(Throwable throwable) {
-        this.lastError = throwable;
+        this.lastError = new SmtpSessionException(throwable);
     }
 
     @Override
