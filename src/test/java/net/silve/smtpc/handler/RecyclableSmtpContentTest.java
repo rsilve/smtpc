@@ -136,6 +136,13 @@ class RecyclableSmtpContentTest {
     }
 
     @Test
+    void shouldHaveEqualMethod005() {
+        SmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
+        assertNotEquals(null, instance);
+    }
+
+
+    @Test
     void shouldHaveHashMethod() {
         SmtpContent instance = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("b".getBytes()));
         assertNotEquals(0, instance.hashCode());

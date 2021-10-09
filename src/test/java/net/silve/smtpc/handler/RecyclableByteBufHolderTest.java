@@ -43,10 +43,24 @@ class RecyclableByteBufHolderTest {
     }
 
     @Test
-    void shouldHaveEqualsMethod() {
+    void shouldHaveEqualsMethod000() {
         RecyclableByteBufHolder holder = new RecyclableByteBufHolder();
         holder.content(Unpooled.copiedBuffer("b".getBytes()));
         assertEquals(holder, holder);
+    }
+
+    @Test
+    void shouldHaveEqualsMethod001() {
+        RecyclableByteBufHolder holder = new RecyclableByteBufHolder();
+        holder.content(Unpooled.copiedBuffer("b".getBytes()));
+        assertNotEquals(null, holder);
+    }
+
+    @Test
+    void shouldHaveEqualsMethod002() {
+        RecyclableByteBufHolder holder = new RecyclableByteBufHolder();
+        holder.content(Unpooled.copiedBuffer("b".getBytes()));
+        assertNotEquals("e", holder);
     }
 
 }

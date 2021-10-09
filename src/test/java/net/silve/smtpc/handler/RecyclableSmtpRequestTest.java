@@ -67,6 +67,12 @@ class RecyclableSmtpRequestTest {
     }
 
     @Test
+    void shouldHaveEqualMethod004() {
+        SmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO);
+        assertNotEquals(null, instance);
+    }
+
+    @Test
     void shouldHaveHashMethod() {
         RecyclableSmtpRequest instance = RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO);
         assertNotEquals(0, instance.hashCode());
