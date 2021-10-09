@@ -5,8 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.LastSmtpContent;
 import io.netty.util.Recycler;
 
-import java.util.Objects;
-
 public final class RecyclableLastSmtpContent extends RecyclableSmtpContent implements LastSmtpContent {
 
     private static final Recycler<RecyclableLastSmtpContent> RECYCLER = new Recycler<>() {
@@ -80,13 +78,11 @@ public final class RecyclableLastSmtpContent extends RecyclableSmtpContent imple
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
         return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), handle);
+        return super.hashCode();
     }
 }
