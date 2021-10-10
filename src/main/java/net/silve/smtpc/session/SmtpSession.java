@@ -8,6 +8,7 @@ import java.util.*;
 public class SmtpSession {
 
     private static final SmtpSessionListener defaultListener = new DefaultSmtpSessionListener();
+    private static final MessageFactory DEFAULT_MESSAGE_FACTORY = new EmptyMessageFactory();
 
     private final String host;
     private final int port;
@@ -15,9 +16,7 @@ public class SmtpSession {
     private boolean extendedHelo = true;
     private CharSequence greeting = AsciiString.cached("localhost");
 
-    private String sender;
-    private String[] recipient = new String[]{};
-    private Iterator<SmtpContent> chunks;
+    private MessageFactory messageFactory = DEFAULT_MESSAGE_FACTORY;
 
     private SmtpSessionListener listener;
 
@@ -65,39 +64,9 @@ public class SmtpSession {
         return this;
     }
 
-    public SmtpSession setSender(String sender) {
-        this.sender = sender;
+    public SmtpSession setMessageFactory(MessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
         return this;
-    }
-
-    public SmtpSession setRecipient(String recipient) {
-        this.recipient = new String[]{recipient};
-        return this;
-    }
-
-    public SmtpSession setRecipient(String[] recipient) {
-        if (Objects.isNull(recipient)) {
-            this.recipient = new String[]{};
-        } else {
-            this.recipient = Arrays.copyOf(recipient, recipient.length);
-        }
-        return this;
-    }
-
-    public SmtpSession addRecipient(String recipient) {
-        List<String> list = new ArrayList<>(Arrays.asList(this.recipient));
-        list.add(recipient);
-        this.recipient = list.toArray(this.recipient);
-        return this;
-    }
-
-    public SmtpSession setChunks(Iterator<SmtpContent> chunks) {
-        this.chunks = chunks;
-        return this;
-    }
-
-    public SmtpSession setChunks(SmtpContent... chunks) {
-        return setChunks(Arrays.asList(chunks).iterator());
     }
 
     public SmtpSession setListener(SmtpSessionListener listener) {
@@ -142,9 +111,14 @@ public class SmtpSession {
     }
 
     public Message getMessage() {
-        return new Message()
-                .setSender(this.sender)
-                .setRecipients(this.recipient)
-                .setChunks(this.chunks);
+        return messageFactory.next();
+    }
+
+
+    private static class EmptyMessageFactory implements MessageFactory {
+        @Override
+        public Message next() {
+            return null;
+        }
     }
 }

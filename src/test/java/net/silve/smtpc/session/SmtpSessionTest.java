@@ -19,9 +19,7 @@ class SmtpSessionTest {
     void shouldHaveProperties() {
         SmtpSession session = new SmtpSession("host", 25);
         session.setGreeting("greet")
-                .setExtendedHelo(false)
-                .setSender("sender")
-                .setRecipient("recipient");
+                .setExtendedHelo(false);
         assertEquals("greet", session.getGreeting());
         assertFalse(session.useExtendedHelo());
     }

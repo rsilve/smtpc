@@ -24,8 +24,13 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
-                "host", 25);
+        SmtpSession session = new SmtpSession("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("smtpc.test@domain.tld")
+                                .setRecipient("devnull@silve.net")
+                                .factory()
+                );
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -41,8 +46,13 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleRequestNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
-                "host", 25);
+        SmtpSession session = new SmtpSession("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("smtpc.test@domain.tld")
+                                .setRecipient("devnull@silve.net")
+                                .factory()
+                );
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -55,8 +65,13 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleRequestNotification002() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
-                "host", 25);
+        SmtpSession session = new SmtpSession("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("smtpc.test@domain.tld")
+                                .setRecipient("devnull@silve.net")
+                                .factory()
+                );
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -68,10 +83,17 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleContentNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
-                "host", 25).setChunks(
-                RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
-                RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))));
+        SmtpSession session = new SmtpSession("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("smtpc.test@domain.tld")
+                                .setRecipient("devnull@silve.net")
+                                .setChunks(
+                                        RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
+                                        RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8)))
+                                )
+                                .factory()
+                );
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -84,8 +106,13 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleWriteErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
-                "host", 25);
+        SmtpSession session = new SmtpSession("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("smtpc.test@domain.tld")
+                                .setRecipient("devnull@silve.net")
+                                .factory()
+                );
         session.setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {

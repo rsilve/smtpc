@@ -22,7 +22,7 @@ public class Message {
     }
 
     public String[] getRecipients() {
-        return recipients;
+        return Arrays.copyOf(recipients, recipients.length);
     }
 
     public Message setRecipient(String recipient) {
@@ -73,6 +73,10 @@ public class Message {
             return chunks.next();
         }
         return null;
+    }
+
+    public MessageFactory factory() {
+        return new SimpleMessageFactory(this);
     }
 
 }

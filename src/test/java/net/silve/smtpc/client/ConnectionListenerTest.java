@@ -4,6 +4,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.DefaultSmtpRequest;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.smtpc.handler.ConnectionListener;
+import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +15,13 @@ class ConnectionListenerTest {
 
     @Test
     void shouldHandleRequestNotification() {
-        SmtpSession session = new SmtpSession(
-                "host", 25);
+        SmtpSession session = new SmtpSession("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("sender")
+                                .setRecipient("recipient")
+                                .factory()
+                );
         EmbeddedChannel channel = new EmbeddedChannel();
         channel.newSucceededFuture().addListener(new ConnectionListener(session));
         assertEquals(2, channel.pipeline().names().size());
