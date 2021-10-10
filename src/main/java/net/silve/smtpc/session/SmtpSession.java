@@ -17,9 +17,8 @@ public class SmtpSession {
 
     private String sender;
     private String[] recipient = new String[]{};
-    private int lastRecipientIndex = -1;
-
     private Iterator<SmtpContent> chunks;
+
     private SmtpSessionListener listener;
 
     private final String id = UUID.randomUUID().toString();
@@ -33,23 +32,6 @@ public class SmtpSession {
         this.port = port;
         setListener(listener);
 
-    }
-
-    public Object next() {
-        if (chunks.hasNext()) {
-            return chunks.next();
-        }
-        return null;
-    }
-
-
-    public String nextRecipient() {
-        if (lastRecipientIndex + 1 < recipient.length) {
-            lastRecipientIndex++;
-            return recipient[lastRecipientIndex];
-        } else {
-            return null;
-        }
     }
 
     public String getId() {
@@ -83,18 +65,9 @@ public class SmtpSession {
         return this;
     }
 
-
-    public String getSender() {
-        return sender;
-    }
-
     public SmtpSession setSender(String sender) {
         this.sender = sender;
         return this;
-    }
-
-    public String[] getRecipient() {
-        return Arrays.copyOf(recipient, recipient.length);
     }
 
     public SmtpSession setRecipient(String recipient) {
@@ -166,5 +139,12 @@ public class SmtpSession {
 
     public void notifyStartTls() {
         this.listener.onStartTls();
+    }
+
+    public Message getMessage() {
+        return new Message()
+                .setSender(this.sender)
+                .setRecipients(this.recipient)
+                .setChunks(this.chunks);
     }
 }

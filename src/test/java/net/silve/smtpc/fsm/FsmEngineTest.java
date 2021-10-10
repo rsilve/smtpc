@@ -1,7 +1,9 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
+import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -104,35 +106,13 @@ class FsmEngineTest {
 
         FsmEngine engine = new FsmEngine(testState)
                 .applySession(new SmtpSession("host", 25)
-                        .setExtendedHelo(true)
-                        .addRecipient("recipient"));
+                        .setExtendedHelo(true),
+                        new Message().setRecipient("recipient"));
         engine.notifyRcpt();
         engine.notify(new FsmEvent());
 
 
     }
-
-    @Test
-    void shouldApplyNullSession() {
-        State testState = new State() {
-            @Override
-            public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
-                assertFalse(context.isExtendedGreeting());
-                return null;
-            }
-
-            @Override
-            public SmtpCommandAction action() {
-                return SmtpCommandAction.CLOSE_TRANSMISSION;
-            }
-        };
-
-        FsmEngine engine = new FsmEngine(testState)
-                .applySession(null);
-        engine.notify(new FsmEvent());
-
-    }
-
 
     @Test
     void shouldHaveDefaultActionListener() {

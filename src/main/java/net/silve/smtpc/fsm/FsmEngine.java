@@ -1,7 +1,9 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -38,11 +40,9 @@ public class FsmEngine {
         return state;
     }
 
-    public FsmEngine applySession(SmtpSession session) {
-        if (Objects.nonNull(session)) {
-            context.setExtendedGreeting(session.useExtendedHelo());
-            context.setRcptCount(session.getRecipient().length);
-        }
+    public FsmEngine applySession(@NotNull SmtpSession session, @NotNull Message message) {
+        context.setExtendedGreeting(session.useExtendedHelo());
+        context.setRcptCount(message.getRecipients().length);
         return this;
     }
 
@@ -62,7 +62,7 @@ public class FsmEngine {
 
     private static class NoopActionListener implements FsmActionListener {
         @Override
-        public void onAction(SmtpCommandAction action, SmtpResponse response) {
+        public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
             // do nothing
         }
     }

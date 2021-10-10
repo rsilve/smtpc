@@ -10,6 +10,7 @@ import net.silve.smtpc.fsm.FsmEngine;
 import net.silve.smtpc.fsm.FsmEvent;
 import net.silve.smtpc.fsm.SmtpCommandAction;
 import net.silve.smtpc.handler.ssl.StartTlsHandler;
+import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,7 @@ import java.util.Objects;
 public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
 
     private final SmtpSession session;
+    private Message message;
     private ChannelHandlerContext ctx;
     private int size = 0;
 
@@ -26,7 +28,12 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     public SmtpClientFSEHandler(SmtpSession session) {
         this.session = session;
-        engine.applySession(session).setActionListener(this);
+        initMessage();
+        engine.applySession(session, message).setActionListener(this);
+    }
+
+    private void initMessage() {
+        this.message = this.session.getMessage();
     }
 
     @Override
@@ -69,12 +76,10 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     }
 
     private void handleContentRequest() {
-
-        Object next = session.next();
+        Object next = message.nextChunk();
         if (Objects.isNull(next)) {
             return;
         }
-
         RecyclableSmtpContent content = (RecyclableSmtpContent) next;
         size += getDataSize(content.retain());
         if (content instanceof LastSmtpContent) {
@@ -127,12 +132,12 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case MAIL:
-                String sender = String.format("FROM:<%s>", this.session.getSender());
+                String sender = String.format("FROM:<%s>", this.message.getSender());
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, AsciiString.of(sender)));
                 break;
 
             case RCPT:
-                String rcpt = this.session.nextRecipient();
+                String rcpt = this.message.nextRecipient();
                 engine.notifyRcpt();
                 String recipient = String.format("TO:<%s>", rcpt);
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, AsciiString.of(recipient)));
