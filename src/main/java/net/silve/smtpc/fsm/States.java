@@ -11,6 +11,7 @@ public class States {
     public static final State RCPT_STATE = new RcptState();
     public static final State DATA_STATE = new DataState();
     public static final State CONTENT_STATE = new ContentState();
+    public static final State RSET_STATE = new RsetState();
     public static final State QUIT_STATE = new QuitState();
 
     public static final State CLOSING_TRANSMISSION_STATE = new CloseTransmissionState();

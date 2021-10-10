@@ -5,7 +5,6 @@ import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.util.Recycler;
 import io.netty.util.internal.ObjectUtil;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +32,7 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
     }
 
     private static List<CharSequence> toUnmodifiableList(CharSequence... sequences) {
-        return sequences != null && sequences.length != 0 ? Collections.unmodifiableList(Arrays.asList(sequences)) : Collections.emptyList();
+        return sequences != null && sequences.length != 0 ? List.of(sequences) : Collections.emptyList();
     }
 
     private final Recycler.Handle<RecyclableSmtpRequest> handle;

@@ -40,9 +40,8 @@ public class FsmEngine {
         return state;
     }
 
-    public FsmEngine applySession(@NotNull SmtpSession session, @NotNull Message message) {
-        context.setExtendedGreeting(session.useExtendedHelo());
-        context.setRcptCount(message.getRecipients().length);
+    public FsmEngine applySession(@NotNull SmtpSession session, Message message) {
+        context.setExtendedGreeting(session.useExtendedHelo()).setMessage(message);
         return this;
     }
 

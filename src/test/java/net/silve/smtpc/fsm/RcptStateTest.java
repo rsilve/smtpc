@@ -1,6 +1,7 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
+import net.silve.smtpc.session.Message;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.fsm.States.*;
@@ -19,7 +20,7 @@ class RcptStateTest {
         State state = new RcptState();
         assertEquals(RCPT_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(250)),
-                new FsmEngineContext().setRcptCount(1)
+                new FsmEngineContext().setMessage(new Message().setRecipient("recipient"))
         ));
         assertEquals(DATA_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(250)), null

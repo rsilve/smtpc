@@ -7,6 +7,7 @@ public enum SmtpCommandAction {
     MAIL, RCPT,
     DATA,
     DATA_CONTENT,
+    RSET,
     QUIT,
     CLOSE_TRANSMISSION
 

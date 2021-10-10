@@ -1,9 +1,14 @@
 package net.silve.smtpc.fsm;
 
+import net.silve.smtpc.session.Message;
+
+import java.util.Objects;
+
 public class FsmEngineContext {
 
     private boolean tlsActive;
     private boolean extendedGreeting;
+    private boolean allMessageCompleted = true;
     private int rcptCount;
 
     public boolean isTlsActive() {
@@ -26,13 +31,22 @@ public class FsmEngineContext {
     }
 
 
+    public FsmEngineContext setMessage(Message message) {
+        if (Objects.nonNull(message)) {
+            this.rcptCount = message.getRecipients().length;
+            this.allMessageCompleted = false;
+        } else {
+            this.allMessageCompleted = true;
+        }
+        return this;
+    }
+
     public int getRcptCount() {
         return rcptCount;
     }
 
-    public FsmEngineContext setRcptCount(int rcptCount) {
-        this.rcptCount = rcptCount;
-        return this;
+    public boolean isAllMessageCompleted() {
+        return allMessageCompleted;
     }
 
     public void decrRcptCount() {

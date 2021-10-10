@@ -1,6 +1,7 @@
 package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -31,5 +32,5 @@ public abstract class AbstractState implements State {
     }
 
 
-    protected abstract State nextState(SmtpResponse response, FsmEngineContext context);
+    protected abstract State nextState(@NotNull SmtpResponse response, FsmEngineContext context);
 }

@@ -114,7 +114,6 @@ public class SmtpSession {
         return messageFactory.next();
     }
 
-
     private static class EmptyMessageFactory implements MessageFactory {
         @Override
         public Message next() {

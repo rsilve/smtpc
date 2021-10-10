@@ -2,6 +2,7 @@ package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.AsciiString;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ class ExtendedGreetingState extends AbstractState {
     private static final CharSequence STARTTLS = AsciiString.cached("STARTTLS");
 
     @Override
-    public State nextState(SmtpResponse response, FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
         State stateFromExtensions = stateFromExtensions(response, context);
         if (Objects.nonNull(stateFromExtensions)) {
             return stateFromExtensions;

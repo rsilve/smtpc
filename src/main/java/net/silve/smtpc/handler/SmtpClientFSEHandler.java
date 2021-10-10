@@ -28,12 +28,13 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     public SmtpClientFSEHandler(SmtpSession session) {
         this.session = session;
-        initMessage();
-        engine.applySession(session, message).setActionListener(this);
+        updateEngineContext();
+        engine.setActionListener(this);
     }
 
-    private void initMessage() {
+    private void updateEngineContext() {
         this.message = this.session.getMessage();
+        engine.applySession(session, message);
     }
 
     @Override
@@ -78,32 +79,46 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     private void handleContentRequest() {
         Object next = message.nextChunk();
         if (Objects.isNull(next)) {
+            updateEngineContext();
             return;
         }
         RecyclableSmtpContent content = (RecyclableSmtpContent) next;
         size += getDataSize(content.retain());
         if (content instanceof LastSmtpContent) {
-            ctx.writeAndFlush(content).addListener(future -> {
-                if (future.isSuccess()) {
-                    session.notifyData(size);
-                } else {
-                    session.notifyError(future.cause());
-                    ctx.close();
-                }
-            });
+            handleLastContent(content);
         } else {
-            ctx.writeAndFlush(content).addListener(future -> {
-                if (future.isSuccess()) {
-                    handleContentRequest();
-                } else {
-                    session.notifyError(future.cause());
-                    ctx.close();
-                }
-            });
+            handleContent(content);
         }
-        if (! (ctx.channel() instanceof EmbeddedChannel)) {
-            content.recycle();
-        }
+
+    }
+
+    private void handleContent(RecyclableSmtpContent content) {
+        ctx.writeAndFlush(content).addListener(future -> {
+            if (future.isSuccess()) {
+                handleContentRequest();
+            } else {
+                session.notifyError(future.cause());
+                ctx.close();
+            }
+            if (! (ctx.channel() instanceof EmbeddedChannel)) {
+                content.recycle();
+            }
+        });
+    }
+
+    private void handleLastContent(RecyclableSmtpContent content) {
+        ctx.writeAndFlush(content).addListener(future -> {
+            if (future.isSuccess()) {
+                updateEngineContext();
+                session.notifyData(size);
+            } else {
+                session.notifyError(future.cause());
+                ctx.close();
+            }
+            if (! (ctx.channel() instanceof EmbeddedChannel)) {
+                content.recycle();
+            }
+        });
     }
 
     @Override
@@ -149,6 +164,10 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
             case DATA_CONTENT:
                 handleContentRequest();
+                break;
+
+            case RSET:
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RSET));
                 break;
 
             case QUIT:

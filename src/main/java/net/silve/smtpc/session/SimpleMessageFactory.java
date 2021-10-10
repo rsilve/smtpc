@@ -14,6 +14,10 @@ class SimpleMessageFactory implements MessageFactory {
 
     @Override
     public Message next() {
-        return messageIterator.next();
+        if (messageIterator.hasNext()) {
+            return messageIterator.next();
+        } else {
+            return null;
+        }
     }
 }

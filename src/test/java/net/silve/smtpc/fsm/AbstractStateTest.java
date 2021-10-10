@@ -2,6 +2,7 @@ package net.silve.smtpc.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.fsm.States.CLOSING_TRANSMISSION_STATE;
@@ -26,7 +27,7 @@ class AbstractStateTest {
     void shouldHandleCloseCode() {
         AbstractState state = new AbstractState() {
             @Override
-            protected State nextState(SmtpResponse response, FsmEngineContext context) {
+            protected State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
                 return NOOP_STATE;
             }
 
