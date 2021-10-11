@@ -5,6 +5,7 @@ import io.netty.util.concurrent.Promise;
 import net.silve.smtpc.SmtpClient;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.session.Builder;
+import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class Concurrent {
         final long globalStartedAt = System.nanoTime();
         Promise<Void> promise = GlobalEventExecutor.INSTANCE.next().newPromise();
         promise.addListener(future -> {
-            logger.info(() -> String.format("total duration = %d", (System.nanoTime() - globalStartedAt)/ 1000000));
+            logger.info(() -> String.format("total duration = %d", (System.nanoTime() - globalStartedAt) / 1000000));
             client.shutdownGracefully();
         });
         LogListener logListener = new LogListener();
@@ -46,13 +47,16 @@ public class Concurrent {
         for (int i = 0; i < max.get(); i++) {
             final SmtpSession session = new SmtpSession(HOST, PORT);
             session.setGreeting("greeting.tld")
-                    .setSender(SENDER)
-                    .setRecipient(RECIPIENT)
-                    .setChunks(Builder.chunks(contentBytes).iterator())
+                    .setMessageFactory(
+                            new Message().setSender(SENDER)
+                                    .setRecipient(RECIPIENT)
+                                    .setChunks(Builder.chunks(contentBytes).iterator())
+                                    .factory()
+                    )
                     .setListener(logListener);
             final long startedAt = System.nanoTime();
             client.run(session).addListener(future -> {
-                logger.info(() -> String.format("=== duration = %d", (System.nanoTime() - startedAt)/ 1000000));
+                logger.info(() -> String.format("=== duration = %d", (System.nanoTime() - startedAt) / 1000000));
                 int step = max.decrementAndGet();
                 if (step <= 0) {
                     promise.setSuccess(null);
