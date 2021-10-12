@@ -25,6 +25,12 @@ class ContentStateTest {
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
+                new FsmEvent().setResponse(new DefaultSmtpResponse(501)),
+                new FsmEngineContext().setMessage(new Message())
+        ));
+
+
+        assertEquals(QUIT_STATE, state.nextStateFromEvent(
                 new FsmEvent().setResponse(new DefaultSmtpResponse(250)),
                 new FsmEngineContext()
         ));
