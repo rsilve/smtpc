@@ -39,7 +39,6 @@ class SmtpSessionListenerTest {
         assertTrue(channel.finish());
         assertTrue(listener.started);
         assertEquals(response.code(), listener.responseCode);
-        assertTrue(listener.completed);
     }
 
 
@@ -59,7 +58,6 @@ class SmtpSessionListenerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertTrue(channel.finish());
         assertEquals(SmtpCommand.EHLO, listener.command);
-        assertTrue(listener.completed);
     }
 
     @Test

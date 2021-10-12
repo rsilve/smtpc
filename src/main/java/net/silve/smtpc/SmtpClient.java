@@ -19,21 +19,22 @@ import java.util.Objects;
 public class SmtpClient {
 
     private final Bootstrap bootstrap;
-    private final Promise<Void> promise;
-    private final Promise<Void> promiseCompleted;
+    private final Promise<Void> promiseShutdownRequested;
+    private final Promise<Void> promiseShutdownCompleted;
 
     public SmtpClient() throws SSLException {
         this(new Config());
     }
 
     public SmtpClient(Config config) throws SSLException {
+
         EventLoopGroup group = new NioEventLoopGroup(config.getNumberOfThread());
 
-        promise = GlobalEventExecutor.INSTANCE.next().newPromise();
-        promiseCompleted = GlobalEventExecutor.INSTANCE.next().newPromise();
-        promise.addListener(future -> group.shutdownGracefully());
+        promiseShutdownRequested = GlobalEventExecutor.INSTANCE.next().newPromise();
+        promiseShutdownRequested.addListener(future -> group.shutdownGracefully());
 
-        group.terminationFuture().addListener(future -> promiseCompleted.setSuccess(null));
+        promiseShutdownCompleted = GlobalEventExecutor.INSTANCE.next().newPromise();
+        group.terminationFuture().addListener(future -> promiseShutdownCompleted.setSuccess(null));
 
         bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -45,7 +46,7 @@ public class SmtpClient {
     }
 
 
-    public ChannelFuture run(final SmtpSession session) {
+    public Promise<Void> run(final SmtpSession session) {
         if (Objects.isNull(session)) {
             throw new IllegalArgumentException("Session must not be null");
         }
@@ -53,19 +54,25 @@ public class SmtpClient {
         if (Objects.isNull(session.getHost()) || session.getHost().isBlank()) {
             throw new IllegalArgumentException("Host must be defined");
         }
+
+        final Promise<Void> promiseClosed = GlobalEventExecutor.INSTANCE.next().newPromise();
         ChannelFuture futureConnection = bootstrap.connect(session.getHost(), session.getPort());
         futureConnection.addListener(new ConnectionListener(session));
-        return futureConnection.channel().closeFuture();
+        futureConnection.channel().closeFuture().addListener(future -> {
+            session.notifyCompleted();
+            promiseClosed.setSuccess(null);
+        });
+        return promiseClosed;
     }
 
     public Promise<Void> runAndClose(final SmtpSession session) {
         run(session).addListener(future -> shutdownGracefully());
-        return promiseCompleted;
+        return promiseShutdownCompleted;
     }
 
     public Promise<Void> shutdownGracefully() {
-        promise.setSuccess(null);
-        return promiseCompleted;
+        promiseShutdownRequested.setSuccess(null);
+        return promiseShutdownCompleted;
     }
 
 }

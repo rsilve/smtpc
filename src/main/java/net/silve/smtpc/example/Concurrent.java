@@ -24,7 +24,7 @@ public class Concurrent {
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
-    private static final int NUMBER_OF_MESSAGES = 2;
+    private static final int NUMBER_OF_MESSAGES = 10;
 
     private static final Logger logger = LoggerFactory.getInstance();
 
@@ -39,12 +39,12 @@ public class Concurrent {
         final long globalStartedAt = System.nanoTime();
         Promise<Void> promise = GlobalEventExecutor.INSTANCE.next().newPromise();
         promise.addListener(future -> {
-            logger.info(() -> String.format("total duration = %d", (System.nanoTime() - globalStartedAt) / 1000000));
+            logger.info(() -> String.format("!!! total duration = %d", (System.nanoTime() - globalStartedAt) / 1000000));
             client.shutdownGracefully();
         });
         LogListener logListener = new LogListener();
 
-        for (int i = 0; i < max.get(); i++) {
+        for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
             final SmtpSession session = new SmtpSession(HOST, PORT);
             session.setGreeting("greeting.tld")
                     .setMessageFactory(
@@ -54,9 +54,7 @@ public class Concurrent {
                                     .factory()
                     )
                     .setListener(logListener);
-            final long startedAt = System.nanoTime();
             client.run(session).addListener(future -> {
-                logger.info(() -> String.format("=== duration = %d", (System.nanoTime() - startedAt) / 1000000));
                 int step = max.decrementAndGet();
                 if (step <= 0) {
                     promise.setSuccess(null);

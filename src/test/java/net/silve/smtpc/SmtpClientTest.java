@@ -80,7 +80,7 @@ class SmtpClientTest {
 
     @Test
     void shouldSendEmail() throws Exception {
-        DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
+        TestListener listener = new TestListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
         SmtpSession session = new SmtpSession("localhost", 2525)
                 .setMessageFactory(
@@ -96,6 +96,7 @@ class SmtpClientTest {
 
         client.runAndClose(session).await();
         assertTrue(listener.isDataCompleted());
+        assertTrue(listener.completed);
     }
 
     @Test
@@ -119,4 +120,14 @@ class SmtpClientTest {
     }
 
 
+    private static class TestListener extends DefaultSmtpSessionListener {
+
+        public boolean completed;
+
+        @Override
+        public void onCompleted(String id) {
+            super.onCompleted(id);
+            this.completed = true;
+        }
+    }
 }

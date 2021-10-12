@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 public class LogListener extends DefaultSmtpSessionListener {
 
     private static final Logger logger = LoggerFactory.getInstance();
+    private final long globalStartedAt = System.nanoTime();
 
     @Override
     public void onConnect(String host, int port) {
@@ -49,7 +50,8 @@ public class LogListener extends DefaultSmtpSessionListener {
     @Override
     public void onCompleted(String id) {
         super.onCompleted(id);
-        logger.log(Level.INFO, () -> String.format("=== transaction completed for %s", id));
+        logger.log(Level.INFO, () -> String.format("=== transaction completed for %s, duration = %dms",
+                id, (System.nanoTime() - globalStartedAt) / 1000000));
     }
 
     @Override

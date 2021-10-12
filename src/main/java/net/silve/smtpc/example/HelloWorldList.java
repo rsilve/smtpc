@@ -7,7 +7,10 @@ import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -20,6 +23,7 @@ public class HelloWorldList {
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
+    private static final int NUMBER_OF_MESSAGES = 10;
 
     public static void main(String[] args) throws IOException {
         LoggerFactory.configure(Level.ALL);
@@ -28,19 +32,14 @@ public class HelloWorldList {
 
         SmtpClient client = new SmtpClient();
         SmtpSession session = new SmtpSession(HOST, PORT);
+
+        List<Message> messages = IntStream.range(0, NUMBER_OF_MESSAGES).mapToObj(value -> new Message().setSender(SENDER)
+                .setRecipient(RECIPIENT)
+                .setChunks(Builder.chunks(contentBytes).iterator())).collect(Collectors.toList());
         session.setGreeting("greeting.tld")
-                .setMessageFactory(
-                        new ListMessageFactory(
-                                new Message().setSender(SENDER)
-                                        .setRecipient(RECIPIENT)
-                                        .setChunks(Builder.chunks(contentBytes).iterator()),
-                                new Message().setSender(SENDER)
-                                        .setRecipient(RECIPIENT)
-                                        .setChunks(Builder.chunks(contentBytes).iterator())
-                        )
-                )
+                .setMessageFactory(new ListMessageFactory(messages))
                 .setListener(new LogListener());
 
-        client.run(session).addListener(future -> client.shutdownGracefully());
+        client.runAndClose(session);
     }
 }

@@ -36,6 +36,6 @@ public class HelloWorld {
                 )
                 .setListener(new LogListener());
 
-        client.run(session).addListener(future -> client.shutdownGracefully());
+        client.runAndClose(session);
     }
 }
