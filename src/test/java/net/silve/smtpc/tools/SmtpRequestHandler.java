@@ -25,6 +25,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = Logger.getLogger("SmtpTestServer");
     private static final SmtpCommand STARTTLS = SmtpCommand.valueOf(AsciiString.cached("STAR"));
+    public static final String SSLHANDLER = "sslhandler";
     private static SslContext sslCtx;
 
     static {
@@ -53,7 +54,9 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        ctx.pipeline().remove(SslHandler.class);
+        if (ctx.pipeline().names().contains(SSLHANDLER)) {
+            ctx.pipeline().remove(SSLHANDLER);
+        }
         logger.log(Level.INFO, () -> "=== disconnected");
     }
 
@@ -99,7 +102,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private void handleStartTls(ChannelHandlerContext ctx) {
         SSLEngine sslEngine = sslCtx.newEngine(ctx.channel().alloc());
-        ctx.pipeline().addFirst(new SslHandler(sslEngine, true));
+        ctx.pipeline().addFirst(SSLHANDLER, new SslHandler(sslEngine, true));
     }
 
 

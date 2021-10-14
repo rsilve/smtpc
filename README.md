@@ -13,14 +13,14 @@ Very basic example :
 byte[] contentBytes = /* get mime message as bytes */
 
 SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession(HOST, PORT);
-        session.setGreeting("greeting.tld")
-                .setSender(SENDER)
-                .setRecipient(RECIPIENT)
-                .setChunks(Builder.chunks(contentBytes).iterator())
-                .setListener(new LogListener());
+SmtpSession session = new SmtpSession(HOST, PORT);
+session.setGreeting("greeting.tld")
+        .setSender(SENDER)
+        .setRecipient(RECIPIENT)
+        .setChunks(Builder.chunks(contentBytes).iterator())
+        .setListener(new LogListener());
 
-        client.run(session).addListener(future -> client.shutdownGracefully());
+client.runAndClose(session);
 ```
 
 

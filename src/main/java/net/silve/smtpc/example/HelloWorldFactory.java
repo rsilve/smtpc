@@ -42,9 +42,9 @@ public class HelloWorldFactory {
         private static byte[] contentBytes = new byte[]{};
         static {
             try {
-                contentBytes = HelloWorldFactory.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
+                contentBytes = CustomMessageFactory.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
             } catch (IOException e) {
-                e.printStackTrace();
+                // log something
             }
         }
 
