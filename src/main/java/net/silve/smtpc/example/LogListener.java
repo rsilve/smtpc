@@ -50,8 +50,9 @@ public class LogListener extends DefaultSmtpSessionListener {
     @Override
     public void onCompleted(String id) {
         super.onCompleted(id);
-        logger.log(Level.INFO, () -> String.format("=== transaction completed for %s, duration = %dms",
-                id, (System.nanoTime() - globalStartedAt) / 1000000));
+        logger.log(Level.INFO,
+                () -> String.format("=== transaction completed for %s, duration = %dms, messages=%d",
+                        id, (System.nanoTime() - globalStartedAt) / 1000000, this.getCount()));
     }
 
     @Override

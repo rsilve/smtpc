@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.*;
+import net.silve.smtpc.session.DefaultSmtpSessionListener;
 import net.silve.smtpc.session.ListMessageFactory;
 import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
@@ -459,6 +460,7 @@ class SmtpClientFSEHandlerTest {
     void shouldHandleBasicSessionMultiMessage() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         SmtpSession session = new SmtpSession("host", 25)
                 .setMessageFactory(
                         new ListMessageFactory(new Message()
@@ -471,7 +473,8 @@ class SmtpClientFSEHandlerTest {
                                 .setChunks(content, content2)
                                 )
                 )
-                .setExtendedHelo(false);
+                .setExtendedHelo(false)
+                .setListener(listener);
         SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         channel.writeInbound(new DefaultSmtpResponse(220, "Ok"));
@@ -529,7 +532,7 @@ class SmtpClientFSEHandlerTest {
         outbound = channel.readOutbound();
         assertNull(outbound);
         assertFalse(channel.isActive());
-
+        assertEquals(2, listener.getCount());
     }
 
 

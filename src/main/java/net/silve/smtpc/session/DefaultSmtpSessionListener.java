@@ -9,6 +9,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     private SmtpCommand lastCommand;
     private boolean dataCompleted;
     private Throwable lastError;
+    private int count = 0;
 
     @Override
     public void onConnect(String host, int port) {
@@ -45,6 +46,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     public void onResponse(int code, List<CharSequence> details) {
         if (SmtpCommand.DATA.equals(lastCommand) && code == 250) {
             dataCompleted = true;
+            count++;
         }
         // default implementation : do nothing
     }
@@ -60,5 +62,9 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     public Throwable getLastError() {
         return lastError;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

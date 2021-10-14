@@ -15,8 +15,8 @@ import java.util.logging.Level;
  */
 public class HelloWorld {
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 2525;
+    private static final String HOST = "home.silve.net";
+    private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
 
