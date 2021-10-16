@@ -92,6 +92,7 @@ class SmtpClientTest {
         SmtpClient client = new SmtpClient(config);
 
         client.runAndClose(session).await();
+        assertNull(session.getHost());
         assertTrue(listener.isDataCompleted());
         assertTrue(listener.completed);
         assertEquals(1, listener.getCount());
