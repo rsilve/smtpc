@@ -20,27 +20,27 @@ class ContentStateTest {
     void shouldReturnNextState() {
         State state = new ContentState();
         assertEquals(RSET_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(250)),
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
                 new FsmEngineContext().setMessage(new Message())
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(501)),
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)),
                 new FsmEngineContext().setMessage(new Message())
         ));
 
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(250)),
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
                 new FsmEngineContext()
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(250)),
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
                 null
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(501)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), null
         ));
     }
 

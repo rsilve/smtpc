@@ -17,8 +17,10 @@ class FsmEngineTest {
     void shouldNotifyEvent() {
         AtomicBoolean action_started = new AtomicBoolean(false);
         FsmEngine engine = new FsmEngine().setActionListener((action, response) -> action_started.set(true));
-        engine.notify(new FsmEvent());
+        FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250));
+        engine.notify(event);
         assertTrue(action_started.get());
+        assertNull(event.getResponse());
     }
 
     @Test
@@ -39,7 +41,7 @@ class FsmEngineTest {
         FsmEngine engine = new FsmEngine(testState)
                 .setActionListener((action, response) -> action_started.set(true));
 
-        engine.notify(new FsmEvent());
+        engine.notify(FsmEvent.newInstance());
         assertFalse(action_started.get());
     }
 
@@ -108,7 +110,7 @@ class FsmEngineTest {
                         .setExtendedHelo(true),
                         new Message().setRecipient("recipient"));
         engine.notifyRcpt();
-        engine.notify(new FsmEvent());
+        engine.notify(FsmEvent.newInstance());
 
 
     }
@@ -117,7 +119,7 @@ class FsmEngineTest {
     void shouldHaveDefaultActionListener() {
         FsmEngine engine = new FsmEngine();
         assertEquals(INIT_STATE, engine.getState());
-        engine.notify(new FsmEvent());
+        engine.notify(FsmEvent.newInstance());
         assertEquals(CLOSING_TRANSMISSION_STATE, engine.getState());
 
     }

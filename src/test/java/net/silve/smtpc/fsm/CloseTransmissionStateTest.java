@@ -11,7 +11,7 @@ class CloseTransmissionStateTest {
     @Test
     void shouldReturnNextState() {
         State state = new CloseTransmissionState();
-        assertNull(state.nextStateFromEvent(new FsmEvent(), new FsmEngineContext()));
+        assertNull(state.nextStateFromEvent(FsmEvent.newInstance(), new FsmEngineContext()));
     }
 
     @Test

@@ -134,7 +134,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                     } else {
                         session.notifyError(future.cause());
                     }
-                    engine.notify(new FsmEvent().setCause(future.cause()));
+                    engine.notify(FsmEvent.newInstance().setCause(future.cause()));
                 });
                 break;
 

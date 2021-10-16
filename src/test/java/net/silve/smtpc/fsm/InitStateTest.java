@@ -17,10 +17,10 @@ class InitStateTest {
     void shouldReturnNextState() {
         InitState state = new InitState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(220)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), null
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(500)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), null
         ));
     }
 

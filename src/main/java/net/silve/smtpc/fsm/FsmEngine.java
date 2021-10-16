@@ -25,7 +25,7 @@ public class FsmEngine {
     }
 
     public void notify(SmtpResponse response) {
-        FsmEvent event = new FsmEvent().setResponse(response);
+        FsmEvent event = FsmEvent.newInstance().setResponse(response);
         notify(event);
     }
 
@@ -34,6 +34,7 @@ public class FsmEngine {
         if (Objects.nonNull(state)) {
             this.actionListener.onAction(state.action(), event.getResponse());
         }
+        event.recycle();
     }
 
     public State getState() {

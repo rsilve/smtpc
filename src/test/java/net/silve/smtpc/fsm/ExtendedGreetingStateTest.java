@@ -18,30 +18,30 @@ class ExtendedGreetingStateTest {
     void shouldReturnNextState() {
         State state = new ExtendedGreetingState();
         assertEquals(MAIL_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(250)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), null
         ));
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(502)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(502)), null
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(500)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), null
         ));
 
         assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
-                new FsmEvent()
+                FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext().setTlsActive(false)
         ));
 
         assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
-                new FsmEvent()
+                FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 null
         ));
 
         assertEquals(MAIL_STATE, state.nextStateFromEvent(
-                new FsmEvent()
+                FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext().setTlsActive(true)
         ));

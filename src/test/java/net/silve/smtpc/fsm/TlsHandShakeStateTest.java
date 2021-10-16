@@ -12,11 +12,11 @@ class TlsHandShakeStateTest {
     void shouldReturnNextState() {
         State state = new TlsHandshakeState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
-                new FsmEvent(), null
+                FsmEvent.newInstance(), null
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setCause(new RuntimeException("ee")), null
+                FsmEvent.newInstance().setCause(new RuntimeException("ee")), null
         ));
     }
 

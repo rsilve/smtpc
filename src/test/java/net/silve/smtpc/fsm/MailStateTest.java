@@ -19,10 +19,10 @@ class MailStateTest {
     void shouldReturnNextState() {
         State state = new MailState();
         assertEquals(RCPT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(250)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), null
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(501)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), null
         ));
     }
 

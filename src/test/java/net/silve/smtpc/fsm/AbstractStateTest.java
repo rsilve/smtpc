@@ -37,13 +37,13 @@ class AbstractStateTest {
             }
         };
         assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(221)), null));
+                state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(221)), null));
         assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(421)), null));
+                state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(421)), null));
         assertEquals(NOOP_STATE,
-                state.nextStateFromEvent(new FsmEvent().setResponse(new DefaultSmtpResponse(100)), null));
+                state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(100)), null));
         assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(new FsmEvent(), null));
+                state.nextStateFromEvent(FsmEvent.newInstance(), null));
         assertEquals(CLOSING_TRANSMISSION_STATE,
                 state.nextStateFromEvent(null, null));
     }

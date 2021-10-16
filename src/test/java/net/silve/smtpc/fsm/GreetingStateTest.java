@@ -19,11 +19,11 @@ class GreetingStateTest {
     void shouldReturnNextState() {
         State state = new GreetingState();
         assertEquals(MAIL_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(250)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), null
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(500)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), null
         ));
 
     }

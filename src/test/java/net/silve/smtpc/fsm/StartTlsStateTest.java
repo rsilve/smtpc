@@ -19,13 +19,13 @@ class StartTlsStateTest {
     void shouldReturnNextState() {
         State state = new StartTlsState();
         assertEquals(TLS_HANDSHAKE_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(220)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), null
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(501)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), null
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                new FsmEvent().setResponse(new DefaultSmtpResponse(454)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(454)), null
         ));
     }
 
