@@ -1,10 +1,7 @@
 package net.silve.smtpc.example;
 
 import net.silve.smtpc.SmtpClient;
-import net.silve.smtpc.session.Builder;
-import net.silve.smtpc.session.ListMessageFactory;
-import net.silve.smtpc.session.Message;
-import net.silve.smtpc.session.SmtpSession;
+import net.silve.smtpc.session.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,11 +28,12 @@ public class HelloWorldList {
         byte[] contentBytes = HelloWorldList.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession(HOST, PORT);
+        SmtpSession session = SmtpSession.newInstance(HOST, PORT);
 
         List<Message> messages = IntStream.range(0, NUMBER_OF_MESSAGES).mapToObj(value -> new Message().setSender(SENDER)
                 .setRecipient(RECIPIENT)
                 .setChunks(Builder.chunks(contentBytes).iterator())).collect(Collectors.toList());
+
         session.setGreeting("greeting.tld")
                 .setMessageFactory(new ListMessageFactory(messages))
                 .setListener(new LogListener());

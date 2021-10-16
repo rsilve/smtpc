@@ -4,9 +4,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.Promise;
 import net.silve.smtpc.SmtpClient;
 import net.silve.smtpc.client.Config;
-import net.silve.smtpc.session.Builder;
-import net.silve.smtpc.session.Message;
-import net.silve.smtpc.session.SmtpSession;
+import net.silve.smtpc.session.*;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +48,7 @@ public class Concurrent {
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
             executors.schedule(() -> {
                         LogListener logListener = new LogListener();
-                        final SmtpSession session = new SmtpSession(HOST, PORT);
+                        final SmtpSession session = SmtpSession.newInstance(HOST, PORT);
                         session.setGreeting("greeting.tld")
                                 .setMessageFactory(
                                         new Message().setSender(SENDER)
@@ -58,8 +56,7 @@ public class Concurrent {
                                                 .setChunks(Builder.chunks(contentBytes).iterator())
                                                 .factory()
                                 )
-                                .setListener(logListener)
-                                .setExtendedHelo(false);
+                                .setListener(logListener);
                         client.run(session).addListener(future -> {
                             int step = max.decrementAndGet();
                             if (step <= 0) {

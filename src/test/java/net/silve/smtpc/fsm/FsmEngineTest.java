@@ -3,7 +3,6 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -105,7 +104,7 @@ class FsmEngineTest {
         };
 
         FsmEngine engine = new FsmEngine(testState)
-                .applySession(new SmtpSession("host", 25)
+                .applySession(SmtpSession.newInstance("host", 25)
                         .setExtendedHelo(true),
                         new Message().setRecipient("recipient"));
         engine.notifyRcpt();

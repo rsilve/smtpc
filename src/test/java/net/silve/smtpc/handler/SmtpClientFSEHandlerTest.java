@@ -5,10 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.*;
-import net.silve.smtpc.session.DefaultSmtpSessionListener;
-import net.silve.smtpc.session.ListMessageFactory;
-import net.silve.smtpc.session.Message;
-import net.silve.smtpc.session.SmtpSession;
+import net.silve.smtpc.session.*;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -22,7 +19,7 @@ class SmtpClientFSEHandlerTest {
     void shouldHandleBasicSession() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -68,7 +65,7 @@ class SmtpClientFSEHandlerTest {
     void shouldHandleBasicSessionWith2Rcpt() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -118,7 +115,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleSessionWithExtendedGreeting() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -161,7 +158,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleSessionWithExtendedGreetingAndFallBack() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -208,7 +205,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleSessionWithStartTls() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -242,7 +239,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleErrorAtConnectSession() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -266,7 +263,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleErrorAtWrite() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -299,7 +296,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleErrorAtWriteOnContent() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -350,7 +347,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleErrorAtWriteOnLastContent() {
         RecyclableSmtpContent content = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -401,7 +398,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleRejectAtHELO() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -430,7 +427,7 @@ class SmtpClientFSEHandlerTest {
     @Test
     void shouldHandleRejectAtEHLO() {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")
@@ -461,7 +458,7 @@ class SmtpClientFSEHandlerTest {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new ListMessageFactory(new Message()
                                 .setSender("sender")

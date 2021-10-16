@@ -1,8 +1,6 @@
 package net.silve.smtpc.client;
 
 import io.netty.channel.embedded.EmbeddedChannel;
-import io.netty.handler.codec.smtp.DefaultSmtpRequest;
-import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
@@ -15,7 +13,7 @@ class ConnectionListenerTest {
 
     @Test
     void shouldHandleRequestNotification() {
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("sender")

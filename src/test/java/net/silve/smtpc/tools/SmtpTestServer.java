@@ -93,6 +93,6 @@ public class SmtpTestServer {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        new SmtpTestServer().run(SmtpTestServer::startTlsResponses);
+        new SmtpTestServer().run(SmtpTestServer::basicResponses);
     }
 }

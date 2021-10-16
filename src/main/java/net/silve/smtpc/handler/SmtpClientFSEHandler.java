@@ -139,14 +139,14 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case MAIL:
-                String sender = String.format("FROM:<%s>", this.message.getSender());
+                String sender = "FROM:<" + this.message.getSender() + ">";
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, AsciiString.of(sender)));
                 break;
 
             case RCPT:
                 String rcpt = this.message.nextRecipient();
                 engine.notifyRcpt();
-                String recipient = String.format("TO:<%s>", rcpt);
+                String recipient = "TO:<" + rcpt + ">";
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, AsciiString.of(recipient)));
                 break;
 

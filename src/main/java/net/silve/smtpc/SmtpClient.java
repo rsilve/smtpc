@@ -60,6 +60,7 @@ public class SmtpClient {
         futureConnection.addListener(new ConnectionListener(session));
         futureConnection.channel().closeFuture().addListener(future -> {
             session.notifyCompleted();
+            session.recycle();
             promiseClosed.setSuccess(null);
         });
         return promiseClosed;

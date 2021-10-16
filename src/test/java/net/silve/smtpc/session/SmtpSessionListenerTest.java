@@ -24,7 +24,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -45,7 +45,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleRequestNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -63,7 +63,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleRequestNotification002() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -81,7 +81,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleContentNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -104,7 +104,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleWriteErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession("host", 25)
+        SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -134,7 +134,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleConnectNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
+        SmtpSession session = SmtpSession.newInstance(
                 "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
@@ -146,7 +146,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleConnectErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
+        SmtpSession session = SmtpSession.newInstance(
                 "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
@@ -166,7 +166,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleErrorResponseNotification() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
+        RecyclableSmtpSession session = new RecyclableSmtpSession(
                 "host", 25,
                 new DefaultSmtpRequest(SmtpCommand.MAIL, "from"));
         session.setListener(listener);
@@ -185,7 +185,7 @@ class SmtpSessionListenerTest {
     @Test
     void shouldHandleException() {
         TestSessionListener listener = new TestSessionListener();
-        SmtpSession session = new SmtpSession(
+        RecyclableSmtpSession session = new RecyclableSmtpSession(
                 "host", 25,
                 new DefaultSmtpRequest(SmtpCommand.MAIL, "from")) {
             @Override

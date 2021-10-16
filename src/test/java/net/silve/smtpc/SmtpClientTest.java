@@ -3,10 +3,7 @@ package net.silve.smtpc;
 import io.netty.channel.ChannelFuture;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.example.HelloWorld;
-import net.silve.smtpc.session.Builder;
-import net.silve.smtpc.session.DefaultSmtpSessionListener;
-import net.silve.smtpc.session.Message;
-import net.silve.smtpc.session.SmtpSession;
+import net.silve.smtpc.session.*;
 import net.silve.smtpc.tools.SmtpTestServer;
 import net.silve.smtpc.tools.TrustAllX509TrustManager;
 import org.junit.jupiter.api.*;
@@ -46,7 +43,7 @@ class SmtpClientTest {
     @Test
     void shouldAvoidInvalidSession() throws SSLException {
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession("", 25);
+        SmtpSession session = SmtpSession.newInstance("", 25);
         assertThrows(IllegalArgumentException.class, () -> client.run(session));
     }
 
@@ -54,7 +51,7 @@ class SmtpClientTest {
     @Test
     void shouldAvoidInvalidSession002() throws SSLException {
         SmtpClient client = new SmtpClient();
-        SmtpSession session = new SmtpSession(null, 25);
+        SmtpSession session = SmtpSession.newInstance(null, 25);
         assertThrows(IllegalArgumentException.class, () -> client.run(session));
     }
 
@@ -62,7 +59,7 @@ class SmtpClientTest {
     void shouldHandleConnectionError() throws Exception {
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
-        SmtpSession session = new SmtpSession("localhost", 2526)
+        SmtpSession session = SmtpSession.newInstance("localhost", 2526)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -82,7 +79,7 @@ class SmtpClientTest {
     void shouldSendEmail() throws Exception {
         TestListener listener = new TestListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
-        SmtpSession session = new SmtpSession("localhost", 2525)
+        SmtpSession session = SmtpSession.newInstance("localhost", 2525)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
@@ -104,7 +101,7 @@ class SmtpClientTest {
     void shouldHandleTLSError() throws Exception {
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
-        SmtpSession session = new SmtpSession("localhost", 2525)
+        SmtpSession session = SmtpSession.newInstance("localhost", 2525)
                 .setMessageFactory(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")

@@ -13,7 +13,7 @@ Very basic example :
 byte[] contentBytes = /* get mime message as bytes */
 
 SmtpClient client = new SmtpClient();
-SmtpSession session = new SmtpSession(HOST, PORT);
+RecyclableSmtpSession session = new RecyclableSmtpSession(HOST, PORT);
 session.setGreeting("greeting.tld")
         .setSender(SENDER)
         .setRecipient(RECIPIENT)

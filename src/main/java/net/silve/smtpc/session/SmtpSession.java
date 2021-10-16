@@ -1,17 +1,35 @@
 package net.silve.smtpc.session;
 
-import io.netty.handler.codec.smtp.*;
+import io.netty.handler.codec.smtp.SmtpRequest;
+import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.AsciiString;
+import io.netty.util.Recycler;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 public class SmtpSession {
 
-    private static final SmtpSessionListener defaultListener = new DefaultSmtpSessionListener();
+    private static final Recycler<SmtpSession> RECYCLER = new Recycler<>() {
+        protected SmtpSession newObject(Handle<SmtpSession> handle) {
+            return new SmtpSession(handle);
+        }
+    };
+
+    public static SmtpSession newInstance(String host, int port) {
+        SmtpSession obj = RECYCLER.get();
+        obj.host = host;
+        obj.port = port;
+        obj.setListener(new DefaultSmtpSessionListener());
+        return obj;
+    }
+
+    private final Recycler.Handle<SmtpSession> handle;
+
     private static final MessageFactory DEFAULT_MESSAGE_FACTORY = new EmptyMessageFactory();
 
-    private final String host;
-    private final int port;
+    private String host;
+    private int port;
 
     private boolean extendedHelo = true;
     private CharSequence greeting = AsciiString.cached("localhost");
@@ -19,42 +37,47 @@ public class SmtpSession {
     private MessageFactory messageFactory = DEFAULT_MESSAGE_FACTORY;
 
     private SmtpSessionListener listener;
+    private String id = UUID.randomUUID().toString();
 
-    private final String id = UUID.randomUUID().toString();
 
-    public SmtpSession(String host, int port) {
-        this(host, port, null);
+    private SmtpSession(Recycler.Handle<SmtpSession> handle) {
+        this.handle = handle;
     }
 
-    public SmtpSession(String host, int port, SmtpSessionListener listener) {
-        this.host = host;
-        this.port = port;
-        setListener(listener);
-
+    public void recycle() {
+        this.host = null;
+        this.port = 0;
+        this.extendedHelo = true;
+        this.greeting = AsciiString.cached("localhost");
+        this.messageFactory = DEFAULT_MESSAGE_FACTORY;
+        this.listener = new DefaultSmtpSessionListener();
+        this.id = UUID.randomUUID().toString();
+        handle.recycle(this);
     }
 
+    
     public String getId() {
         return id;
     }
-
+    
     public String getHost() {
         return host;
     }
 
-
+    
     public int getPort() {
         return port;
     }
-
+    
     public boolean useExtendedHelo() {
         return extendedHelo;
     }
-
+    
     public SmtpSession setExtendedHelo(boolean extendedHelo) {
         this.extendedHelo = extendedHelo;
         return this;
     }
-
+    
     public CharSequence getGreeting() {
         return greeting;
     }
@@ -70,7 +93,7 @@ public class SmtpSession {
     }
 
     public SmtpSession setListener(SmtpSessionListener listener) {
-        this.listener = Objects.isNull(listener) ? defaultListener : listener;
+        this.listener = Objects.isNull(listener) ? new DefaultSmtpSessionListener() : listener;
         return this;
     }
 
@@ -114,10 +137,11 @@ public class SmtpSession {
         return messageFactory.next();
     }
 
+
     private static class EmptyMessageFactory implements MessageFactory {
-        @Override
         public Message next() {
             return null;
         }
     }
+
 }
