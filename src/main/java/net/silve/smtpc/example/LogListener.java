@@ -1,38 +1,37 @@
 package net.silve.smtpc.example;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
-import net.silve.smtpc.session.DefaultSmtpSessionListener;
+import net.silve.smtpc.session.SmtpSessionListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LogListener extends DefaultSmtpSessionListener {
+public class LogListener implements SmtpSessionListener {
 
     private static final Logger logger = LoggerFactory.getInstance();
-    private final long globalStartedAt = System.nanoTime();
+    private final Map<String,Long> globalStartedAt = new HashMap<>();
 
     @Override
     public void onConnect(String host, int port) {
-        super.onConnect(host, port);
         logger.log(Level.FINE, () -> String.format("=== connected to %s:%d", host, port));
     }
 
     @Override
     public void onStart(String host, int port, String id) {
-        super.onStart(host, port, id);
+        globalStartedAt.put(id, System.nanoTime());
         logger.log(Level.FINE, () -> String.format("=== start session %s", id));
     }
 
     @Override
     public void onError(Throwable throwable) {
-        super.onError(throwable);
         logger.log(Level.WARNING, throwable, () -> String.format("!!! %s", throwable.getMessage()));
     }
 
     @Override
     public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
-        super.onRequest(command, parameters);
         logger.log(Level.FINE, () ->
                 String.format(">>> %s %s",
                         command.name(),
@@ -42,22 +41,21 @@ public class LogListener extends DefaultSmtpSessionListener {
 
     @Override
     public void onData(int size) {
-        super.onData(size);
         logger.log(Level.FINE, () -> ">>> ... (hidden content)");
         logger.log(Level.FINE, () -> String.format("=== message size %d", size));
     }
 
     @Override
     public void onCompleted(String id) {
-        super.onCompleted(id);
+        Long startedAt = globalStartedAt.get(id);
+        final long duration = startedAt != null && startedAt != 0 ? (System.nanoTime() - startedAt) / 1000000 : -1L;
+
         logger.log(Level.INFO,
-                () -> String.format("=== transaction completed for %s, duration = %dms, messages=%d",
-                        id, (System.nanoTime() - globalStartedAt) / 1000000, this.getCount()));
+                () -> String.format("=== transaction completed for %s, duration = %dms", id, duration));
     }
 
     @Override
     public void onResponse(int code, List<CharSequence> details) {
-        super.onResponse(code, details);
         logger.log(Level.FINE, () -> String.format("<<< %s %s",
                 code,
                 String.join("\r\n", details)));
@@ -65,7 +63,6 @@ public class LogListener extends DefaultSmtpSessionListener {
 
     @Override
     public void onStartTls() {
-        super.onStartTls();
         logger.log(Level.FINE, "=== StartTLS handshake completed");
     }
 }

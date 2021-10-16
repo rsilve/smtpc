@@ -23,13 +23,13 @@ public class Concurrent {
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
-    private static final int NUMBER_OF_MESSAGES = 1000;
-    private static final long DELAY_MILLIS = 50;
+    private static final int NUMBER_OF_MESSAGES = 100;
+    private static final long DELAY_MILLIS = 100;
 
     private static final Logger logger = LoggerFactory.getInstance();
 
     public static void main(String[] args) throws IOException {
-        LoggerFactory.configure(Level.ALL);
+        LoggerFactory.configure(Level.OFF);
 
         byte[] contentBytes = Concurrent.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
@@ -44,10 +44,9 @@ public class Concurrent {
             client.shutdownGracefully();
             executors.shutdownGracefully();
         });
-
+        LogListener logListener = new LogListener();
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
             executors.schedule(() -> {
-                        LogListener logListener = new LogListener();
                         final SmtpSession session = SmtpSession.newInstance(HOST, PORT);
                         session.setGreeting("greeting.tld")
                                 .setMessageFactory(
@@ -56,7 +55,8 @@ public class Concurrent {
                                                 .setChunks(Builder.chunks(contentBytes).iterator())
                                                 .factory()
                                 )
-                                .setListener(logListener);
+                                .setListener(logListener)
+                                .setExtendedHelo(false);
                         client.run(session).addListener(future -> {
                             int step = max.decrementAndGet();
                             if (step <= 0) {
