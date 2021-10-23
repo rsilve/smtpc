@@ -7,18 +7,20 @@ It only covers the management of the SMTP protocol.
 
 ## Usage
 
-Very basic example :
+A very basic example :
 
 ```
 byte[] contentBytes = /* get mime message as bytes */
 
 SmtpClient client = new SmtpClient();
-RecyclableSmtpSession session = new RecyclableSmtpSession(HOST, PORT);
+SmtpSession session = SmtpSession.newInstance(HOST, PORT);
 session.setGreeting("greeting.tld")
-        .setSender(SENDER)
-        .setRecipient(RECIPIENT)
-        .setChunks(Builder.chunks(contentBytes).iterator())
-        .setListener(new LogListener());
+        .setMessageFactory(
+                new Message().setSender(SENDER)
+                        .setRecipient(RECIPIENT)
+                        .setChunks(Builder.chunks(contentBytes).iterator())
+                        .factory()
+        );
 
 client.runAndClose(session);
 ```
