@@ -5,6 +5,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.*;
 import io.netty.util.AsciiString;
+import net.silve.smtpc.client.Config;
 import net.silve.smtpc.fsm.FsmActionListener;
 import net.silve.smtpc.fsm.FsmEngine;
 import net.silve.smtpc.fsm.FsmEvent;
@@ -26,10 +27,11 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private final FsmEngine engine = new FsmEngine();
 
-    public SmtpClientFSEHandler(SmtpSession session) {
+    public SmtpClientFSEHandler(SmtpSession session, Config config) {
         this.session = session;
         updateEngineContext();
         engine.setActionListener(this);
+        engine.useTls(config.useTls());
     }
 
     private void updateEngineContext() {

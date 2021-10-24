@@ -10,6 +10,7 @@ public class FsmEngineContext {
     private boolean extendedGreeting;
     private boolean allMessageCompleted = true;
     private int rcptCount;
+    private boolean useTls = true;
 
     public boolean isTlsActive() {
         return tlsActive;
@@ -20,6 +21,14 @@ public class FsmEngineContext {
         return this;
     }
 
+    public boolean useTls() {
+        return useTls;
+    }
+
+    public FsmEngineContext setUseTls(boolean useTls) {
+        this.useTls = useTls;
+        return this;
+    }
 
     public boolean isExtendedGreeting() {
         return extendedGreeting;

@@ -28,4 +28,8 @@ public class SslUtils {
     public static SslContext getSslCtx() {
         return sslCtx;
     }
+
+    public static void reset() {
+        sslCtx = null;
+    }
 }

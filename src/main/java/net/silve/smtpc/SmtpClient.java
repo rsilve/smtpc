@@ -12,21 +12,41 @@ import net.silve.smtpc.client.Config;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.SmtpChannelInitializer;
 import net.silve.smtpc.session.SmtpSession;
+import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.SSLException;
 import java.util.Objects;
 
+/**
+ * The class for SMTP client. The instances of this class use a Config object to define some constants during the
+ * execution of SMTP sessions.  The methods run and runAndClose will execute the session as defined by the
+ * SmtpSession object. These last two methods are asynchronous and several sessions can be executed concurrently.
+ *
+ *
+ *
+ */
 public class SmtpClient {
 
     private final Bootstrap bootstrap;
     private final Promise<Void> promiseShutdownRequested;
     private final Promise<Void> promiseShutdownCompleted;
+    private final Config config;
 
+    /**
+     * Default constructor. Use a default Config.
+     * @throws SSLException TLS throw an error durign configuration
+     */
     public SmtpClient() throws SSLException {
         this(new Config());
     }
 
-    public SmtpClient(Config config) throws SSLException {
+    /**
+     * This constructor use the Config provided.
+     * @param config configuration of the SMTP connection
+     * @throws SSLException TLS throw an error durign configuration
+     */
+    public SmtpClient(@NotNull Config config) throws SSLException {
+        this.config = config;
 
         EventLoopGroup group = new NioEventLoopGroup(config.getNumberOfThread());
 
@@ -46,18 +66,14 @@ public class SmtpClient {
     }
 
 
-    public Promise<Void> run(final SmtpSession session) {
-        if (Objects.isNull(session)) {
-            throw new IllegalArgumentException("Session must not be null");
-        }
-
+    public Promise<Void> run(@NotNull final SmtpSession session) {
         if (Objects.isNull(session.getHost()) || session.getHost().isBlank()) {
             throw new IllegalArgumentException("Host must be defined");
         }
 
         final Promise<Void> promiseClosed = GlobalEventExecutor.INSTANCE.next().newPromise();
         ChannelFuture futureConnection = bootstrap.connect(session.getHost(), session.getPort());
-        futureConnection.addListener(new ConnectionListener(session));
+        futureConnection.addListener(new ConnectionListener(session, config));
         futureConnection.channel().closeFuture().addListener(future -> {
             session.notifyCompleted();
             session.recycle();

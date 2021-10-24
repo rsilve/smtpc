@@ -19,8 +19,8 @@ import java.util.logging.Logger;
  */
 public class Concurrent {
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 2525;
+    private static final String HOST = "home.silve.net";
+    private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
     private static final int NUMBER_OF_MESSAGES = 100;
@@ -55,8 +55,7 @@ public class Concurrent {
                                                 .setChunks(Builder.chunks(contentBytes).iterator())
                                                 .factory()
                                 )
-                                .setListener(logListener)
-                                .setExtendedHelo(false);
+                                .setListener(logListener);
                         client.run(session).addListener(future -> {
                             int step = max.decrementAndGet();
                             if (step <= 0) {

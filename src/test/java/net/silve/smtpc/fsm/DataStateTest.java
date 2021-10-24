@@ -19,10 +19,10 @@ class DataStateTest {
     void shouldReturnNextState() {
         State state = new DataState();
         assertEquals(CONTENT_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354)), new FsmEngineContext()
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), new FsmEngineContext()
         ));
     }
 

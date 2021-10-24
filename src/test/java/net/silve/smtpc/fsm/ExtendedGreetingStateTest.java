@@ -18,14 +18,14 @@ class ExtendedGreetingStateTest {
     void shouldReturnNextState() {
         State state = new ExtendedGreetingState();
         assertEquals(MAIL_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()
         ));
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(502)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(502)), new FsmEngineContext()
         ));
 
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), new FsmEngineContext()
         ));
 
         assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
@@ -37,7 +37,13 @@ class ExtendedGreetingStateTest {
         assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
-                null
+                new FsmEngineContext()
+        ));
+
+        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+                FsmEvent.newInstance()
+                        .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
+                new FsmEngineContext().setUseTls(false)
         ));
 
         assertEquals(MAIL_STATE, state.nextStateFromEvent(

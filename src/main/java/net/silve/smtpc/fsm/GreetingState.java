@@ -10,7 +10,7 @@ import static net.silve.smtpc.fsm.States.QUIT_STATE;
 class GreetingState extends AbstractState {
 
     @Override
-    public State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
         if (response.code() == 250) {
             return MAIL_STATE;
         }

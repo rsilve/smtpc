@@ -23,10 +23,10 @@ class RcptStateTest {
                 new FsmEngineContext().setMessage(new Message().setRecipient("recipient"))
         ));
         assertEquals(DATA_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), new FsmEngineContext()
         ));
     }
 

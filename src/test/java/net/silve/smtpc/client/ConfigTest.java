@@ -17,6 +17,7 @@ class ConfigTest {
         assertEquals(5 * 60 * 1000, config.getWriteTimeoutMillis());
         assertEquals(60000, config.getConnectTimeoutMillis());
         assertNull(config.getTrustManager());
+        assertTrue(config.useTls());
     }
 
 
@@ -37,6 +38,13 @@ class ConfigTest {
         assertEquals(1, config.getWriteTimeoutMillis());
         assertEquals(1, config.getConnectTimeoutMillis());
         assertNotNull(config.getTrustManager());
+    }
+
+    @Test
+    void shouldHaveUseTlsSetter() {
+        Config config = new Config();
+        config.useTls(false);
+        assertFalse(config.useTls());
     }
 
 }

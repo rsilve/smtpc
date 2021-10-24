@@ -3,19 +3,17 @@ package net.silve.smtpc.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 import static net.silve.smtpc.fsm.States.*;
 
 class InitState extends AbstractState {
 
     @Override
-    public State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
         if (response.code() != 220) {
             return QUIT_STATE;
         }
 
-        return Objects.nonNull(context) && context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
+        return context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
     }
 
     @Override

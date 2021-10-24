@@ -14,6 +14,11 @@ public abstract class AbstractState implements State {
         if (Objects.isNull(event)) {
             return CLOSING_TRANSMISSION_STATE;
         }
+
+        if (Objects.isNull(context)) {
+            return CLOSING_TRANSMISSION_STATE;
+        }
+
         SmtpResponse response = event.getResponse();
         if (Objects.isNull(response)) {
             return CLOSING_TRANSMISSION_STATE;
@@ -32,5 +37,5 @@ public abstract class AbstractState implements State {
     }
 
 
-    protected abstract State nextState(@NotNull SmtpResponse response, FsmEngineContext context);
+    protected abstract State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context);
 }

@@ -14,7 +14,7 @@ class ExtendedGreetingState extends AbstractState {
     private static final CharSequence STARTTLS = AsciiString.cached("STARTTLS");
 
     @Override
-    public State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
         State stateFromExtensions = stateFromExtensions(response, context);
         if (Objects.nonNull(stateFromExtensions)) {
             return stateFromExtensions;
@@ -36,8 +36,8 @@ class ExtendedGreetingState extends AbstractState {
     }
 
 
-    public State stateFromExtensions(SmtpResponse response, FsmEngineContext context) {
-        if (Objects.isNull(context) || !context.isTlsActive()) {
+    public State stateFromExtensions(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
+        if (context.useTls() && !context.isTlsActive()) {
             final boolean startTlsSupported = AsciiString.containsContentEqualsIgnoreCase(response.details(), STARTTLS);
             if (startTlsSupported) {
                 return STARTTLS_STATE;

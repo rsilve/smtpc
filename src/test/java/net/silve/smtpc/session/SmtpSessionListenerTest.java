@@ -7,6 +7,7 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.smtpc.client.Config;
 import net.silve.smtpc.fsm.SmtpCommandAction;
 import net.silve.smtpc.handler.ConnectionListener;
 import net.silve.smtpc.handler.RecyclableLastSmtpContent;
@@ -32,7 +33,7 @@ class SmtpSessionListenerTest {
                                 .factory()
                 );
         session.setListener(listener);
-        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         DefaultSmtpResponse response = new DefaultSmtpResponse(250, "Ok");
         assertFalse(channel.writeInbound(response));
@@ -53,7 +54,7 @@ class SmtpSessionListenerTest {
                                 .factory()
                 );
         session.setListener(listener);
-        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertTrue(channel.finish());
@@ -71,7 +72,7 @@ class SmtpSessionListenerTest {
                                 .factory()
                 );
         session.setListener(listener);
-        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         handler.onAction(SmtpCommandAction.MAIL, null);
         assertTrue(channel.finish());
@@ -93,7 +94,7 @@ class SmtpSessionListenerTest {
                                 .factory()
                 );
         session.setListener(listener);
-        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         handler.onAction(SmtpCommandAction.DATA_CONTENT, null);
         assertTrue(channel.finish());
@@ -112,7 +113,7 @@ class SmtpSessionListenerTest {
                                 .factory()
                 );
         session.setListener(listener);
-        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session);
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config());
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
             @Override
             public boolean acceptOutboundMessage(Object msg) {
@@ -138,7 +139,7 @@ class SmtpSessionListenerTest {
                 "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
-        channel.newSucceededFuture().addListener(new ConnectionListener(session));
+        channel.newSucceededFuture().addListener(new ConnectionListener(session, new Config()));
         assertTrue(listener.connect);
     }
 
@@ -150,7 +151,7 @@ class SmtpSessionListenerTest {
                 "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
-        channel.newFailedFuture(new RuntimeException("rr")).addListener(new ConnectionListener(session));
+        channel.newFailedFuture(new RuntimeException("rr")).addListener(new ConnectionListener(session, new Config()));
         assertFalse(listener.connect);
         assertTrue(listener.error instanceof RuntimeException);
         assertEquals("rr", listener.error.getMessage());

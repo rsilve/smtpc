@@ -56,6 +56,11 @@ public class FsmEngine {
         return this;
     }
 
+    public FsmEngine useTls(boolean useTls) {
+        context.setUseTls(useTls);
+        return this;
+    }
+
     public void notifyRcpt() {
         context.decrRcptCount();
     }

@@ -8,7 +8,7 @@ import static net.silve.smtpc.fsm.States.RCPT_STATE;
 
 public class MailState  extends AbstractState {
     @Override
-    public State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
         if (response.code() == 250) {
             return RCPT_STATE;
         }

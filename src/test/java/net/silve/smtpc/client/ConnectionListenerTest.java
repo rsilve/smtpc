@@ -21,7 +21,7 @@ class ConnectionListenerTest {
                                 .factory()
                 );
         EmbeddedChannel channel = new EmbeddedChannel();
-        channel.newSucceededFuture().addListener(new ConnectionListener(session));
+        channel.newSucceededFuture().addListener(new ConnectionListener(session, new Config()));
         assertEquals(2, channel.pipeline().names().size());
         assertEquals(SMTP_HANDLER_HANDLER_NAME, channel.pipeline().names().get(0));
     }

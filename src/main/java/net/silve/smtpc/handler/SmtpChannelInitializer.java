@@ -28,7 +28,9 @@ public class SmtpChannelInitializer extends ChannelInitializer<Channel> {
 
     public SmtpChannelInitializer(Config config) throws SSLException {
         this.config = config;
-        SslUtils.configureSslCtx(config.getTrustManager());
+        if (config.useTls()) {
+            SslUtils.configureSslCtx(config.getTrustManager());
+        }
     }
 
     @Override

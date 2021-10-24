@@ -9,7 +9,7 @@ import static net.silve.smtpc.fsm.States.TLS_HANDSHAKE_STATE;
 public class StartTlsState extends AbstractState {
 
     @Override
-    public State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
         int code = response.code();
 
         if (code == 220) {

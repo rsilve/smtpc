@@ -20,10 +20,10 @@ class RsetStateTest {
         State state = new RsetState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
-                null
+                new FsmEngineContext()
         ));
         assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), null
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501)), new FsmEngineContext()
         ));
     }
 

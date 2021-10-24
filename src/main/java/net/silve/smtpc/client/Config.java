@@ -14,6 +14,8 @@ public class Config {
 
     private TrustManager trustManager;
 
+    private boolean useTls = true;
+
     public int getNumberOfThread() {
         return numberOfThread;
     }
@@ -65,6 +67,15 @@ public class Config {
 
     public Config setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
+        return this;
+    }
+
+    public boolean useTls() {
+        return useTls;
+    }
+
+    public Config useTls(boolean useTls) {
+        this.useTls = useTls;
         return this;
     }
 }

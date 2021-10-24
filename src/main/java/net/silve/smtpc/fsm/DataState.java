@@ -8,7 +8,7 @@ import static net.silve.smtpc.fsm.States.QUIT_STATE;
 
 public class DataState extends AbstractState {
     @Override
-    protected State nextState(@NotNull SmtpResponse response, FsmEngineContext context) {
+    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
         if (response.code() == 354) {
             return CONTENT_STATE;
         }
