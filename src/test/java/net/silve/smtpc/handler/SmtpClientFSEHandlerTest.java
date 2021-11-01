@@ -536,7 +536,7 @@ class SmtpClientFSEHandlerTest {
 
 
     @Test
-    void shouldHandleBasicSessionWithTLS() throws SSLException {
+    void shouldHandleBasicSessionWithoutTLS() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
@@ -548,7 +548,7 @@ class SmtpClientFSEHandlerTest {
                                 .factory()
                 )
                 .setExtendedHelo(false);
-        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config().useTls(true));
+        SmtpClientFSEHandler handler = new SmtpClientFSEHandler(session, new Config().useTls(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
