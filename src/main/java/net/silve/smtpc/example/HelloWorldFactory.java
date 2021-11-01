@@ -19,7 +19,7 @@ public class HelloWorldFactory {
     private static final String RECIPIENT = "devnull@silve.net";
     private static final int NUMBER_OF_MESSAGES = 10;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         LoggerFactory.configure(Level.INFO);
 
         SmtpClient client = new SmtpClient();
