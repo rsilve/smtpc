@@ -9,6 +9,7 @@ import net.silve.smtpc.client.Config;
 import net.silve.smtpc.session.*;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.SSLException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SmtpClientFSEHandlerTest {
 
     @Test
-    void shouldHandleBasicSession() {
+    void shouldHandleBasicSession() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
@@ -63,7 +64,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleBasicSessionWith2Rcpt() {
+    void shouldHandleBasicSessionWith2Rcpt() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
@@ -114,7 +115,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleSessionWithExtendedGreeting() {
+    void shouldHandleSessionWithExtendedGreeting() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -157,7 +158,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleSessionWithExtendedGreetingAndFallBack() {
+    void shouldHandleSessionWithExtendedGreetingAndFallBack() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -204,7 +205,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleSessionWithStartTls() {
+    void shouldHandleSessionWithStartTls() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -238,7 +239,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleErrorAtConnectSession() {
+    void shouldHandleErrorAtConnectSession() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -262,7 +263,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleErrorAtWrite() {
+    void shouldHandleErrorAtWrite() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -295,7 +296,7 @@ class SmtpClientFSEHandlerTest {
 
 
     @Test
-    void shouldHandleErrorAtWriteOnContent() {
+    void shouldHandleErrorAtWriteOnContent() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -346,7 +347,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleErrorAtWriteOnLastContent() {
+    void shouldHandleErrorAtWriteOnLastContent() throws SSLException {
         RecyclableSmtpContent content = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -397,7 +398,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleRejectAtHELO() {
+    void shouldHandleRejectAtHELO() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -426,7 +427,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleRejectAtEHLO() {
+    void shouldHandleRejectAtEHLO() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -455,7 +456,7 @@ class SmtpClientFSEHandlerTest {
     }
 
     @Test
-    void shouldHandleBasicSessionMultiMessage() {
+    void shouldHandleBasicSessionMultiMessage() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();

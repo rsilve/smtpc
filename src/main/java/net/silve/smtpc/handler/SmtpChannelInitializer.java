@@ -10,9 +10,7 @@ import io.netty.handler.codec.smtp.SmtpResponseDecoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import net.silve.smtpc.client.Config;
-import net.silve.smtpc.handler.ssl.SslUtils;
 
-import javax.net.ssl.SSLException;
 import java.util.concurrent.TimeUnit;
 
 public class SmtpChannelInitializer extends ChannelInitializer<Channel> {
@@ -26,11 +24,8 @@ public class SmtpChannelInitializer extends ChannelInitializer<Channel> {
     private static final ByteBuf CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{13, 10});
     private final Config config;
 
-    public SmtpChannelInitializer(Config config) throws SSLException {
+    public SmtpChannelInitializer(Config config) {
         this.config = config;
-        if (config.useTls()) {
-            SslUtils.configureSslCtx(config.getTrustManager());
-        }
     }
 
     @Override

@@ -15,6 +15,7 @@ import net.silve.smtpc.handler.RecyclableSmtpContent;
 import net.silve.smtpc.handler.SmtpClientFSEHandler;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.SSLException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SmtpSessionListenerTest {
 
     @Test
-    void shouldHandleNotification() {
+    void shouldHandleNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -44,7 +45,7 @@ class SmtpSessionListenerTest {
 
 
     @Test
-    void shouldHandleRequestNotification() {
+    void shouldHandleRequestNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -62,7 +63,7 @@ class SmtpSessionListenerTest {
     }
 
     @Test
-    void shouldHandleRequestNotification002() {
+    void shouldHandleRequestNotification002() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -80,7 +81,7 @@ class SmtpSessionListenerTest {
     }
 
     @Test
-    void shouldHandleContentNotification() {
+    void shouldHandleContentNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -103,7 +104,7 @@ class SmtpSessionListenerTest {
     }
 
     @Test
-    void shouldHandleWriteErrorNotification() {
+    void shouldHandleWriteErrorNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
                 .setMessageFactory(
@@ -157,56 +158,6 @@ class SmtpSessionListenerTest {
         assertEquals("rr", listener.error.getMessage());
     }
 
-
-    /*
-
-
-
-
-
-    @Test
-    void shouldHandleErrorResponseNotification() {
-        TestSessionListener listener = new TestSessionListener();
-        RecyclableSmtpSession session = new RecyclableSmtpSession(
-                "host", 25,
-                new DefaultSmtpRequest(SmtpCommand.MAIL, "from"));
-        session.setListener(listener);
-        SmtpClientHandler handler = new SmtpClientHandler(session);
-        EmbeddedChannel channel = new EmbeddedChannel(handler);
-        DefaultSmtpResponse response = new DefaultSmtpResponse(400, "Ok");
-        assertFalse(channel.writeInbound(response));
-        assertTrue(channel.finish());
-        assertTrue(listener.error instanceof SmtpSessionException);
-        SmtpSessionException ex = (SmtpSessionException) listener.error;
-        assertEquals(response, ex.getResponse());
-    }
-
-
-
-    @Test
-    void shouldHandleException() {
-        TestSessionListener listener = new TestSessionListener();
-        RecyclableSmtpSession session = new RecyclableSmtpSession(
-                "host", 25,
-                new DefaultSmtpRequest(SmtpCommand.MAIL, "from")) {
-            @Override
-            public Object next() {
-                throw new RuntimeException("ee");
-            }
-        };
-        session.setListener(listener);
-        SmtpClientHandler handler = new SmtpClientHandler(session);
-        EmbeddedChannel channel = new EmbeddedChannel(handler);
-        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
-        assertFalse(channel.finish());
-
-        assertTrue(listener.error instanceof RuntimeException);
-        assertEquals("ee", listener.error.getMessage());
-    }
-
-
-
-*/
     static class TestSessionListener extends DefaultSmtpSessionListener {
 
         private SmtpCommand command;

@@ -10,8 +10,7 @@ import javax.net.ssl.SSLEngine;
 
 public class StartTlsHandler {
 
-    public static Future<Channel> handleStartTlsHandshake(ChannelHandlerContext ctx) {
-        SslContext sslCtx = SslUtils.getSslCtx();
+    public static Future<Channel> handleStartTlsHandshake(ChannelHandlerContext ctx, SslContext sslCtx) {
         final SSLEngine sslEngine = sslCtx.newEngine(ctx.channel().alloc());
         sslEngine.setUseClientMode(true);
         SslHandler sslHandler = new SslHandler(sslEngine, false);

@@ -4,17 +4,20 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.*;
+import io.netty.handler.ssl.SslContext;
 import io.netty.util.AsciiString;
 import net.silve.smtpc.client.Config;
 import net.silve.smtpc.fsm.FsmActionListener;
 import net.silve.smtpc.fsm.FsmEngine;
 import net.silve.smtpc.fsm.FsmEvent;
 import net.silve.smtpc.fsm.SmtpCommandAction;
+import net.silve.smtpc.handler.ssl.SslUtils;
 import net.silve.smtpc.handler.ssl.StartTlsHandler;
 import net.silve.smtpc.session.Message;
 import net.silve.smtpc.session.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLException;
 import java.util.Objects;
 
 
@@ -26,12 +29,20 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
     private int size = 0;
 
     private final FsmEngine engine = new FsmEngine();
+    private SslContext sslCtx;
 
-    public SmtpClientFSEHandler(SmtpSession session, Config config) {
+    public SmtpClientFSEHandler(@NotNull SmtpSession session, @NotNull Config config) throws SSLException {
         this.session = session;
+        updateTLSContext(config);
         updateEngineContext();
         engine.setActionListener(this);
+    }
+
+    private void updateTLSContext(@NotNull Config config) throws SSLException {
         engine.useTls(config.useTls());
+        if (config.useTls()) {
+            this.sslCtx = SslUtils.createSslCtx(config.getTrustManager());
+        }
     }
 
     private void updateEngineContext() {
@@ -129,7 +140,7 @@ public class SmtpClientFSEHandler extends SimpleChannelInboundHandler<SmtpRespon
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpClientCommand.STARTTLS));
                 break;
             case TLS_HANDSHAKE:
-                StartTlsHandler.handleStartTlsHandshake(ctx).addListener(future -> {
+                StartTlsHandler.handleStartTlsHandshake(ctx, sslCtx).addListener(future -> {
                     if (future.isSuccess()) {
                         engine.tlsActive();
                         session.notifyStartTls();

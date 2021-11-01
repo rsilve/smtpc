@@ -14,7 +14,6 @@ import net.silve.smtpc.handler.SmtpChannelInitializer;
 import net.silve.smtpc.session.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
-import javax.net.ssl.SSLException;
 import java.util.Objects;
 
 /**
@@ -34,18 +33,16 @@ public class SmtpClient {
 
     /**
      * Default constructor. Use a default Config.
-     * @throws SSLException TLS throw an error durign configuration
      */
-    public SmtpClient() throws SSLException {
+    public SmtpClient() {
         this(new Config());
     }
 
     /**
      * This constructor use the Config provided.
      * @param config configuration of the SMTP connection
-     * @throws SSLException TLS throw an error durign configuration
      */
-    public SmtpClient(@NotNull Config config) throws SSLException {
+    public SmtpClient(@NotNull Config config) {
         this.config = config;
 
         EventLoopGroup group = new NioEventLoopGroup(config.getNumberOfThread());

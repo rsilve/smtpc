@@ -6,6 +6,8 @@ import net.silve.smtpc.client.Config;
 import net.silve.smtpc.session.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLException;
+
 public class ConnectionListener implements GenericFutureListener<ChannelFuture> {
 
     public static final String SMTP_HANDLER_HANDLER_NAME = "smtp handler";
@@ -19,7 +21,7 @@ public class ConnectionListener implements GenericFutureListener<ChannelFuture> 
     }
 
     @Override
-    public void operationComplete(ChannelFuture future) {
+    public void operationComplete(ChannelFuture future) throws SSLException {
         if (future.isSuccess()) {
             session.notifyConnect();
             future.channel().pipeline().addLast(SMTP_HANDLER_HANDLER_NAME, new SmtpClientFSEHandler(session, config));

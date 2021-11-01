@@ -11,25 +11,11 @@ public class SslUtils {
 
     private SslUtils() {}
 
-    private static SslContext sslCtx;
-
-    public static void configureSslCtx() throws SSLException {
-        configureSslCtx(null);
-    }
-
-    public static void configureSslCtx(TrustManager trustManager) throws SSLException {
+    public static SslContext createSslCtx(TrustManager trustManager) throws SSLException {
         if (Objects.isNull(trustManager)) {
-            sslCtx = SslContextBuilder.forClient().build();
+            return SslContextBuilder.forClient().build();
         } else {
-            sslCtx = SslContextBuilder.forClient().trustManager(trustManager).build();
+            return SslContextBuilder.forClient().trustManager(trustManager).build();
         }
-    }
-
-    public static SslContext getSslCtx() {
-        return sslCtx;
-    }
-
-    public static void reset() {
-        sslCtx = null;
     }
 }
