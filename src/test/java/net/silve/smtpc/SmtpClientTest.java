@@ -29,19 +29,13 @@ class SmtpClientTest {
     }
 
     @Test
-    void shouldHaveConstructor() throws SSLException {
+    void shouldHaveConstructor() {
         SmtpClient client = new SmtpClient();
         assertNotNull(client);
     }
 
     @Test
-    void shouldAvoidNullSession() throws SSLException {
-        SmtpClient client = new SmtpClient();
-        assertThrows(IllegalArgumentException.class, () -> client.run(null));
-    }
-
-    @Test
-    void shouldAvoidInvalidSession() throws SSLException {
+    void shouldAvoidInvalidSession() {
         SmtpClient client = new SmtpClient();
         SmtpSession session = SmtpSession.newInstance("", 25);
         assertThrows(IllegalArgumentException.class, () -> client.run(session));
@@ -49,7 +43,7 @@ class SmtpClientTest {
 
 
     @Test
-    void shouldAvoidInvalidSession002() throws SSLException {
+    void shouldAvoidInvalidSession002() {
         SmtpClient client = new SmtpClient();
         SmtpSession session = SmtpSession.newInstance(null, 25);
         assertThrows(IllegalArgumentException.class, () -> client.run(session));
