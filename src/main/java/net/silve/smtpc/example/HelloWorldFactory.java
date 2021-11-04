@@ -1,7 +1,10 @@
 package net.silve.smtpc.example;
 
+import net.silve.smtpc.SmtpContentBuilder;
 import net.silve.smtpc.SmtpClient;
-import net.silve.smtpc.session.*;
+import net.silve.smtpc.message.Message;
+import net.silve.smtpc.message.MessageFactory;
+import net.silve.smtpc.message.SmtpSession;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -56,7 +59,7 @@ public class HelloWorldFactory {
             if ((--this.count) >= 0) {
                 return new Message().setSender(SENDER)
                         .setRecipient(RECIPIENT)
-                        .setChunks(Builder.chunks(contentBytes).iterator());
+                        .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator());
             }
             return null;
         }

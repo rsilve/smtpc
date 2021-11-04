@@ -1,14 +1,15 @@
 package net.silve.smtpc;
 
 import io.netty.channel.ChannelFuture;
-import net.silve.smtpc.client.Config;
+import net.silve.smtpc.client.SmtpClientConfig;
 import net.silve.smtpc.example.HelloWorld;
-import net.silve.smtpc.session.*;
+import net.silve.smtpc.message.Message;
+import net.silve.smtpc.message.SmtpSession;
+import net.silve.smtpc.listener.*;
 import net.silve.smtpc.tools.SmtpTestServer;
 import net.silve.smtpc.tools.TrustAllX509TrustManager;
 import org.junit.jupiter.api.*;
 
-import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import java.net.ConnectException;
 
@@ -58,7 +59,7 @@ class SmtpClientTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .setChunks(Builder.chunks(contentBytes).iterator())
+                                .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                 .factory()
                 )
                 .setListener(listener);
@@ -78,12 +79,12 @@ class SmtpClientTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .setChunks(Builder.chunks(contentBytes).iterator())
+                                .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                 .factory()
                 )
                 .setListener(listener);
-        Config config = new Config().setTrustManager(new TrustAllX509TrustManager());
-        SmtpClient client = new SmtpClient(config);
+        SmtpClientConfig smtpClientConfig = new SmtpClientConfig().setTrustManager(new TrustAllX509TrustManager());
+        SmtpClient client = new SmtpClient(smtpClientConfig);
 
         client.runAndClose(session).await();
         assertNull(session.getHost());
@@ -101,7 +102,7 @@ class SmtpClientTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .setChunks(Builder.chunks(contentBytes).iterator())
+                                .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                 .factory()
                 )
                 .setListener(listener);

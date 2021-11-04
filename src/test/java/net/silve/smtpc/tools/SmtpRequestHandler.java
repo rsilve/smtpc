@@ -15,8 +15,6 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.util.AsciiString;
 
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLException;
-import java.security.cert.CertificateException;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;

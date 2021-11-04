@@ -2,9 +2,11 @@ package net.silve.smtpc.example;
 
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.Promise;
+import net.silve.smtpc.SmtpContentBuilder;
 import net.silve.smtpc.SmtpClient;
-import net.silve.smtpc.client.Config;
-import net.silve.smtpc.session.*;
+import net.silve.smtpc.message.Message;
+import net.silve.smtpc.message.SmtpSession;
+import net.silve.smtpc.client.SmtpClientConfig;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +36,7 @@ public class Concurrent {
         byte[] contentBytes = Concurrent.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
-        SmtpClient client = new SmtpClient(new Config().setNumberOfThread(2));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().setNumberOfThread(2));
         AtomicInteger max = new AtomicInteger(NUMBER_OF_MESSAGES);
 
         final long globalStartedAt = System.nanoTime();
@@ -52,7 +54,7 @@ public class Concurrent {
                                 .setMessageFactory(
                                         new Message().setSender(SENDER)
                                                 .setRecipient(RECIPIENT)
-                                                .setChunks(Builder.chunks(contentBytes).iterator())
+                                                .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                                 .factory()
                                 )
                                 .setListener(logListener);

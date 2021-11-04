@@ -10,21 +10,21 @@ class ConfigTest {
 
     @Test
     void shouldHaveDefaultValues() {
-        Config config = new Config();
-        assertEquals(0, config.getNumberOfThread());
-        assertEquals(998, config.getMaxLineLength());
-        assertEquals(5 * 60 * 1000, config.getReadTimeoutMillis());
-        assertEquals(5 * 60 * 1000, config.getWriteTimeoutMillis());
-        assertEquals(60000, config.getConnectTimeoutMillis());
-        assertNull(config.getTrustManager());
-        assertTrue(config.useTls());
+        SmtpClientConfig smtpClientConfig = new SmtpClientConfig();
+        assertEquals(0, smtpClientConfig.getNumberOfThread());
+        assertEquals(998, smtpClientConfig.getMaxLineLength());
+        assertEquals(5 * 60 * 1000, smtpClientConfig.getReadTimeoutMillis());
+        assertEquals(5 * 60 * 1000, smtpClientConfig.getWriteTimeoutMillis());
+        assertEquals(60000, smtpClientConfig.getConnectTimeoutMillis());
+        assertNull(smtpClientConfig.getTrustManager());
+        assertTrue(smtpClientConfig.useTls());
     }
 
 
     @Test
     void shouldHaveSetter() {
-        Config config = new Config();
-        config
+        SmtpClientConfig smtpClientConfig = new SmtpClientConfig();
+        smtpClientConfig
                 .setNumberOfThread(1)
                 .setMaxLineLength(1)
                 .setConnectTimeoutMillis(1)
@@ -32,19 +32,19 @@ class ConfigTest {
                 .setWriteTimeoutMillis(1)
                 .setTrustManager(new TrustAllX509TrustManager());
 
-        assertEquals(1, config.getNumberOfThread());
-        assertEquals(1, config.getMaxLineLength());
-        assertEquals(1, config.getReadTimeoutMillis());
-        assertEquals(1, config.getWriteTimeoutMillis());
-        assertEquals(1, config.getConnectTimeoutMillis());
-        assertNotNull(config.getTrustManager());
+        assertEquals(1, smtpClientConfig.getNumberOfThread());
+        assertEquals(1, smtpClientConfig.getMaxLineLength());
+        assertEquals(1, smtpClientConfig.getReadTimeoutMillis());
+        assertEquals(1, smtpClientConfig.getWriteTimeoutMillis());
+        assertEquals(1, smtpClientConfig.getConnectTimeoutMillis());
+        assertNotNull(smtpClientConfig.getTrustManager());
     }
 
     @Test
     void shouldHaveUseTlsSetter() {
-        Config config = new Config();
-        config.useTls(false);
-        assertFalse(config.useTls());
+        SmtpClientConfig smtpClientConfig = new SmtpClientConfig();
+        smtpClientConfig.useTls(false);
+        assertFalse(smtpClientConfig.useTls());
     }
 
 }

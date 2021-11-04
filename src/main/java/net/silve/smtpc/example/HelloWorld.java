@@ -1,7 +1,9 @@
 package net.silve.smtpc.example;
 
+import net.silve.smtpc.SmtpContentBuilder;
 import net.silve.smtpc.SmtpClient;
-import net.silve.smtpc.session.*;
+import net.silve.smtpc.message.Message;
+import net.silve.smtpc.message.SmtpSession;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -13,7 +15,7 @@ import java.util.logging.Level;
  */
 public class HelloWorld {
 
-    private static final String HOST = "localhost";
+    private static final String HOST = "home.silve.net";
     private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
@@ -29,7 +31,7 @@ public class HelloWorld {
                 .setMessageFactory(
                         new Message().setSender(SENDER)
                                 .setRecipient(RECIPIENT)
-                                .setChunks(Builder.chunks(contentBytes).iterator())
+                                .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                 .factory()
                 )
                 .setListener(new LogListener());

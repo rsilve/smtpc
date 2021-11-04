@@ -1,0 +1,1 @@
+The smtpc project aims to provide an SMTP client based on netty and a non-blocking design.

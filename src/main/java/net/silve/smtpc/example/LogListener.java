@@ -1,7 +1,7 @@
 package net.silve.smtpc.example;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
-import net.silve.smtpc.session.SmtpSessionListener;
+import net.silve.smtpc.listener.SmtpSessionListener;
 
 import java.util.HashMap;
 import java.util.List;

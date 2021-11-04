@@ -1,7 +1,10 @@
 package net.silve.smtpc.example;
 
+import net.silve.smtpc.SmtpContentBuilder;
 import net.silve.smtpc.SmtpClient;
-import net.silve.smtpc.session.*;
+import net.silve.smtpc.message.ListMessageFactory;
+import net.silve.smtpc.message.Message;
+import net.silve.smtpc.message.SmtpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +35,7 @@ public class HelloWorldList {
 
         List<Message> messages = IntStream.range(0, NUMBER_OF_MESSAGES).mapToObj(value -> new Message().setSender(SENDER)
                 .setRecipient(RECIPIENT)
-                .setChunks(Builder.chunks(contentBytes).iterator())).collect(Collectors.toList());
+                .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())).collect(Collectors.toList());
 
         session.setGreeting("greeting.tld")
                 .setMessageFactory(new ListMessageFactory(messages))
