@@ -16,13 +16,21 @@ import java.util.stream.IntStream;
  */
 public class SmtpContentBuilder {
 
-    public static byte[][] chunk(byte[] input, int chunkSize) {
-        return IntStream.iterate(0, i -> i + chunkSize)
-                .limit((long) Math.ceil((double) input.length / chunkSize))
-                .mapToObj(j -> Arrays.copyOfRange(input, j, Math.min(j + chunkSize, input.length)))
-                .toArray(byte[][]::new);
+    /**
+     * Transforms an array of bytes into chunks of StmpContent (of size 4096b)
+     * @param input byte array content
+     * @return a list of SmtpContent chunks
+     */
+    public static List<SmtpContent> chunks(byte[] input) {
+        return chunks(input, 4096);
     }
 
+    /**
+     * Transforms an array of bytes into chunks of StmpContent (of size chunkSize)
+     * @param input byte array content
+     * @param chunkSize size of the chunks
+     * @return a list of SmtpContent chunks
+     */
     public static List<SmtpContent> chunks(byte[] input, int chunkSize) {
         ArrayList<SmtpContent> chunks = new ArrayList<>();
         byte[][] chunked = chunk(input, chunkSize);
@@ -33,8 +41,11 @@ public class SmtpContentBuilder {
         return chunks;
     }
 
-    public static List<SmtpContent> chunks(byte[] input) {
-        return chunks(input, 4096);
+    private static byte[][] chunk(byte[] input, int chunkSize) {
+        return IntStream.iterate(0, i -> i + chunkSize)
+                .limit((long) Math.ceil((double) input.length / chunkSize))
+                .mapToObj(j -> Arrays.copyOfRange(input, j, Math.min(j + chunkSize, input.length)))
+                .toArray(byte[][]::new);
     }
 
     private SmtpContentBuilder() {}
