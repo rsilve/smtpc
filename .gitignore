@@ -15,3 +15,8 @@ buildNumber.properties
 
 .idea
 .run
+
+
+.settings
+.project
+.classpath
