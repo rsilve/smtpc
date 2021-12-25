@@ -13,7 +13,7 @@ public interface SmtpSessionListener {
 
     void onRequest(SmtpCommand command, List<CharSequence> parameters);
 
-    void onData(int size);
+    void onData(int size, String id);
 
     void onCompleted(String id);
 

@@ -5,8 +5,10 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import java.util.List;
 
 /**
- * Default implementation of the SmtpSessionListener. It keeps track of the last SMTP command,
- * the fact that the DATA command is completed, the number of messages processed during the SMTP transaction.
+ * Default implementation of the SmtpSessionListener. It keeps track of the last
+ * SMTP command,
+ * the fact that the DATA command is completed, the number of messages processed
+ * during the SMTP transaction.
  *
  */
 public class DefaultSmtpSessionListener implements SmtpSessionListener {
@@ -37,7 +39,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onData(int size) {
+    public void onData(int size, String id) {
         // default implementation : do nothing
     }
 

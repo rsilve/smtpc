@@ -41,7 +41,6 @@ public class SmtpSession {
     private SmtpSessionListener listener;
     private String id = UUID.randomUUID().toString();
 
-
     private SmtpSession(Recycler.Handle<SmtpSession> handle) {
         this.handle = handle;
     }
@@ -57,29 +56,27 @@ public class SmtpSession {
         handle.recycle(this);
     }
 
-    
     public String getId() {
         return id;
     }
-    
+
     public String getHost() {
         return host;
     }
 
-    
     public int getPort() {
         return port;
     }
-    
+
     public boolean useExtendedHelo() {
         return extendedHelo;
     }
-    
+
     public SmtpSession setExtendedHelo(boolean extendedHelo) {
         this.extendedHelo = extendedHelo;
         return this;
     }
-    
+
     public CharSequence getGreeting() {
         return greeting;
     }
@@ -128,7 +125,7 @@ public class SmtpSession {
     }
 
     public void notifyData(int size) {
-        this.listener.onData(size);
+        this.listener.onData(size, this.id);
     }
 
     public void notifyStartTls() {
@@ -138,7 +135,6 @@ public class SmtpSession {
     public Message getMessage() {
         return messageFactory.next();
     }
-
 
     private static class EmptyMessageFactory implements MessageFactory {
         public Message next() {

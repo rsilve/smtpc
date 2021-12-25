@@ -6,6 +6,7 @@ import net.silve.smtpc.listener.SmtpSessionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ public class LogListener implements SmtpSessionListener {
 
     private static final Logger logger = LoggerFactory.getInstance();
     private final Map<String, Long> globalStartedAt = new HashMap<>();
+    private final Map<String, Boolean> sentStatusMap = new HashMap<>();
 
     @Override
     public void onConnect(String host, int port) {
@@ -38,18 +40,24 @@ public class LogListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onData(int size) {
+    public void onData(int size, String id) {
         logger.log(Level.FINE, () -> ">>> ... (hidden content)");
         logger.log(Level.FINE, () -> String.format("=== message size %d", size));
+        sentStatusMap.put(id, Boolean.TRUE);
     }
 
     @Override
     public void onCompleted(String id) {
         Long startedAt = globalStartedAt.get(id);
         final long duration = startedAt != null && startedAt != 0 ? (System.nanoTime() - startedAt) / 1000000 : -1L;
-
-        logger.log(Level.INFO,
-                () -> String.format("=== transaction completed for %s, duration=%dms", id, duration));
+        Boolean sended = sentStatusMap.get(id);
+        if (Objects.nonNull(sended) && sended) {
+            logger.log(Level.FINE,
+                    () -> String.format("=== transaction completed for %s, duration=%dms, sended", id, duration));
+        } else {
+            logger.log(Level.WARNING,
+                    () -> String.format("=== transaction completed for %s, duration=%dms, not send", id, duration));
+        }
     }
 
     @Override

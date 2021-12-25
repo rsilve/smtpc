@@ -33,8 +33,7 @@ class SmtpSessionListenerTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory()
-                );
+                                .factory());
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -45,7 +44,6 @@ class SmtpSessionListenerTest {
         assertEquals(response.code(), listener.responseCode);
     }
 
-
     @Test
     void shouldHandleRequestNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
@@ -54,8 +52,7 @@ class SmtpSessionListenerTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory()
-                );
+                                .factory());
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -72,8 +69,7 @@ class SmtpSessionListenerTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory()
-                );
+                                .factory());
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -91,11 +87,11 @@ class SmtpSessionListenerTest {
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
                                 .setChunks(
-                                        RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
-                                        RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8)))
-                                )
-                                .factory()
-                );
+                                        RecyclableSmtpContent.newInstance(
+                                                Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
+                                        RecyclableLastSmtpContent.newInstance(
+                                                Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))))
+                                .factory());
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -113,8 +109,7 @@ class SmtpSessionListenerTest {
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory()
-                );
+                                .factory());
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
@@ -146,7 +141,6 @@ class SmtpSessionListenerTest {
         assertTrue(listener.connect);
     }
 
-
     @Test
     void shouldHandleConnectErrorNotification() {
         TestSessionListener listener = new TestSessionListener();
@@ -154,7 +148,8 @@ class SmtpSessionListenerTest {
                 "host", 25);
         session.setListener(listener);
         EmbeddedChannel channel = new EmbeddedChannel();
-        channel.newFailedFuture(new RuntimeException("rr")).addListener(new ConnectionListener(session, new SmtpClientConfig()));
+        channel.newFailedFuture(new RuntimeException("rr"))
+                .addListener(new ConnectionListener(session, new SmtpClientConfig()));
         assertFalse(listener.connect);
         assertTrue(listener.error instanceof RuntimeException);
         assertEquals("rr", listener.error.getMessage());
@@ -185,7 +180,7 @@ class SmtpSessionListenerTest {
         }
 
         @Override
-        public void onData(int size) {
+        public void onData(int size, String id) {
             this.data = size;
         }
 
@@ -199,6 +194,5 @@ class SmtpSessionListenerTest {
             this.connect = true;
         }
     }
-
 
 }
