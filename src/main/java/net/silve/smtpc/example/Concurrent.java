@@ -43,13 +43,16 @@ public class Concurrent {
         final long globalStartedAt = System.nanoTime();
         Promise<Void> promise = executors.next().newPromise();
         promise.addListener(future -> {
+            long totalDurationNano = totalDuration.longValue();
             long duration = System.nanoTime() - globalStartedAt;
-            long durationMS = duration / 1000000;
-            double rate = NUMBER_OF_MESSAGES * 1000 / duration;
-            long avgDuration = totalDuration.longValue() / NUMBER_OF_MESSAGES;
+            long avgConcurrency = Math.max(1, totalDurationNano / duration);
+            long avgDuration = totalDurationNano / NUMBER_OF_MESSAGES;
 
-            logger.info(() -> String.format("!!! total duration=%dms, rate=%.2fm/s, avg=%dms", durationMS, rate,
-                    avgDuration / 1000000));
+            long durationMS = duration / 1000000;
+            double rate = ((double) NUMBER_OF_MESSAGES * 1000 * 1000000) / duration;
+
+            logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d",
+                    durationMS, avgDuration / 1000000, rate, avgConcurrency));
             client.shutdownGracefully();
             executors.shutdownGracefully();
         });
