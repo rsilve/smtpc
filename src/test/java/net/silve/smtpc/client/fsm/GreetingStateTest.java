@@ -16,7 +16,7 @@ class GreetingStateTest {
     }
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new GreetingState();
         assertEquals(MAIL_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()

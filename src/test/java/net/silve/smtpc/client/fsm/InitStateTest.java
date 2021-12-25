@@ -14,7 +14,7 @@ class InitStateTest {
     }
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         InitState state = new InitState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()

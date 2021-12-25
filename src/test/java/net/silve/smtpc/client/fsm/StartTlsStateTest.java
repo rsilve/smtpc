@@ -16,7 +16,7 @@ class StartTlsStateTest {
     }
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new StartTlsState();
         assertEquals(TLS_HANDSHAKE_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()

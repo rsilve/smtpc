@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.client.fsm.States.CLOSING_TRANSMISSION_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AbstractStateTest {
 
@@ -24,7 +25,7 @@ class AbstractStateTest {
     };
 
     @Test
-    void shouldHandleCloseCode() {
+    void shouldHandleCloseCode() throws InvalidStateException {
         AbstractState state = new AbstractState() {
             @Override
             protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
@@ -54,5 +55,24 @@ class AbstractStateTest {
                 state.nextStateFromEvent(FsmEvent.newInstance(), null));
     }
 
+    @Test
+    void shouldThrowInvalidStateException() {
+        AbstractState state = new AbstractState() {
+            @Override
+            protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context)
+                    throws InvalidStateException {
+                throw new InvalidStateException(NOOP_STATE);
+            }
+
+            @Override
+            public SmtpCommandAction action() {
+                return null;
+            }
+        };
+        assertThrows(InvalidStateException.class, () -> {
+            state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
+                    new FsmEngineContext());
+        });
+    }
 
 }

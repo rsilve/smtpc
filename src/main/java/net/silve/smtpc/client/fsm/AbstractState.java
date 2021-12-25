@@ -10,7 +10,7 @@ import static net.silve.smtpc.client.fsm.States.CLOSING_TRANSMISSION_STATE;
 public abstract class AbstractState implements State {
 
     @Override
-    public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
+    public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) throws InvalidStateException {
         if (Objects.isNull(event)) {
             return CLOSING_TRANSMISSION_STATE;
         }
@@ -24,7 +24,8 @@ public abstract class AbstractState implements State {
             return CLOSING_TRANSMISSION_STATE;
         }
         State closingTransmissionState = handleClosingTransmissionCode(response);
-        if (closingTransmissionState != null) return closingTransmissionState;
+        if (closingTransmissionState != null)
+            return closingTransmissionState;
         return nextState(response, context);
     }
 
@@ -36,6 +37,6 @@ public abstract class AbstractState implements State {
         return null;
     }
 
-
-    protected abstract State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context);
+    protected abstract State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context)
+            throws InvalidStateException;
 }

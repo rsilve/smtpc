@@ -16,7 +16,7 @@ class RsetStateTest {
     }
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new RsetState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),

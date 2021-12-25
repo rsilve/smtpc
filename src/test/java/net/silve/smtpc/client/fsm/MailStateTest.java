@@ -16,7 +16,7 @@ class MailStateTest {
     }
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new MailState();
         assertEquals(RCPT_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()

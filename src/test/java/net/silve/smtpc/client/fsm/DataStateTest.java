@@ -16,7 +16,7 @@ class DataStateTest {
     }
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new DataState();
         assertEquals(CONTENT_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354)), new FsmEngineContext()

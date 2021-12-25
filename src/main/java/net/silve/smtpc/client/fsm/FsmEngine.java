@@ -30,11 +30,16 @@ public class FsmEngine {
     }
 
     public void notify(FsmEvent event) {
-        state = state.nextStateFromEvent(event, context);
-        if (Objects.nonNull(state)) {
-            this.actionListener.onAction(state.action(), event.getResponse());
+        try {
+            state = state.nextStateFromEvent(event, context);
+            if (Objects.nonNull(state)) {
+                this.actionListener.onAction(state.action(), event.getResponse());
+            }
+        } catch (InvalidStateException e) {
+
+        } finally {
+            event.recycle();
         }
-        event.recycle();
     }
 
     public State getState() {

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TlsHandShakeStateTest {
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new TlsHandshakeState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance(), null
