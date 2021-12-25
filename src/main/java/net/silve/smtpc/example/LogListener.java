@@ -51,7 +51,7 @@ public class LogListener implements SmtpSessionListener {
         Long startedAt = globalStartedAt.get(id);
         final long duration = startedAt != null && startedAt != 0 ? (System.nanoTime() - startedAt) / 1000000 : -1L;
         Boolean sended = sentStatusMap.get(id);
-        if (Objects.nonNull(sended) && sended) {
+        if (Boolean.TRUE.equals(sended)) {
             logger.log(Level.FINE,
                     () -> String.format("=== transaction completed for %s, duration=%dms, sended", id, duration));
         } else {
