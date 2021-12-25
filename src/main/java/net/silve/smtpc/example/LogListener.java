@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class LogListener implements SmtpSessionListener {
 
     private static final Logger logger = LoggerFactory.getInstance();
-    private final Map<String,Long> globalStartedAt = new HashMap<>();
+    private final Map<String, Long> globalStartedAt = new HashMap<>();
 
     @Override
     public void onConnect(String host, int port) {
@@ -32,11 +32,9 @@ public class LogListener implements SmtpSessionListener {
 
     @Override
     public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
-        logger.log(Level.FINE, () ->
-                String.format(">>> %s %s",
-                        command.name(),
-                        String.join(" ", parameters))
-        );
+        logger.log(Level.FINE, () -> String.format(">>> %s %s",
+                command.name(),
+                String.join(" ", parameters)));
     }
 
     @Override
@@ -51,7 +49,7 @@ public class LogListener implements SmtpSessionListener {
         final long duration = startedAt != null && startedAt != 0 ? (System.nanoTime() - startedAt) / 1000000 : -1L;
 
         logger.log(Level.INFO,
-                () -> String.format("=== transaction completed for %s, duration = %dms", id, duration));
+                () -> String.format("=== transaction completed for %s, duration=%dms", id, duration));
     }
 
     @Override
