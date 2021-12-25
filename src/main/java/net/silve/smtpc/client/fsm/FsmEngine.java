@@ -37,6 +37,7 @@ public class FsmEngine {
             }
         } catch (InvalidStateException e) {
             state = e.getState();
+            this.actionListener.onError();
             this.actionListener.onAction(state.action(), event.getResponse());
         } finally {
             event.recycle();
@@ -74,6 +75,11 @@ public class FsmEngine {
     private static class NoopActionListener implements FsmActionListener {
         @Override
         public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
+            // do nothing
+        }
+
+        @Override
+        public void onError() {
             // do nothing
         }
     }

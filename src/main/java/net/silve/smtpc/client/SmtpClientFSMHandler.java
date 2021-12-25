@@ -183,4 +183,9 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
         }
     }
+
+    @Override
+    public void onError() {
+        //session.notifyError();
+    }
 }
