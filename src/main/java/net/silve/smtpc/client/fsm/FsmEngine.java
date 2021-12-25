@@ -37,7 +37,7 @@ public class FsmEngine {
             }
         } catch (InvalidStateException e) {
             state = e.getState();
-            this.actionListener.onError();
+            this.actionListener.onError(e);
             this.actionListener.onAction(state.action(), event.getResponse());
         } finally {
             event.recycle();
@@ -79,7 +79,7 @@ public class FsmEngine {
         }
 
         @Override
-        public void onError() {
+        public void onError(InvalidStateException exception) {
             // do nothing
         }
     }

@@ -7,6 +7,7 @@ import net.silve.smtpc.message.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.silve.smtpc.client.fsm.States.*;
@@ -24,7 +25,7 @@ class FsmEngineTest {
             }
 
             @Override
-            public void onError() {
+            public void onError(InvalidStateException exception) {
             }
         });
         FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250));
@@ -55,7 +56,7 @@ class FsmEngineTest {
             }
 
             @Override
-            public void onError() {
+            public void onError(InvalidStateException exception) {
             }
         });
 
@@ -73,7 +74,7 @@ class FsmEngineTest {
             }
 
             @Override
-            public void onError() {
+            public void onError(InvalidStateException exception) {
             }
         });
         engine.notify(new DefaultSmtpResponse(250));
@@ -113,7 +114,7 @@ class FsmEngineTest {
             }
 
             @Override
-            public void onError() {
+            public void onError(InvalidStateException exception) {
             }
         }).tlsActive();
 
@@ -173,8 +174,8 @@ class FsmEngineTest {
             }
 
             @Override
-            public void onError() {
-                errorCatched.set(true);
+            public void onError(InvalidStateException exception) {
+                errorCatched.set(Objects.nonNull(exception));
             }
         });
 

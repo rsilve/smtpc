@@ -6,10 +6,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.util.AsciiString;
-import net.silve.smtpc.client.fsm.FsmActionListener;
-import net.silve.smtpc.client.fsm.FsmEngine;
-import net.silve.smtpc.client.fsm.FsmEvent;
-import net.silve.smtpc.client.fsm.SmtpCommandAction;
+import net.silve.smtpc.client.fsm.*;
 import net.silve.smtpc.client.ssl.SslUtils;
 import net.silve.smtpc.client.ssl.StartTlsHandler;
 import net.silve.smtpc.message.Message;
@@ -185,7 +182,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     }
 
     @Override
-    public void onError() {
-        //session.notifyError();
+    public void onError(InvalidStateException exception) {
+        session.notifyError(exception);
     }
 }

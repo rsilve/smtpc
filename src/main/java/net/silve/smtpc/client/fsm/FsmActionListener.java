@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface FsmActionListener {
     void onAction(@NotNull SmtpCommandAction action, SmtpResponse response);
-    void onError();
+    void onError(InvalidStateException exception);
 }
