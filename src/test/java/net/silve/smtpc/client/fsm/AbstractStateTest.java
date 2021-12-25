@@ -40,19 +40,27 @@ class AbstractStateTest {
         assertEquals(CLOSING_TRANSMISSION_STATE,
                 state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(221)),
                         new FsmEngineContext()));
-        assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(421)),
-                        new FsmEngineContext()));
         assertEquals(NOOP_STATE,
                 state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(100)),
                         new FsmEngineContext()));
-        assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(FsmEvent.newInstance(), new FsmEngineContext()));
-        assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(null, new FsmEngineContext()));
 
-        assertEquals(CLOSING_TRANSMISSION_STATE,
-                state.nextStateFromEvent(FsmEvent.newInstance(), null));
+        InvalidStateException throwed = assertThrows(InvalidStateException.class,
+                () -> state.nextStateFromEvent(FsmEvent.newInstance(), new FsmEngineContext()));
+        assertEquals(CLOSING_TRANSMISSION_STATE, throwed.getState());
+
+        throwed = assertThrows(InvalidStateException.class,
+                () -> state.nextStateFromEvent(null, new FsmEngineContext()));
+        assertEquals(CLOSING_TRANSMISSION_STATE, throwed.getState());
+
+        throwed = assertThrows(InvalidStateException.class,
+                () -> state.nextStateFromEvent(FsmEvent.newInstance(), null));
+        assertEquals(CLOSING_TRANSMISSION_STATE, throwed.getState());
+
+        throwed = assertThrows(InvalidStateException.class,
+                () -> state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(421)),
+                        new FsmEngineContext()));
+        assertEquals(CLOSING_TRANSMISSION_STATE, throwed.getState());
+
     }
 
     @Test

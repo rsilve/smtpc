@@ -36,7 +36,8 @@ public class FsmEngine {
                 this.actionListener.onAction(state.action(), event.getResponse());
             }
         } catch (InvalidStateException e) {
-
+            state = e.getState();
+            this.actionListener.onAction(state.action(), event.getResponse());
         } finally {
             event.recycle();
         }

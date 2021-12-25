@@ -88,7 +88,6 @@ class FsmEngineTest {
         assertTrue(action_started.get());
     }
 
-
     @Test
     void shouldApplySession() {
         State testState = new State() {
@@ -111,8 +110,6 @@ class FsmEngineTest {
                         new Message().setRecipient("recipient"));
         engine.notifyRcpt();
         engine.notify(FsmEvent.newInstance());
-
-
     }
 
     @Test
@@ -121,7 +118,6 @@ class FsmEngineTest {
         assertEquals(INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance());
         assertEquals(CLOSING_TRANSMISSION_STATE, engine.getState());
-
     }
 
 }
