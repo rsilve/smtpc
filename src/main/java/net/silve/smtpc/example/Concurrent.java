@@ -21,17 +21,17 @@ import java.util.logging.Logger;
  */
 public class Concurrent {
 
-    private static final String HOST = "home.silve.net";
-    private static final int PORT = 25;
+    private static final String HOST = "smtp.black-hole.in";
+    private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
-    private static final int NUMBER_OF_MESSAGES = 100;
+    private static final int NUMBER_OF_MESSAGES = 1000;
     private static final long DELAY_MILLIS = 100;
 
     private static final Logger logger = LoggerFactory.getInstance();
 
     public static void main(String[] args) throws IOException {
-        LoggerFactory.configure(Level.OFF);
+        LoggerFactory.configure(Level.INFO);
 
         byte[] contentBytes = Concurrent.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 

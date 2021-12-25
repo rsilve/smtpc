@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
  */
 public class HelloWorldList {
 
-    private static final String HOST = "localhost";
+    private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";

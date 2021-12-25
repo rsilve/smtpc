@@ -23,7 +23,7 @@ public class HelloWorldFactory {
     private static final int NUMBER_OF_MESSAGES = 10;
 
     public static void main(String[] args) {
-        LoggerFactory.configure(Level.INFO);
+        LoggerFactory.configure(Level.FINEST);
 
         SmtpClient client = new SmtpClient();
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
