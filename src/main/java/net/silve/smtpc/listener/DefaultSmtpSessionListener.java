@@ -29,12 +29,12 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onError(Throwable throwable) {
+    public void onError(String id, Throwable throwable) {
         this.lastError = new SmtpSessionException(throwable);
     }
 
     @Override
-    public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
+    public void onRequest(String id, SmtpCommand command, List<CharSequence> parameters) {
         lastCommand = command;
     }
 
@@ -49,7 +49,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onResponse(int code, List<CharSequence> details) {
+    public void onResponse(String id, int code, List<CharSequence> details) {
         if (SmtpCommand.DATA.equals(lastCommand) && code == 250) {
             dataCompleted = true;
             count++;

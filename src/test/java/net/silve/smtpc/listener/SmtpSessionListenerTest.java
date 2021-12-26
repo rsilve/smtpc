@@ -165,12 +165,12 @@ class SmtpSessionListenerTest {
         private boolean connect;
 
         @Override
-        public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
+        public void onRequest(String id, SmtpCommand command, List<CharSequence> parameters) {
             this.command = command;
         }
 
         @Override
-        public void onResponse(int code, List<CharSequence> details) {
+        public void onResponse(String id, int code, List<CharSequence> details) {
             this.responseCode = code;
         }
 
@@ -185,7 +185,7 @@ class SmtpSessionListenerTest {
         }
 
         @Override
-        public void onError(Throwable throwable) {
+        public void onError(String id, Throwable throwable) {
             this.error = throwable;
         }
 

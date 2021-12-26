@@ -1,8 +1,10 @@
 package net.silve.smtpc.example;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.smtpc.client.fsm.InvalidStateException;
 import net.silve.smtpc.listener.SmtpSessionListener;
 
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,8 @@ public class LogListener implements SmtpSessionListener {
     private static final Logger logger = LoggerFactory.getInstance();
     private final Map<String, Long> globalStartedAt = new HashMap<>();
     private final Map<String, Boolean> sentStatusMap = new HashMap<>();
+    private final Map<String, SmtpCommand> lastCommand = new HashMap<>();
+    private final Map<String, Integer> lastResponseCode = new HashMap<>();
 
     @Override
     public void onConnect(String host, int port) {
@@ -27,12 +31,18 @@ public class LogListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onError(Throwable throwable) {
-        logger.log(Level.WARNING, throwable, () -> String.format("!!! %s", throwable.getMessage()));
+    public void onError(String id, Throwable throwable) {
+        if (throwable instanceof InvalidStateException || throwable instanceof SocketException) {
+            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] after commmand %s, server send %d",
+                    id, lastCommand.get(id).name(), lastResponseCode.get(id)));
+        } else {
+            logger.log(Level.WARNING, throwable, () -> String.format("!!! %s", throwable.getMessage()));
+        }
     }
 
     @Override
-    public void onRequest(SmtpCommand command, List<CharSequence> parameters) {
+    public void onRequest(String id, SmtpCommand command, List<CharSequence> parameters) {
+        this.lastCommand.put(id, command);
         logger.log(Level.FINE, () -> String.format(">>> %s %s",
                 command.name(),
                 String.join(" ", parameters)));
@@ -54,13 +64,14 @@ public class LogListener implements SmtpSessionListener {
             logger.log(Level.FINE,
                     () -> String.format("=== transaction completed for %s, duration=%dms, sended", id, duration));
         } else {
-            logger.log(Level.WARNING,
+            logger.log(Level.INFO,
                     () -> String.format("=== transaction completed for %s, duration=%dms, not send", id, duration));
         }
     }
 
     @Override
-    public void onResponse(int code, List<CharSequence> details) {
+    public void onResponse(String id, int code, List<CharSequence> details) {
+        this.lastResponseCode.put(id, code);
         logger.log(Level.FINE, () -> String.format("<<< %s %s",
                 code,
                 String.join("\r\n", details)));

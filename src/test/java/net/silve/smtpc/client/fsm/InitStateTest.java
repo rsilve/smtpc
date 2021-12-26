@@ -16,12 +16,13 @@ class InitStateTest {
     @Test
     void shouldReturnNextState() throws InvalidStateException {
         InitState state = new InitState();
-        assertEquals(GREETING_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()
-        ));
-        assertEquals(QUIT_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), new FsmEngineContext()
-        ));
+        assertEquals(GREETING_STATE, state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()));
+
+        InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
+            FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500));
+            state.nextStateFromEvent(event, new FsmEngineContext());
+        });
+        assertEquals(QUIT_STATE, exception.getState());
     }
 
     @Test

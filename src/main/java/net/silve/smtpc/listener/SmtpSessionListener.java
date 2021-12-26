@@ -9,15 +9,15 @@ public interface SmtpSessionListener {
 
     void onStart(String host, int port, String id);
 
-    void onError(Throwable throwable);
+    void onError(String id, Throwable throwable);
 
-    void onRequest(SmtpCommand command, List<CharSequence> parameters);
+    void onRequest(String id, SmtpCommand command, List<CharSequence> parameters);
 
     void onData(int size, String id);
 
     void onCompleted(String id);
 
-    void onResponse(int code, List<CharSequence> details);
+    void onResponse(String id, int code, List<CharSequence> details);
 
     void onStartTls();
 }

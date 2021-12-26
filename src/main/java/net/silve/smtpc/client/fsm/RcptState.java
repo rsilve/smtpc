@@ -8,7 +8,7 @@ import static net.silve.smtpc.client.fsm.States.*;
 public class RcptState extends AbstractState {
 
     @Override
-    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
+    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
         if (response.code() == 250) {
             if (context.getRcptCount() > 0) {
                 return RCPT_STATE;
@@ -16,7 +16,7 @@ public class RcptState extends AbstractState {
                 return DATA_STATE;
             }
         }
-        return QUIT_STATE;
+        throw new InvalidStateException(QUIT_STATE);
     }
 
     @Override

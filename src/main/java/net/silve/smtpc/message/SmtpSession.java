@@ -113,15 +113,15 @@ public class SmtpSession {
     }
 
     public void notifyRequest(SmtpRequest request) {
-        this.listener.onRequest(request.command(), request.parameters());
+        this.listener.onRequest(this.getId(), request.command(), request.parameters());
     }
 
     public void notifyError(Throwable throwable) {
-        this.listener.onError(throwable);
+        this.listener.onError(this.getId(), throwable);
     }
 
     public void notifyResponse(SmtpResponse response) {
-        this.listener.onResponse(response.code(), response.details());
+        this.listener.onResponse(this.getId(), response.code(), response.details());
     }
 
     public void notifyData(int size) {

@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.net.ssl.SSLException;
 import java.util.Objects;
 
+import static net.silve.smtpc.client.fsm.States.CLOSING_TRANSMISSION_STATE;
+
 
 public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
 
@@ -175,7 +177,12 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.QUIT));
                 break;
 
+            case CLOSE_TRANSMISSION:
+                this.ctx.close();
+                break;
+
             default:
+                session.notifyError(new InvalidStateException(CLOSING_TRANSMISSION_STATE));
                 this.ctx.close();
                 break;
         }
@@ -184,5 +191,11 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     @Override
     public void onError(InvalidStateException exception) {
         session.notifyError(exception);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        session.notifyError(cause);
+        ctx.close();
     }
 }
