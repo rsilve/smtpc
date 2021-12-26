@@ -1,6 +1,7 @@
 package net.silve.smtpc.example;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import io.netty.util.AsciiString;
 import net.silve.smtpc.client.fsm.InvalidStateException;
 import net.silve.smtpc.listener.SmtpSessionListener;
 
@@ -32,17 +33,20 @@ public class LogListener implements SmtpSessionListener {
 
     @Override
     public void onError(String id, Throwable throwable) {
+        AsciiString name = lastCommand.containsKey(id) ? lastCommand.get(id).name() : AsciiString.of("none");
         if (throwable instanceof InvalidStateException || throwable instanceof SocketException) {
-            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] after commmand %s, server send %d",
-                    id, lastCommand.get(id).name(), lastResponseCode.get(id)));
+            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] last_command=%s, last_response=%d, invalid protocol",
+                    id, name, lastResponseCode.get(id)));
         } else {
-            logger.log(Level.WARNING, throwable, () -> String.format("!!! %s", throwable.getMessage()));
+            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] last_command=%s, last_response=%d, error='%s'",
+                    id, name, lastResponseCode.get(id), throwable.getMessage()));
         }
     }
 
     @Override
     public void onRequest(String id, SmtpCommand command, List<CharSequence> parameters) {
         this.lastCommand.put(id, command);
+        this.lastResponseCode.remove(id);
         logger.log(Level.FINE, () -> String.format(">>> %s %s",
                 command.name(),
                 String.join(" ", parameters)));
