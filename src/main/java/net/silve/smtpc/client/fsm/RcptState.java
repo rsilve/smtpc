@@ -3,6 +3,7 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
+import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 import static net.silve.smtpc.client.fsm.States.*;
 
 public class RcptState extends AbstractState {
@@ -16,7 +17,7 @@ public class RcptState extends AbstractState {
                 return DATA_STATE;
             }
         }
-        throw new InvalidStateException(QUIT_STATE);
+        throw INVALID_STATE_EXCEPTION_QUIT;
     }
 
     @Override

@@ -3,8 +3,8 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
+import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 import static net.silve.smtpc.client.fsm.States.GREETING_STATE;
-import static net.silve.smtpc.client.fsm.States.QUIT_STATE;
 
 public class RsetState extends AbstractState {
 
@@ -13,7 +13,7 @@ public class RsetState extends AbstractState {
         if (response.code() == 250) {
             return GREETING_STATE;
         }
-        throw new InvalidStateException(QUIT_STATE);
+        throw INVALID_STATE_EXCEPTION_QUIT;
     }
 
     @Override
