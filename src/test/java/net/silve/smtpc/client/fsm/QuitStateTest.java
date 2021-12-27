@@ -9,7 +9,7 @@ class QuitStateTest {
 
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new QuitState();
         assertEquals(CLOSING_TRANSMISSION_STATE, state.nextStateFromEvent(
                null, null

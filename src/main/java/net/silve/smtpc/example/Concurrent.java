@@ -25,7 +25,7 @@ public class Concurrent {
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@silve.net";
-    private static final int NUMBER_OF_MESSAGES = 1000;
+    private static final int NUMBER_OF_MESSAGES = 500;
     private static final long DELAY_MILLIS = 100;
 
     private static final Logger logger = LoggerFactory.getInstance();

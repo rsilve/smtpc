@@ -8,8 +8,11 @@ import static net.silve.smtpc.client.fsm.States.RSET_STATE;
 
 public class ContentState extends AbstractState {
     @Override
-    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
-        if (context.isAllMessageCompleted() || response.code() != 250) {
+    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
+        if (response.code() != 250) {
+            throw new InvalidStateException(QUIT_STATE);
+        }
+        if (context.isAllMessageCompleted()) {
             return QUIT_STATE;
         }
         return RSET_STATE;

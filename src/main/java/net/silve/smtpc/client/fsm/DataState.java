@@ -8,11 +8,11 @@ import static net.silve.smtpc.client.fsm.States.QUIT_STATE;
 
 public class DataState extends AbstractState {
     @Override
-    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
+    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
         if (response.code() == 354) {
             return CONTENT_STATE;
         }
-        return QUIT_STATE;
+        throw new InvalidStateException(QUIT_STATE);
     }
 
     @Override

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class CloseTransmissionStateTest {
 
     @Test
-    void shouldReturnNextState() {
+    void shouldReturnNextState() throws InvalidStateException {
         State state = new CloseTransmissionState();
         assertNull(state.nextStateFromEvent(FsmEvent.newInstance(), new FsmEngineContext()));
     }

@@ -8,9 +8,9 @@ import static net.silve.smtpc.client.fsm.States.*;
 class InitState extends AbstractState {
 
     @Override
-    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
+    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
         if (response.code() != 220) {
-            return QUIT_STATE;
+            throw new InvalidStateException(QUIT_STATE);
         }
 
         return context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
