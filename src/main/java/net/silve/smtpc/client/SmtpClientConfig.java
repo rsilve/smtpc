@@ -20,6 +20,7 @@ public class SmtpClientConfig {
     private TrustManager trustManager;
 
     private boolean useTls = true;
+    private boolean usePipelining = false;
 
     public int getNumberOfThread() {
         return numberOfThread;
@@ -87,6 +88,15 @@ public class SmtpClientConfig {
 
     public SmtpClientConfig useTls(boolean useTls) {
         this.useTls = useTls;
+        return this;
+    }
+
+    public boolean usePipelining() {
+        return usePipelining;
+    }
+
+    public SmtpClientConfig usePipelining(boolean usePipelining) {
+        this.usePipelining = usePipelining;
         return this;
     }
 }
