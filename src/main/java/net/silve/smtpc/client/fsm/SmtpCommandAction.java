@@ -4,6 +4,7 @@ public enum SmtpCommandAction {
 
     HELO, EHLO,
     STARTTLS, TLS_HANDSHAKE,
+    PIPELINING,
     MAIL, RCPT,
     DATA,
     DATA_CONTENT,
