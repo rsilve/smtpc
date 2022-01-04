@@ -51,6 +51,18 @@ class ExtendedGreetingStateTest {
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext().setTlsActive(true)
         ));
+
+        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+                FsmEvent.newInstance()
+                        .setResponse(new DefaultSmtpResponse(250, "PIPELINING")),
+                new FsmEngineContext()
+        ));
+
+        assertEquals(PIPELINING_STATE, state.nextStateFromEvent(
+                FsmEvent.newInstance()
+                        .setResponse(new DefaultSmtpResponse(250, "PIPELINING")),
+                new FsmEngineContext().setPipeliningActive(true)
+        ));
     }
 
     @Test

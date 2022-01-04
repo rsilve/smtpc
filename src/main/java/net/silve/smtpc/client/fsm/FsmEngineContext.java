@@ -11,6 +11,7 @@ public class FsmEngineContext {
     private boolean allMessageCompleted = true;
     private int rcptCount;
     private boolean useTls = true;
+    private boolean pipeliningActive = false;
 
     public boolean isTlsActive() {
         return tlsActive;
@@ -60,5 +61,14 @@ public class FsmEngineContext {
 
     public void decrRcptCount() {
         this.rcptCount --;
+    }
+
+    public FsmEngineContext setPipeliningActive(boolean pipeliningActive) {
+        this.pipeliningActive = pipeliningActive;
+        return this;
+    }
+
+    public boolean isPipeliningActive() {
+        return pipeliningActive;
     }
 }

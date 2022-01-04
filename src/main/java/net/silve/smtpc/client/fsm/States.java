@@ -7,6 +7,7 @@ public class States {
     public static final State GREETING_STATE = new GreetingState();
     public static final State STARTTLS_STATE = new StartTlsState();
     public static final State TLS_HANDSHAKE_STATE = new TlsHandshakeState();
+    public static final State PIPELINING_STATE = new PipeliningState();
     public static final State MAIL_STATE = new MailState();
     public static final State RCPT_STATE = new RcptState();
     public static final State DATA_STATE = new DataState();

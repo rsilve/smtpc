@@ -12,6 +12,7 @@ import static net.silve.smtpc.client.fsm.States.*;
 class ExtendedGreetingState extends AbstractState {
 
     private static final CharSequence STARTTLS = AsciiString.cached("STARTTLS");
+    private static final CharSequence PIPELINING = AsciiString.cached("PIPELINING");
 
     @Override
     public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
@@ -43,6 +44,14 @@ class ExtendedGreetingState extends AbstractState {
                 return STARTTLS_STATE;
             }
         }
+
+        if (context.isPipeliningActive()) {
+            final boolean pipeliningSupported = AsciiString.containsContentEqualsIgnoreCase(response.details(), PIPELINING);
+            if (pipeliningSupported) {
+                return PIPELINING_STATE;
+            }
+        }
+
         return null;
     }
 
