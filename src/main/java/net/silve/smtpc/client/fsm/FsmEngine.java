@@ -68,6 +68,11 @@ public class FsmEngine {
         return this;
     }
 
+    public FsmEngine usePipelining(boolean usePipelining) {
+        context.setPipeliningActive(usePipelining);
+        return this;
+    }
+
     public void notifyRcpt() {
         context.decrRcptCount();
     }
