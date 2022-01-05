@@ -4,8 +4,7 @@ import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.States.GREETING_STATE;
-import static net.silve.smtpc.client.fsm.States.QUIT_STATE;
+import static net.silve.smtpc.client.fsm.States.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -15,7 +14,11 @@ class TlsHandShakeStateTest {
     void shouldReturnNextState() throws InvalidStateException {
         State state = new TlsHandshakeState();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance(), null
+                FsmEvent.newInstance(), new FsmEngineContext()
+        ));
+
+        assertEquals(EXTENDED_GREETING_STATE, state.nextStateFromEvent(
+                FsmEvent.newInstance(), new FsmEngineContext().setExtendedGreeting(true)
         ));
 
         InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
