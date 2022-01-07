@@ -1,10 +1,8 @@
 package net.silve.smtpc.client.fsm;
 
-import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.States.*;
+import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

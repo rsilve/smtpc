@@ -10,6 +10,7 @@ public class FsmEngineContext {
     private boolean extendedGreeting;
     private boolean allMessageCompleted = true;
     private int rcptCount;
+    private int pipeliningRcptCount;
     private boolean useTls = true;
     private boolean pipeliningActive = false;
 
@@ -44,6 +45,7 @@ public class FsmEngineContext {
     public FsmEngineContext setMessage(Message message) {
         if (Objects.nonNull(message)) {
             this.rcptCount = message.getRecipients().length;
+            this.pipeliningRcptCount = 0;
             this.allMessageCompleted = false;
         } else {
             this.allMessageCompleted = true;
@@ -55,12 +57,21 @@ public class FsmEngineContext {
         return rcptCount;
     }
 
+    public int getPipeliningRcptCount() {
+        return pipeliningRcptCount;
+    }
+
     public boolean isAllMessageCompleted() {
         return allMessageCompleted;
     }
 
     public void decrRcptCount() {
         this.rcptCount --;
+        this.pipeliningRcptCount ++;
+    }
+
+    public void decrPipeliningRcptCount() {
+        this.pipeliningRcptCount --;
     }
 
     public FsmEngineContext setPipeliningActive(boolean pipeliningActive) {

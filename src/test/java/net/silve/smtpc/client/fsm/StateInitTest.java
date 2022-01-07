@@ -3,19 +3,19 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.States.*;
+import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class InitStateTest {
+class StateInitTest {
 
     @Test
     void shouldInheritFromAbstractState() {
-        assertTrue(new InitState() instanceof AbstractState);
+        assertTrue(new StateInit() instanceof AbstractState);
     }
 
     @Test
     void shouldReturnNextState() throws InvalidStateException {
-        InitState state = new InitState();
+        StateInit state = new StateInit();
         assertEquals(GREETING_STATE, state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()));
 
         InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
@@ -27,7 +27,7 @@ class InitStateTest {
 
     @Test
     void shouldReturnAction() {
-        InitState state = new InitState();
+        StateInit state = new StateInit();
         assertNull(state.action());
     }
 }

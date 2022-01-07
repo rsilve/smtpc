@@ -4,30 +4,28 @@ import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.States.*;
+import static net.silve.smtpc.client.fsm.ConstantStates.GREETING_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.QUIT_STATE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class RcptStateTest {
+class StateRsetTest {
 
     @Test
     void shouldInheritFromAbstractState() {
-        assertTrue(new RcptState() instanceof AbstractState);
+        assertTrue(new StateRset() instanceof AbstractState);
     }
 
     @Test
     void shouldReturnNextState() throws InvalidStateException {
-        State state = new RcptState();
-        assertEquals(RCPT_STATE, state.nextStateFromEvent(
+        State state = new StateRset();
+        assertEquals(GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
-                new FsmEngineContext().setMessage(new Message().setRecipient("recipient"))
-        ));
-        assertEquals(DATA_STATE, state.nextStateFromEvent(
-                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()
+                new FsmEngineContext()
         ));
 
         InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
             FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501));
-            state.nextStateFromEvent(event, new FsmEngineContext());
+            state.nextStateFromEvent(event, new FsmEngineContext().setMessage(new Message()));
         });
         assertEquals(QUIT_STATE, exception.getState());
 
@@ -35,7 +33,7 @@ class RcptStateTest {
 
     @Test
     void shouldReturnAction() {
-        State state = new RcptState();
-        assertEquals(SmtpCommandAction.RCPT, state.action());
+        State state = new StateRset();
+        assertEquals(SmtpCommandAction.RSET, state.action());
     }
 }

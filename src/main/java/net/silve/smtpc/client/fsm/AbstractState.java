@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.States.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
 
 public abstract class AbstractState implements State {
 

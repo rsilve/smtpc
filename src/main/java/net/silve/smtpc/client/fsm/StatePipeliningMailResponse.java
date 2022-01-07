@@ -3,20 +3,20 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
+import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_RCPT_RESPONSE_STATE;
 import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
-import static net.silve.smtpc.client.fsm.States.RCPT_STATE;
 
-public class MailState  extends AbstractState {
+public class StatePipeliningMailResponse extends AbstractState {
     @Override
-    public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
+    protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
         if (response.code() == 250) {
-            return RCPT_STATE;
+            return PIPELINING_RCPT_RESPONSE_STATE;
         }
         throw INVALID_STATE_EXCEPTION_QUIT;
     }
 
     @Override
     public SmtpCommandAction action() {
-        return SmtpCommandAction.MAIL;
+        return SmtpCommandAction.PIPELINING_MAIL_RESPONSE;
     }
 }

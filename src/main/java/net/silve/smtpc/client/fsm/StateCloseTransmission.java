@@ -1,6 +1,6 @@
 package net.silve.smtpc.client.fsm;
 
-class CloseTransmissionState implements State {
+class StateCloseTransmission implements State {
 
     @Override
     public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {

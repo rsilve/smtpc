@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.States.INIT_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.INIT_STATE;
 
 public class FsmEngine {
 
@@ -75,6 +75,9 @@ public class FsmEngine {
 
     public void notifyRcpt() {
         context.decrRcptCount();
+    }
+    public void notifyPipeliningRcpt() {
+        context.decrPipeliningRcptCount();
     }
 
     private static class NoopActionListener implements FsmActionListener {

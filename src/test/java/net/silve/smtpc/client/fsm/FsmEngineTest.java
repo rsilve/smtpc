@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static net.silve.smtpc.client.fsm.States.*;
+import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FsmEngineTest {
