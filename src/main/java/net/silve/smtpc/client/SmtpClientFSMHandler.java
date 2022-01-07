@@ -186,15 +186,13 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case PIPELINING_MAIL_RESPONSE:
+            case PIPELINING_DATA_RESPONSE:
                 // do nothing
                 break;
             case PIPELINING_RCPT_RESPONSE:
                 engine.notifyPipeliningRcpt();
                 break;
 
-            case PIPELINING_DATA_RESPONSE:
-                // do nothing
-                break;
             case DATA_CONTENT:
                 handleContentRequest();
                 break;
