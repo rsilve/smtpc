@@ -6,7 +6,7 @@ import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class TlsHandShakeStateTest {
+class StateTlsHandShakeTest {
 
     @Test
     void shouldReturnNextState() throws InvalidStateException {

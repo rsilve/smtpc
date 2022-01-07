@@ -123,12 +123,13 @@ class FsmEngineTest {
     }
 
     @Test
-    void shouldApplySession() {
+    void shouldNotifyRcpt() {
         State testState = new State() {
             @Override
             public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
                 assertTrue(context.isExtendedGreeting());
                 assertEquals(0, context.getRcptCount());
+                assertEquals(1, context.getPipeliningRcptCount());
                 return null;
             }
 
@@ -140,6 +141,29 @@ class FsmEngineTest {
 
         FsmEngine engine = new FsmEngine(testState).applySession(SmtpSession.newInstance("host", 25).setExtendedHelo(true), new Message().setRecipient("recipient"));
         engine.notifyRcpt();
+        engine.notify(FsmEvent.newInstance());
+    }
+
+    @Test
+    void shouldNotifyPipeliningRcpt() {
+        State testState = new State() {
+            @Override
+            public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
+                assertTrue(context.isExtendedGreeting());
+                assertEquals(0, context.getRcptCount());
+                assertEquals(0, context.getPipeliningRcptCount());
+                return null;
+            }
+
+            @Override
+            public SmtpCommandAction action() {
+                return SmtpCommandAction.CLOSE_TRANSMISSION;
+            }
+        };
+
+        FsmEngine engine = new FsmEngine(testState).applySession(SmtpSession.newInstance("host", 25).setExtendedHelo(true), new Message().setRecipient("recipient"));
+        engine.notifyRcpt();
+        engine.notifyPipeliningRcpt();
         engine.notify(FsmEvent.newInstance());
     }
 
