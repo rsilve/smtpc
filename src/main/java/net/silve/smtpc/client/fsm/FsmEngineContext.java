@@ -1,5 +1,6 @@
 package net.silve.smtpc.client.fsm;
 
+import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.message.Message;
 
 import java.util.Objects;
@@ -13,6 +14,7 @@ public class FsmEngineContext {
     private int pipeliningRcptCount;
     private boolean useTls = true;
     private boolean pipeliningActive = false;
+    private SmtpResponse pipeliningError;
 
     public boolean isTlsActive() {
         return tlsActive;
@@ -46,6 +48,7 @@ public class FsmEngineContext {
         if (Objects.nonNull(message)) {
             this.rcptCount = message.getRecipients().length;
             this.pipeliningRcptCount = 0;
+            this.pipeliningError = null;
             this.allMessageCompleted = false;
         } else {
             this.allMessageCompleted = true;
@@ -81,5 +84,14 @@ public class FsmEngineContext {
 
     public boolean isPipeliningActive() {
         return pipeliningActive;
+    }
+
+    public SmtpResponse getPipeliningError() {
+        return pipeliningError;
+    }
+
+    public FsmEngineContext setPipeliningError(SmtpResponse pipeliningError) {
+        this.pipeliningError = pipeliningError;
+        return this;
     }
 }

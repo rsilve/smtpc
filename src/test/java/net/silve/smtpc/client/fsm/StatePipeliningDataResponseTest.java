@@ -24,8 +24,17 @@ class StatePipeliningDataResponseTest {
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354)), new FsmEngineContext()));
 
         InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
+            FsmEngineContext context = new FsmEngineContext();
+            context.setPipeliningError(new DefaultSmtpResponse(454));
+            FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354));
+            state.nextStateFromEvent(event, context);
+        });
+        assertEquals(QUIT_STATE, exception.getState());
+
+        exception = assertThrows(InvalidStateException.class, () -> {
+            FsmEngineContext context = new FsmEngineContext();
             FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501));
-            state.nextStateFromEvent(event, new FsmEngineContext());
+            state.nextStateFromEvent(event, context);
         });
         assertEquals(QUIT_STATE, exception.getState());
     }

@@ -4,15 +4,14 @@ import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_RCPT_RESPONSE_STATE;
-import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 
 public class StatePipeliningMailResponse extends AbstractState {
     @Override
     protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
-        if (response.code() == 250) {
-            return PIPELINING_RCPT_RESPONSE_STATE;
+        if (response.code() != 250) {
+            context.setPipeliningError(response);
         }
-        throw INVALID_STATE_EXCEPTION_QUIT;
+        return PIPELINING_RCPT_RESPONSE_STATE;
     }
 
     @Override
