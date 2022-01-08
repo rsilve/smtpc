@@ -35,7 +35,7 @@ public class LogListener implements SmtpSessionListener {
     public void onError(String id, Throwable throwable) {
         AsciiString name = lastCommand.containsKey(id) ? lastCommand.get(id).name() : AsciiString.of("none");
         if (throwable instanceof InvalidStateException || throwable instanceof SocketException) {
-            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] last_command=%s, last_response=%d, invalid protocol",
+            logger.log(Level.WARNING, () -> String.format("!!! [%s] last_command=%s, last_response=%d, invalid protocol",
                     id, name, lastResponseCode.get(id)));
         } else {
             logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] last_command=%s, last_response=%d, error='%s'",

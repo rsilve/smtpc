@@ -8,6 +8,7 @@ import net.silve.smtpc.message.SmtpSession;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.stream.IntStream;
 
 
 /**
@@ -16,11 +17,11 @@ import java.util.logging.Level;
  */
 public class HelloWorldPipelining {
 
-    private static final String HOST = "home.silve.net";
+    private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 25;
     private static final String SENDER = "sender@silve.net";
-    private static final String RECIPIENT = "devnull@silve.net";
-    private static final String RECIPIENT2 = "devnull+2@silve.net";
+    private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final boolean USE_PIPELINING = true;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         LoggerFactory.configure(Level.ALL);
@@ -29,12 +30,12 @@ public class HelloWorldPipelining {
 
         LoggerFactory.getInstance().log(Level.INFO, "=============== WITHOUT PIPELINING ===============");
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(false));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(USE_PIPELINING));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session.setGreeting("greeting.tld")
                 .setMessageFactory(
                         new Message().setSender(SENDER)
-                                .setRecipient(RECIPIENT).addRecipient(RECIPIENT2)
+                                .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                 .factory()
                 )
@@ -49,7 +50,7 @@ public class HelloWorldPipelining {
         session.setGreeting("greeting.tld")
                 .setMessageFactory(
                         new Message().setSender(SENDER)
-                                .setRecipient(RECIPIENT).addRecipient(RECIPIENT2)
+                                .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                 .factory()
                 )
