@@ -18,10 +18,9 @@ import java.util.stream.IntStream;
 public class HelloWorldPipelining {
 
     private static final String HOST = "smtp.black-hole.in";
-    private static final int PORT = 25;
+    private static final int PORT = 2525;
     private static final String SENDER = "sender@silve.net";
-    private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
-    private static final boolean USE_PIPELINING = true;
+    private static final String[] RECIPIENTS = IntStream.range(1, 52).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
 
     public static void main(String[] args) throws IOException, InterruptedException {
         LoggerFactory.configure(Level.ALL);
@@ -30,7 +29,7 @@ public class HelloWorldPipelining {
 
         LoggerFactory.getInstance().log(Level.INFO, "=============== WITHOUT PIPELINING ===============");
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(false));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session.setGreeting("greeting.tld")
                 .setMessageFactory(

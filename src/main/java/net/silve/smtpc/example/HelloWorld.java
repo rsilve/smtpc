@@ -20,8 +20,8 @@ public class HelloWorld {
     private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
-    private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
-    private static final boolean USE_PIPELINING = true;
+    private static final String[] RECIPIENTS = IntStream.range(1, 10).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final boolean USE_PIPELINING = false;
 
     public static void main(String[] args) throws IOException {
         LoggerFactory.configure(Level.ALL);
