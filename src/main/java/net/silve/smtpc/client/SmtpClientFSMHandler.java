@@ -206,7 +206,9 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case CLOSE_TRANSMISSION:
-                this.ctx.close();
+                if (Objects.nonNull(this.ctx)) {
+                    this.ctx.close();
+                }
                 break;
 
             default:
