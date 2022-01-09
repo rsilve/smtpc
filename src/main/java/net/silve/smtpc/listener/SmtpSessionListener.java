@@ -19,5 +19,5 @@ public interface SmtpSessionListener {
 
     void onResponse(String id, int code, List<CharSequence> details);
 
-    void onStartTls();
+    void onStartTls(String id);
 }

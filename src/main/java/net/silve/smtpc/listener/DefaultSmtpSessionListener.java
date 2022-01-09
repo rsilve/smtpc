@@ -61,7 +61,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
 
     @Override
-    public void onStartTls() {
+    public void onStartTls(String id) {
         // default implementation : do nothing
     }
 

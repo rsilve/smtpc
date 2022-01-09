@@ -39,11 +39,9 @@ public class LogListener implements SmtpSessionListener {
     public void onError(String id, Throwable throwable) {
         AsciiString name = lastCommand.containsKey(id) ? lastCommand.get(id).name() : AsciiString.of("none");
         if (throwable instanceof InvalidStateException || throwable instanceof SocketException) {
-            logger.log(Level.WARNING, () -> String.format("!!! [%s] last_command=%s, last_response=%d, error='%s'",
-                    id, name, lastResponseCode.get(id), lastResponseDetails.get(id)));
+            logger.log(Level.WARNING, () -> String.format("!!! [%s] last_command=%s, last_response=%d, error='%s'", id, name, lastResponseCode.get(id), lastResponseDetails.get(id)));
         } else {
-            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] last_command=%s, last_response=%d, error='%s'",
-                    id, name, lastResponseCode.get(id), throwable.getMessage()));
+            logger.log(Level.WARNING, throwable, () -> String.format("!!! [%s] last_command=%s, last_response=%d, error='%s'", id, name, lastResponseCode.get(id), throwable.getMessage()));
         }
     }
 
@@ -72,12 +70,9 @@ public class LogListener implements SmtpSessionListener {
         final long duration = startedAt != null && startedAt != 0 ? (System.nanoTime() - startedAt) / 1000000 : -1L;
         Boolean sended = sentStatusMap.get(id);
         if (Boolean.TRUE.equals(sended)) {
-            logger.log(Level.FINE,
-                    () -> String.format("=== transaction completed for %s, duration=%dms, status=sended", id, duration));
+            logger.log(Level.FINE, () -> String.format("=== transaction completed for %s, duration=%dms, status=sended", id, duration));
         } else {
-            logger.log(Level.INFO,
-                    () -> String.format("=== transaction completed for %s, duration=%dms, status=not send,%n%s",
-                            id, duration, transactionDetails.get(id).toString()));
+            logger.log(Level.INFO, () -> String.format("=== transaction completed for %s, duration=%dms, status=not send,%n%s", id, duration, transactionDetails.get(id).toString()));
         }
         this.lastResponseCode.remove(id);
         this.lastResponseDetails.remove(id);
@@ -89,18 +84,16 @@ public class LogListener implements SmtpSessionListener {
     public void onResponse(String id, int code, List<CharSequence> details) {
         this.lastResponseCode.put(id, code);
         this.lastResponseDetails.put(id, String.join("\r\n", details));
-        String format = String.format("<<< %s %s",
-                code,
-                String.join("\r\n", details));
+        String format = String.format("<<< %s %s", code, String.join("\r\n", details));
         logger.log(Level.FINE, () -> format);
         saveTransactionDetails(id, format);
     }
 
     @Override
-    public void onStartTls() {
+    public void onStartTls(String id) {
         logger.log(Level.FINE, "=== StartTLS handshake completed");
+        saveTransactionDetails(id, "=== StartTLS handshake completed");
     }
-
 
     private void saveTransactionDetails(String id, String details) {
         transactionDetails.computeIfAbsent(id, s -> new StringBuffer()).append(details).append("\n");

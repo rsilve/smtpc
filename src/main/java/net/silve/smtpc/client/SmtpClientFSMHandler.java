@@ -62,8 +62,10 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SmtpResponse response) {
-        session.notifyResponse(response);
-        engine.notify(response);
+        if (Objects.nonNull(ctx)) {
+            session.notifyResponse(response);
+            engine.notify(response);
+        }
     }
 
     private int getDataSize(SmtpContent content) {
