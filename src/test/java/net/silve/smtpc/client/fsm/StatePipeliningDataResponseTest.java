@@ -19,22 +19,20 @@ class StatePipeliningDataResponseTest {
 
     @Test
     void shouldReturnState() throws InvalidStateException {
-        State state = new StatePipeliningDataResponse();
+        final State state = new StatePipeliningDataResponse();
         assertEquals(CONTENT_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354)), new FsmEngineContext()));
 
-        InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
-            FsmEngineContext context = new FsmEngineContext();
-            context.setPipeliningError(new DefaultSmtpResponse(454));
-            FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354));
-            state.nextStateFromEvent(event, context);
-        });
-        assertEquals(QUIT_STATE, exception.getState());
+        FsmEngineContext context = new FsmEngineContext();
+        context.setPipeliningError(new DefaultSmtpResponse(454));
+        FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(354));
+        State stateResult = state.nextStateFromEvent(event, context);
+        assertEquals(CONTENT_STATE, stateResult);
 
-        exception = assertThrows(InvalidStateException.class, () -> {
-            FsmEngineContext context = new FsmEngineContext();
-            FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501));
-            state.nextStateFromEvent(event, context);
+        InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
+            FsmEngineContext context1 = new FsmEngineContext();
+            FsmEvent event1 = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501));
+            state.nextStateFromEvent(event1, context1);
         });
         assertEquals(QUIT_STATE, exception.getState());
     }
