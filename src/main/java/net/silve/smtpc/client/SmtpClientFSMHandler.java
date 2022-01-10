@@ -3,7 +3,10 @@ package net.silve.smtpc.client;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
-import io.netty.handler.codec.smtp.*;
+import io.netty.handler.codec.smtp.LastSmtpContent;
+import io.netty.handler.codec.smtp.SmtpCommand;
+import io.netty.handler.codec.smtp.SmtpContent;
+import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.handler.ssl.SslContext;
 import io.netty.util.AsciiString;
 import net.silve.smtpc.client.fsm.*;
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.net.ssl.SSLException;
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.States.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
 
 
 public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
@@ -32,6 +35,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public SmtpClientFSMHandler(@NotNull SmtpSession session, @NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         this.session = session;
         updateTLSContext(smtpClientConfig);
+        updatePipeliningContext(smtpClientConfig);
         updateEngineContext();
         engine.setActionListener(this);
     }
@@ -41,6 +45,10 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
         if (smtpClientConfig.useTls()) {
             this.sslCtx = SslUtils.createSslCtx(smtpClientConfig.getTrustManager());
         }
+    }
+
+    private void updatePipeliningContext(@NotNull SmtpClientConfig smtpClientConfig) {
+        engine.usePipelining(smtpClientConfig.usePipelining());
     }
 
     private void updateEngineContext() {
@@ -57,8 +65,10 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SmtpResponse response) {
-        session.notifyResponse(response);
-        engine.notify(response);
+        if (Objects.nonNull(ctx)) {
+            session.notifyResponse(response);
+            engine.notify(response);
+        }
     }
 
     private int getDataSize(SmtpContent content) {
@@ -66,17 +76,24 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     }
 
     private void handleCommandRequest(RecyclableSmtpRequest request) {
-        ctx.writeAndFlush(request).addListener(future -> {
+        handleCommandRequest(request, true);
+    }
+
+    private void handleCommandRequest(RecyclableSmtpRequest request, boolean flush) {
+        ctx.write(request).addListener(future -> {
             if (future.isSuccess()) {
                 session.notifyRequest(request);
             } else {
                 session.notifyError(future.cause());
                 ctx.close();
             }
-            if (! (ctx.channel() instanceof EmbeddedChannel)) {
+            if (!(ctx.channel() instanceof EmbeddedChannel)) {
                 request.recycle();
             }
         });
+        if (flush) {
+            ctx.flush();
+        }
     }
 
     private void handleContentRequest() {
@@ -103,7 +120,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 session.notifyError(future.cause());
                 ctx.close();
             }
-            if (! (ctx.channel() instanceof EmbeddedChannel)) {
+            if (!(ctx.channel() instanceof EmbeddedChannel)) {
                 content.recycle();
             }
         });
@@ -118,7 +135,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 session.notifyError(future.cause());
                 ctx.close();
             }
-            if (! (ctx.channel() instanceof EmbeddedChannel)) {
+            if (!(ctx.channel() instanceof EmbeddedChannel)) {
                 content.recycle();
             }
         });
@@ -149,20 +166,36 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 });
                 break;
 
+            case PIPELINING_MAIL:
+                handleMail(false);
+                engine.notify(FsmEvent.newInstance());
+                break;
             case MAIL:
-                String sender = "FROM:<" + this.message.getSender() + ">";
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, AsciiString.of(sender)));
+                handleMail(true);
                 break;
 
+            case PIPELINING_RCPT:
+                handleRcpt(false);
+                engine.notify(FsmEvent.newInstance());
+                break;
             case RCPT:
-                String rcpt = this.message.nextRecipient();
-                engine.notifyRcpt();
-                String recipient = "TO:<" + rcpt + ">";
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, AsciiString.of(recipient)));
+                handleRcpt(true);
                 break;
 
+            case PIPELINING_DATA:
+                handleData();
+                engine.notify(FsmEvent.newInstance());
+                break;
             case DATA:
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA));
+                handleData();
+                break;
+
+            case PIPELINING_MAIL_RESPONSE:
+            case PIPELINING_DATA_RESPONSE:
+                // do nothing
+                break;
+            case PIPELINING_RCPT_RESPONSE:
+                engine.notifyPipeliningRcpt();
                 break;
 
             case DATA_CONTENT:
@@ -178,7 +211,9 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case CLOSE_TRANSMISSION:
-                this.ctx.close();
+                if (Objects.nonNull(this.ctx)) {
+                    this.ctx.close();
+                }
                 break;
 
             default:
@@ -186,6 +221,22 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 this.ctx.close();
                 break;
         }
+    }
+
+    private void handleData() {
+        handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA), true);
+    }
+
+    private void handleRcpt(boolean flush) {
+        String rcpt = this.message.nextRecipient();
+        engine.notifyRcpt();
+        String recipient = "TO:<" + rcpt + ">";
+        handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, AsciiString.of(recipient)), flush);
+    }
+
+    private void handleMail(boolean flush) {
+        String sender = "FROM:<" + this.message.getSender() + ">";
+        handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, AsciiString.of(sender)), flush);
     }
 
     @Override

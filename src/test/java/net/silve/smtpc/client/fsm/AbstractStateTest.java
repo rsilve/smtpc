@@ -5,7 +5,7 @@ import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.States.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

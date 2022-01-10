@@ -2,7 +2,7 @@ package net.silve.smtpc.client.fsm;
 
 import org.jetbrains.annotations.NotNull;
 
-import static net.silve.smtpc.client.fsm.States.QUIT_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.QUIT_STATE;
 
 
 public class InvalidStateException extends Exception {

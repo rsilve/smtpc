@@ -18,6 +18,7 @@ class ConfigTest {
         assertEquals(60000, smtpClientConfig.getConnectTimeoutMillis());
         assertNull(smtpClientConfig.getTrustManager());
         assertTrue(smtpClientConfig.useTls());
+        assertFalse(smtpClientConfig.usePipelining());
     }
 
 
@@ -45,6 +46,13 @@ class ConfigTest {
         SmtpClientConfig smtpClientConfig = new SmtpClientConfig();
         smtpClientConfig.useTls(false);
         assertFalse(smtpClientConfig.useTls());
+    }
+
+    @Test
+    void shouldHaveUsePipeliningSetter() {
+        SmtpClientConfig smtpClientConfig = new SmtpClientConfig();
+        smtpClientConfig.usePipelining(true);
+        assertTrue(smtpClientConfig.usePipelining());
     }
 
 }

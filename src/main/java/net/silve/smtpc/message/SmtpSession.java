@@ -129,7 +129,7 @@ public class SmtpSession {
     }
 
     public void notifyStartTls() {
-        this.listener.onStartTls();
+        this.listener.onStartTls(getId());
     }
 
     public Message getMessage() {

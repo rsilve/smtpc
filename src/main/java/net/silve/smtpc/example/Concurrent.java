@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 /**
  * use <code>python -m smtpd -c DebuggingServer -n localhost:2525</code>
@@ -24,9 +25,10 @@ public class Concurrent {
     private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
-    private static final String RECIPIENT = "devnull@silve.net";
-    private static final int NUMBER_OF_MESSAGES = 500;
-    private static final long DELAY_MILLIS = 100;
+    private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final boolean USE_PIPELINING = true;
+    private static final int NUMBER_OF_MESSAGES = 1000;
+    private static final long DELAY_MILLIS = 50;
 
     private static final Logger logger = LoggerFactory.getInstance();
 
@@ -36,7 +38,7 @@ public class Concurrent {
         byte[] contentBytes = Concurrent.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
-        SmtpClient client = new SmtpClient(new SmtpClientConfig());
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(USE_PIPELINING));
         AtomicInteger max = new AtomicInteger(NUMBER_OF_MESSAGES);
         AtomicLong totalDuration = new AtomicLong(0L);
 
@@ -63,7 +65,7 @@ public class Concurrent {
                 session.setGreeting("greeting.tld")
                         .setMessageFactory(
                                 new Message().setSender(SENDER)
-                                        .setRecipient(RECIPIENT)
+                                        .setRecipients(RECIPIENTS)
                                         .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
                                         .factory())
                         .setListener(logListener);

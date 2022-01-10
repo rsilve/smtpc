@@ -584,4 +584,49 @@ class SmtpClientFSMHandlerTest {
     }
 
 
+    @Test
+    void shouldHandleSessionWithPipelining() throws SSLException {
+        RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = SmtpSession.newInstance("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("sender")
+                                .setRecipient("recipient")
+                                .setChunks(content)
+                                .factory()
+                )
+                .setExtendedHelo(true);
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().usePipelining(true));
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "PIPELINING")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(354, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals("localhost", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.MAIL, outbound.command());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.RCPT, outbound.command());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.DATA, outbound.command());
+
+        SmtpContent c = channel.readOutbound();
+        assertEquals(content, c);
+
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.QUIT, outbound.command());
+
+        outbound = channel.readOutbound();
+        assertNull(outbound);
+        assertFalse(channel.isActive());
+
+    }
+
+
 }

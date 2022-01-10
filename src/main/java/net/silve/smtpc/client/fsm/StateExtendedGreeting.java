@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.States.*;
+import static net.silve.smtpc.client.fsm.ConstantStates.*;
 
 
-class ExtendedGreetingState extends AbstractState {
+class StateExtendedGreeting extends AbstractState {
 
     private static final CharSequence STARTTLS = AsciiString.cached("STARTTLS");
+    private static final CharSequence PIPELINING = AsciiString.cached("PIPELINING");
 
     @Override
     public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) {
@@ -43,6 +44,14 @@ class ExtendedGreetingState extends AbstractState {
                 return STARTTLS_STATE;
             }
         }
+
+        if (context.isPipeliningActive()) {
+            final boolean pipeliningSupported = AsciiString.containsContentEqualsIgnoreCase(response.details(), PIPELINING);
+            if (pipeliningSupported) {
+                return PIPELINING_MAIL_STATE;
+            }
+        }
+
         return null;
     }
 

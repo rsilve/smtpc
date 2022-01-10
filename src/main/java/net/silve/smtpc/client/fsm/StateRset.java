@@ -4,21 +4,20 @@ import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
-import static net.silve.smtpc.client.fsm.States.*;
+import static net.silve.smtpc.client.fsm.ConstantStates.GREETING_STATE;
 
-class InitState extends AbstractState {
+public class StateRset extends AbstractState {
 
     @Override
     public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
-        if (response.code() != 220) {
-            throw INVALID_STATE_EXCEPTION_QUIT;
+        if (response.code() == 250) {
+            return GREETING_STATE;
         }
-
-        return context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
+        throw INVALID_STATE_EXCEPTION_QUIT;
     }
 
     @Override
     public SmtpCommandAction action() {
-        return null;
+        return SmtpCommandAction.RSET;
     }
 }
