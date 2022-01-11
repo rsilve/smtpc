@@ -629,4 +629,32 @@ class SmtpClientFSMHandlerTest {
     }
 
 
+    @Test
+    void shouldUseGreetingFromConfig() throws SSLException {
+        RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
+        SmtpSession session = SmtpSession.newInstance("host", 25)
+                .setMessageFactory(
+                        new Message()
+                                .setSender("sender")
+                                .setRecipient("recipient")
+                                .setChunks(content, content2)
+                                .factory()
+                )
+                .setExtendedHelo(false);
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().setGreeting("greeting.tld"));
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
+        assertTrue(channel.finish());
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        assertEquals("greeting.tld", outbound.parameters().get(0).toString());
+        outbound = channel.readOutbound();
+        assertNull(outbound);
+        assertFalse(channel.isActive());
+
+    }
+
+
 }
