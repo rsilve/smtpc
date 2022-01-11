@@ -40,6 +40,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
         updateTLSContext(smtpClientConfig);
         updatePipeliningContext(smtpClientConfig);
         updateEngineContext();
+        engine.applyConfiguration(smtpClientConfig);
         engine.setActionListener(this);
     }
 
@@ -56,7 +57,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private void updateEngineContext() {
         this.message = this.session.getMessage();
-        engine.applySession(session, message);
+        engine.applyMessage(message);
     }
 
     @Override

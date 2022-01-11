@@ -32,7 +32,6 @@ public class SmtpSession {
     private String host;
     private int port;
 
-    private boolean extendedHelo = true;
 
     private MessageFactory messageFactory = DEFAULT_MESSAGE_FACTORY;
 
@@ -46,7 +45,6 @@ public class SmtpSession {
     public void recycle() {
         this.host = null;
         this.port = 0;
-        this.extendedHelo = true;
         this.messageFactory = DEFAULT_MESSAGE_FACTORY;
         this.listener = new DefaultSmtpSessionListener();
         this.id = UUID.randomUUID().toString();
@@ -63,15 +61,6 @@ public class SmtpSession {
 
     public int getPort() {
         return port;
-    }
-
-    public boolean useExtendedHelo() {
-        return extendedHelo;
-    }
-
-    public SmtpSession setExtendedHelo(boolean extendedHelo) {
-        this.extendedHelo = extendedHelo;
-        return this;
     }
 
     public SmtpSession setMessageFactory(MessageFactory messageFactory) {

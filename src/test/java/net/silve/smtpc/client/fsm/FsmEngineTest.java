@@ -2,8 +2,8 @@ package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.smtpc.client.SmtpClientConfig;
 import net.silve.smtpc.message.Message;
-import net.silve.smtpc.message.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -139,7 +139,9 @@ class FsmEngineTest {
             }
         };
 
-        FsmEngine engine = new FsmEngine(testState).applySession(SmtpSession.newInstance("host", 25).setExtendedHelo(true), new Message().setRecipient("recipient"));
+        FsmEngine engine = new FsmEngine(testState)
+                .applyMessage(new Message().setRecipient("recipient"))
+                .applyConfiguration(new SmtpClientConfig().useExtendedHelo(true));
         engine.notifyRcpt();
         engine.notify(FsmEvent.newInstance());
     }
@@ -161,7 +163,9 @@ class FsmEngineTest {
             }
         };
 
-        FsmEngine engine = new FsmEngine(testState).applySession(SmtpSession.newInstance("host", 25).setExtendedHelo(true), new Message().setRecipient("recipient"));
+        FsmEngine engine = new FsmEngine(testState)
+                .applyMessage(new Message().setRecipient("recipient"))
+                .applyConfiguration(new SmtpClientConfig().useExtendedHelo(true));
         engine.notifyRcpt();
         engine.notifyPipeliningRcpt();
         engine.notify(FsmEvent.newInstance());
@@ -207,6 +211,39 @@ class FsmEngineTest {
         assertEquals(QUIT_STATE, engine.getState());
         assertTrue(action_started.get());
         assertTrue(errorCatched.get());
+    }
+
+
+    @Test
+    void shouldHaveApplyConfigurationMethod() {
+        State testState1 = new State() {
+            @Override
+            public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
+                return null;
+            }
+
+            @Override
+            public SmtpCommandAction action() {
+                return SmtpCommandAction.CLOSE_TRANSMISSION;
+            }
+        };
+
+        State testState2 = new State() {
+            @Override
+            public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
+
+                return context.isExtendedGreeting() ? testState1 : null;
+            }
+
+            @Override
+            public SmtpCommandAction action() {
+                return null;
+            }
+        };
+        FsmEngine engine = new FsmEngine(testState2);
+        engine.applyConfiguration(new SmtpClientConfig());
+        engine.notify(FsmEvent.newInstance());
+        assertEquals(testState1, engine.getState());
     }
 
 

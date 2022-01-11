@@ -26,11 +26,10 @@ public class HelloWorldFactory {
     public static void main(String[] args) {
         LoggerFactory.configure(Level.FINEST);
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld"));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").useExtendedHelo(false));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
 
-        session.setExtendedHelo(false)
-                .setMessageFactory(new CustomMessageFactory(NUMBER_OF_MESSAGES))
+        session.setMessageFactory(new CustomMessageFactory(NUMBER_OF_MESSAGES))
                 .setListener(new LogListener());
 
         client.runAndClose(session);
