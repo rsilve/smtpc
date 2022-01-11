@@ -2,7 +2,6 @@ package net.silve.smtpc.message;
 
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.handler.codec.smtp.SmtpResponse;
-import io.netty.util.AsciiString;
 import io.netty.util.Recycler;
 import net.silve.smtpc.listener.DefaultSmtpSessionListener;
 import net.silve.smtpc.listener.SmtpSessionListener;
@@ -34,7 +33,6 @@ public class SmtpSession {
     private int port;
 
     private boolean extendedHelo = true;
-    private CharSequence greeting = AsciiString.cached("localhost");
 
     private MessageFactory messageFactory = DEFAULT_MESSAGE_FACTORY;
 
@@ -49,7 +47,6 @@ public class SmtpSession {
         this.host = null;
         this.port = 0;
         this.extendedHelo = true;
-        this.greeting = AsciiString.cached("localhost");
         this.messageFactory = DEFAULT_MESSAGE_FACTORY;
         this.listener = new DefaultSmtpSessionListener();
         this.id = UUID.randomUUID().toString();
@@ -74,15 +71,6 @@ public class SmtpSession {
 
     public SmtpSession setExtendedHelo(boolean extendedHelo) {
         this.extendedHelo = extendedHelo;
-        return this;
-    }
-
-    public CharSequence getGreeting() {
-        return greeting;
-    }
-
-    public SmtpSession setGreeting(String greeting) {
-        this.greeting = greeting;
         return this;
     }
 

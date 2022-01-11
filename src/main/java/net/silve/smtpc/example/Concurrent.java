@@ -38,7 +38,7 @@ public class Concurrent {
         byte[] contentBytes = Concurrent.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
         DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         AtomicInteger max = new AtomicInteger(NUMBER_OF_MESSAGES);
         AtomicLong totalDuration = new AtomicLong(0L);
 
@@ -62,8 +62,7 @@ public class Concurrent {
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
             executors.schedule(() -> {
                 final SmtpSession session = SmtpSession.newInstance(HOST, PORT);
-                session.setGreeting("greeting.tld")
-                        .setMessageFactory(
+                session.setMessageFactory(
                                 new Message().setSender(SENDER)
                                         .setRecipients(RECIPIENTS)
                                         .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())

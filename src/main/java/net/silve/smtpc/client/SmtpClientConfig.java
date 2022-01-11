@@ -1,5 +1,7 @@
 package net.silve.smtpc.client;
 
+import io.netty.util.AsciiString;
+
 import javax.net.ssl.TrustManager;
 
 
@@ -21,6 +23,8 @@ public class SmtpClientConfig {
 
     private boolean useTls = true;
     private boolean usePipelining = false;
+    private CharSequence greeting = AsciiString.cached("localhost");
+
 
     public int getNumberOfThread() {
         return numberOfThread;
@@ -97,6 +101,15 @@ public class SmtpClientConfig {
 
     public SmtpClientConfig usePipelining(boolean usePipelining) {
         this.usePipelining = usePipelining;
+        return this;
+    }
+
+    public CharSequence getGreeting() {
+        return greeting;
+    }
+
+    public SmtpClientConfig setGreeting(CharSequence greeting) {
+        this.greeting = greeting;
         return this;
     }
 }

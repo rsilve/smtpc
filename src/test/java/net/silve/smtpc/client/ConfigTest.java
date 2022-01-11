@@ -55,4 +55,12 @@ class ConfigTest {
         assertTrue(smtpClientConfig.usePipelining());
     }
 
+
+    @Test
+    void shouldHaveGreetingProperty() {
+        SmtpClientConfig smtpClientConfig = new SmtpClientConfig();
+        smtpClientConfig.setGreeting("greeting.tld");
+        assertEquals("greeting.tld", smtpClientConfig.getGreeting());
+    }
+
 }

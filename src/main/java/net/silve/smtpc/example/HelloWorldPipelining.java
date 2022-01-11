@@ -29,10 +29,9 @@ public class HelloWorldPipelining {
 
         LoggerFactory.getInstance().log(Level.INFO, "=============== WITHOUT PIPELINING ===============");
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(false));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(false));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
-        session.setGreeting("greeting.tld")
-                .setMessageFactory(
+        session.setMessageFactory(
                         new Message().setSender(SENDER)
                                 .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
@@ -44,10 +43,9 @@ public class HelloWorldPipelining {
 
         LoggerFactory.getInstance().log(Level.INFO, "=============== WITH PIPELINING ===============");
 
-        client = new SmtpClient(new SmtpClientConfig().usePipelining(true));
+        client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(true));
         session = SmtpSession.newInstance(HOST, PORT);
-        session.setGreeting("greeting.tld")
-                .setMessageFactory(
+        session.setMessageFactory(
                         new Message().setSender(SENDER)
                                 .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
