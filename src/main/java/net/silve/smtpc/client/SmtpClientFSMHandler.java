@@ -24,6 +24,8 @@ import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STA
 
 public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
 
+    private static final SmtpEventListener NOOP_SMTP_EVENT_LISTENER = new NoopSmtpEventListener();
+
     private final SmtpSession session;
     private final SmtpClientConfig smtpClientConfig;
     private Message message;
@@ -32,7 +34,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private final FsmEngine engine = new FsmEngine();
     private SslContext sslCtx;
-    private SmtpEventListener smtpEventListener;
+    private SmtpEventListener smtpEventListener = NOOP_SMTP_EVENT_LISTENER;
 
     public SmtpClientFSMHandler(@NotNull SmtpSession session, @NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         this.session = session;
@@ -267,4 +269,17 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public net.silve.smtpc.client.SmtpEventListener getSmtpEventListener() {
         return smtpEventListener;
     }
+
+    private static class NoopSmtpEventListener implements SmtpEventListener {
+        @Override
+        public void onStart(String id) {
+            // do nothing
+        }
+
+        @Override
+        public void onFinish(String id) {
+            // do nothing
+        }
+    }
+
 }
