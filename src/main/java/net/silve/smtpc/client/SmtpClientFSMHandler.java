@@ -32,6 +32,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     private final FsmEngine engine = new FsmEngine();
     private SslContext sslCtx;
+    private SmtpEventListener smtpEventListener;
 
     public SmtpClientFSMHandler(@NotNull SmtpSession session, @NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         this.session = session;
@@ -149,9 +150,11 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
         switch (action) {
             case HELO:
+                smtpEventListener.onStart(session.getId());
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.smtpClientConfig.getGreeting()));
                 break;
             case EHLO:
+                smtpEventListener.onStart(session.getId());
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, this.smtpClientConfig.getGreeting()));
                 break;
 
@@ -207,14 +210,17 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
                 break;
 
             case RSET:
+                smtpEventListener.onFinish(session.getId());
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.RSET));
                 break;
 
             case QUIT:
+                smtpEventListener.onFinish(session.getId());
                 handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.QUIT));
                 break;
 
             case CLOSE_TRANSMISSION:
+                smtpEventListener.onFinish(session.getId());
                 if (Objects.nonNull(this.ctx)) {
                     this.ctx.close();
                 }
@@ -252,5 +258,13 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         session.notifyError(cause);
         ctx.close();
+    }
+
+    public void setSmtpEventListener(SmtpEventListener smtpEventListener) {
+        this.smtpEventListener = smtpEventListener;
+    }
+
+    public net.silve.smtpc.client.SmtpEventListener getSmtpEventListener() {
+        return smtpEventListener;
     }
 }

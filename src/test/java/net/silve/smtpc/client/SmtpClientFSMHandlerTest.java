@@ -671,4 +671,37 @@ class SmtpClientFSMHandlerTest {
     }
 
 
+    @Test
+    void shouldHaveSmtpEventListener() throws SSLException {
+        SmtpClientConfig config = new SmtpClientConfig().useExtendedHelo(false);
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(SmtpSession.newInstance("host", 25), config);
+        MySmtpEventListener listener = new MySmtpEventListener();
+        handler.setSmtpEventListener(listener);
+        EmbeddedChannel channel = new EmbeddedChannel(handler);
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(500, "Ok")));
+        assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
+        SmtpRequest outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.HELO, outbound.command());
+        outbound = channel.readOutbound();
+        assertEquals(SmtpCommand.QUIT, outbound.command());
+
+        assertTrue(listener.started);
+        assertTrue(listener.finished);
+    }
+
+    private static class MySmtpEventListener implements SmtpEventListener {
+        public boolean started;
+        public boolean finished;
+
+        @Override
+        public void onStart(String id) {
+            this.started = true;
+        }
+
+        @Override
+        public void onFinish(String id) {
+            this.finished = true;
+        }
+    }
 }
