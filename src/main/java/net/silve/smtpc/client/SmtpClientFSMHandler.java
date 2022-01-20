@@ -25,6 +25,7 @@ import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STA
 public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
 
     private final SmtpSession session;
+    private final SmtpClientConfig config;
     private Message message;
     private ChannelHandlerContext ctx;
     private int size = 0;
@@ -34,6 +35,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     public SmtpClientFSMHandler(@NotNull SmtpSession session, @NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         this.session = session;
+        this.config = smtpClientConfig;
         updateTLSContext(smtpClientConfig);
         updatePipeliningContext(smtpClientConfig);
         updateEngineContext();
@@ -145,10 +147,10 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
         switch (action) {
             case HELO:
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.session.getGreeting()));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.config.getGreeting()));
                 break;
             case EHLO:
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, this.session.getGreeting()));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, this.config.getGreeting()));
                 break;
 
             case STARTTLS:

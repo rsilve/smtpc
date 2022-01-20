@@ -21,7 +21,7 @@ public class SmtpClientConfig {
 
     private boolean useTls = true;
     private boolean usePipelining = false;
-    private CharSequence greeting;
+    private CharSequence greeting = "localhost";
 
     public int getNumberOfThread() {
         return numberOfThread;
