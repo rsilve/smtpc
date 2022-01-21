@@ -24,6 +24,7 @@ public class SmtpClientConfig {
     private boolean useTls = true;
     private boolean usePipelining = false;
     private CharSequence greeting =  AsciiString.cached("localhost");
+    private boolean extendedHelo = true;
 
     public int getNumberOfThread() {
         return numberOfThread;
@@ -111,4 +112,14 @@ public class SmtpClientConfig {
     public CharSequence getGreeting() {
         return greeting;
     }
+
+    public SmtpClientConfig useExtendedHelo(boolean b) {
+        this.extendedHelo = b;
+        return this;
+    }
+
+    public boolean useExtendedHelo( ) {
+        return this.extendedHelo;
+    }
+
 }

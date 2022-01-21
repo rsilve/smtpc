@@ -3,7 +3,6 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.message.Message;
-import net.silve.smtpc.message.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -127,7 +126,7 @@ class FsmEngineTest {
         State testState = new State() {
             @Override
             public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
-                assertTrue(context.isExtendedGreeting());
+                assertFalse(context.isExtendedGreeting());
                 assertEquals(0, context.getRcptCount());
                 assertEquals(1, context.getPipeliningRcptCount());
                 return null;
@@ -139,7 +138,7 @@ class FsmEngineTest {
             }
         };
 
-        FsmEngine engine = new FsmEngine(testState).applySession(SmtpSession.newInstance("host", 25).setExtendedHelo(true), new Message().setRecipient("recipient"));
+        FsmEngine engine = new FsmEngine(testState).applyMessage(new Message().setRecipient("recipient"));
         engine.notifyRcpt();
         engine.notify(FsmEvent.newInstance());
     }
@@ -149,7 +148,7 @@ class FsmEngineTest {
         State testState = new State() {
             @Override
             public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) {
-                assertTrue(context.isExtendedGreeting());
+                assertFalse(context.isExtendedGreeting());
                 assertEquals(0, context.getRcptCount());
                 assertEquals(0, context.getPipeliningRcptCount());
                 return null;
@@ -161,7 +160,7 @@ class FsmEngineTest {
             }
         };
 
-        FsmEngine engine = new FsmEngine(testState).applySession(SmtpSession.newInstance("host", 25).setExtendedHelo(true), new Message().setRecipient("recipient"));
+        FsmEngine engine = new FsmEngine(testState).applyMessage(new Message().setRecipient("recipient"));
         engine.notifyRcpt();
         engine.notifyPipeliningRcpt();
         engine.notify(FsmEvent.newInstance());
@@ -209,5 +208,28 @@ class FsmEngineTest {
         assertTrue(errorCatched.get());
     }
 
+    @Test
+    void shouldHaveExtendedHeloSetter() {
+        FsmEngine engine = new FsmEngine().useExtendedHelo(true);
+        assertEquals(INIT_STATE, engine.getState());
+        engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
+        assertEquals(EXTENDED_GREETING_STATE, engine.getState());
+    }
+
+    @Test
+    void shouldHaveExtendedHeloSetter02() {
+        FsmEngine engine = new FsmEngine().useExtendedHelo(false);
+        assertEquals(INIT_STATE, engine.getState());
+        engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
+        assertEquals(GREETING_STATE, engine.getState());
+    }
+
+    @Test
+    void shouldHaveExtendedHeloSetter03() {
+        FsmEngine engine = new FsmEngine();
+        assertEquals(INIT_STATE, engine.getState());
+        engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
+        assertEquals(GREETING_STATE, engine.getState());
+    }
 
 }

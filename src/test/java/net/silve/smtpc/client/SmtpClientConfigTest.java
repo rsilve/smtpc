@@ -13,4 +13,14 @@ class SmtpClientConfigTest {
         assertEquals("Greeting.tld", config.getGreeting());
     }
 
+
+    @Test
+    void shouldHaveExtendedHeloAttribute() {
+        SmtpClientConfig config = new SmtpClientConfig();
+        config.useExtendedHelo(true);
+        assertTrue(config.useExtendedHelo());
+    }
+
+
+
 }

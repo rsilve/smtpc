@@ -36,26 +36,24 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public SmtpClientFSMHandler(@NotNull SmtpSession session, @NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         this.session = session;
         this.config = smtpClientConfig;
-        updateTLSContext(smtpClientConfig);
-        updatePipeliningContext(smtpClientConfig);
+        applyConfiguration(smtpClientConfig);
         updateEngineContext();
         engine.setActionListener(this);
     }
 
-    private void updateTLSContext(@NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
+    private void applyConfiguration(@NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         engine.useTls(smtpClientConfig.useTls());
+        engine.useExtendedHelo(config.useExtendedHelo());
+        engine.usePipelining(smtpClientConfig.usePipelining());
         if (smtpClientConfig.useTls()) {
             this.sslCtx = SslUtils.createSslCtx(smtpClientConfig.getTrustManager());
         }
     }
 
-    private void updatePipeliningContext(@NotNull SmtpClientConfig smtpClientConfig) {
-        engine.usePipelining(smtpClientConfig.usePipelining());
-    }
 
     private void updateEngineContext() {
         this.message = this.session.getMessage();
-        engine.applySession(session, message);
+        engine.applyMessage(message);
     }
 
     @Override
