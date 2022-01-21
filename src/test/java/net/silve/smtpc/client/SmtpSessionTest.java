@@ -9,20 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SmtpSessionTest {
 
-
-    @Test
-    void shouldHaveDefaultValues() {
-        SmtpSession session = SmtpSession.newInstance("host", 25);
-        assertTrue(session.useExtendedHelo());
-    }
-
-    @Test
-    void shouldHaveProperties() {
-        SmtpSession session = SmtpSession.newInstance("host", 25);
-        session.setExtendedHelo(false);
-        assertFalse(session.useExtendedHelo());
-    }
-
     @Test
     void shouldHaveDefaultListener() {
         SmtpSession session = SmtpSession.newInstance("host", 25);

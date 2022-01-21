@@ -20,7 +20,7 @@ public class HelloWorldPipelining {
     private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@silve.net";
-    private static final String[] RECIPIENTS = IntStream.range(1, 52).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final String[] RECIPIENTS = IntStream.range(1, 50).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
 
     public static void main(String[] args) throws IOException, InterruptedException {
         LoggerFactory.configure(Level.ALL);

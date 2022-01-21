@@ -29,9 +29,7 @@ public class HelloWorldFactory {
         SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld"));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
 
-        session
-                .setExtendedHelo(false)
-                .setMessageFactory(new CustomMessageFactory(NUMBER_OF_MESSAGES))
+        session.setMessageFactory(new CustomMessageFactory(NUMBER_OF_MESSAGES))
                 .setListener(new LogListener());
 
         client.runAndClose(session);

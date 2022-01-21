@@ -30,9 +30,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
                                 .factory()
-                )
-                .setExtendedHelo(false);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
@@ -43,7 +42,7 @@ class SmtpClientFSMHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("localhost", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
@@ -77,9 +76,8 @@ class SmtpClientFSMHandlerTest {
                                 .addRecipient("recipient2")
                                 .setChunks(content, content2)
                                 .factory()
-                )
-                .setExtendedHelo(false);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
@@ -91,7 +89,7 @@ class SmtpClientFSMHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("localhost", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
@@ -256,9 +254,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content)
                                 .factory()
-                )
-                .setExtendedHelo(true);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "STARTTLS")));
@@ -347,9 +344,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content)
                                 .factory()
-                )
-                .setExtendedHelo(false);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
             @Override
             public boolean acceptOutboundMessage(Object msg) {
@@ -372,7 +368,7 @@ class SmtpClientFSMHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(354, "Ok")));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("localhost", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
@@ -398,9 +394,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content)
                                 .factory()
-                )
-                .setExtendedHelo(false);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
             @Override
             public boolean acceptOutboundMessage(Object msg) {
@@ -423,7 +418,7 @@ class SmtpClientFSMHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(354, "Ok")));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("localhost", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
@@ -477,9 +472,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content)
                                 .factory()
-                )
-                .setExtendedHelo(true);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(550, "Ok")));
@@ -513,9 +507,8 @@ class SmtpClientFSMHandlerTest {
                                 .setChunks(content, content2)
                                 )
                 )
-                .setExtendedHelo(false)
                 .setListener(listener);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         channel.writeInbound(new DefaultSmtpResponse(220, "Ok"));
         channel.writeInbound(new DefaultSmtpResponse(250, "Ok"));
@@ -535,7 +528,7 @@ class SmtpClientFSMHandlerTest {
         channel.writeInbound(new DefaultSmtpResponse(221, "Ok"));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("localhost", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
@@ -587,9 +580,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
                                 .factory()
-                )
-                .setExtendedHelo(false);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useTls(false));
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useTls(false).useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
@@ -600,7 +592,7 @@ class SmtpClientFSMHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("localhost", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
@@ -633,9 +625,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content)
                                 .factory()
-                )
-                .setExtendedHelo(true);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().usePipelining(true));
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().usePipelining(true).useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "PIPELINING")));
@@ -679,9 +670,8 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
                                 .factory()
-                )
-                .setExtendedHelo(false);
-        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().setGreeting("greeting"));
+                );
+        SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().setGreeting("greeting").useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(220, "Ok")));
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(250, "Ok")));
@@ -692,7 +682,7 @@ class SmtpClientFSMHandlerTest {
         assertFalse(channel.writeInbound(new DefaultSmtpResponse(221, "Ok")));
         assertTrue(channel.finish());
         SmtpRequest outbound = channel.readOutbound();
-        assertEquals(SmtpCommand.EHLO, outbound.command());
+        assertEquals(SmtpCommand.HELO, outbound.command());
         assertEquals("greeting", outbound.parameters().get(0).toString());
         outbound = channel.readOutbound();
         assertEquals(SmtpCommand.MAIL, outbound.command());
