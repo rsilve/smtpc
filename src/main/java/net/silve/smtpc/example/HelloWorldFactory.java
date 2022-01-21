@@ -1,7 +1,8 @@
 package net.silve.smtpc.example;
 
-import net.silve.smtpc.SmtpContentBuilder;
 import net.silve.smtpc.SmtpClient;
+import net.silve.smtpc.SmtpContentBuilder;
+import net.silve.smtpc.client.SmtpClientConfig;
 import net.silve.smtpc.message.Message;
 import net.silve.smtpc.message.MessageFactory;
 import net.silve.smtpc.message.SmtpSession;
@@ -25,12 +26,10 @@ public class HelloWorldFactory {
     public static void main(String[] args) {
         LoggerFactory.configure(Level.FINEST);
 
-        SmtpClient client = new SmtpClient();
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld"));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
 
-        session.setGreeting("greeting.tld")
-                .setExtendedHelo(false)
-                .setMessageFactory(new CustomMessageFactory(NUMBER_OF_MESSAGES))
+        session.setMessageFactory(new CustomMessageFactory(NUMBER_OF_MESSAGES))
                 .setListener(new LogListener());
 
         client.runAndClose(session);
@@ -40,6 +39,7 @@ public class HelloWorldFactory {
     private static class CustomMessageFactory implements MessageFactory {
 
         private static byte[] contentBytes = new byte[]{};
+
         static {
             try {
                 contentBytes = CustomMessageFactory.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();

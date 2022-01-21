@@ -28,9 +28,9 @@ public class HelloWorld {
 
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
-        session.setGreeting("greeting.tld")
+        session
                 .setMessageFactory(
                         new Message().setSender(SENDER)
                                 .setRecipients(RECIPIENTS)

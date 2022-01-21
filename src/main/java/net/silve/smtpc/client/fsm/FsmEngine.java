@@ -2,7 +2,6 @@ package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.smtpc.message.Message;
-import net.silve.smtpc.message.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -48,8 +47,13 @@ public class FsmEngine {
         return state;
     }
 
-    public FsmEngine applySession(@NotNull SmtpSession session, Message message) {
-        context.setExtendedGreeting(session.useExtendedHelo()).setMessage(message);
+    public FsmEngine applyMessage(Message message) {
+        context.setMessage(message);
+        return this;
+    }
+
+    public FsmEngine useExtendedHelo(boolean useExtendedHelo) {
+        context.setExtendedGreeting(useExtendedHelo);
         return this;
     }
 

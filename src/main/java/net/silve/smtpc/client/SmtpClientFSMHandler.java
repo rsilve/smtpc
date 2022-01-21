@@ -25,6 +25,7 @@ import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STA
 public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {
 
     private final SmtpSession session;
+    private final SmtpClientConfig config;
     private Message message;
     private ChannelHandlerContext ctx;
     private int size = 0;
@@ -34,26 +35,25 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     public SmtpClientFSMHandler(@NotNull SmtpSession session, @NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         this.session = session;
-        updateTLSContext(smtpClientConfig);
-        updatePipeliningContext(smtpClientConfig);
+        this.config = smtpClientConfig;
+        applyConfiguration(smtpClientConfig);
         updateEngineContext();
         engine.setActionListener(this);
     }
 
-    private void updateTLSContext(@NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
+    private void applyConfiguration(@NotNull SmtpClientConfig smtpClientConfig) throws SSLException {
         engine.useTls(smtpClientConfig.useTls());
+        engine.useExtendedHelo(config.useExtendedHelo());
+        engine.usePipelining(smtpClientConfig.usePipelining());
         if (smtpClientConfig.useTls()) {
             this.sslCtx = SslUtils.createSslCtx(smtpClientConfig.getTrustManager());
         }
     }
 
-    private void updatePipeliningContext(@NotNull SmtpClientConfig smtpClientConfig) {
-        engine.usePipelining(smtpClientConfig.usePipelining());
-    }
 
     private void updateEngineContext() {
         this.message = this.session.getMessage();
-        engine.applySession(session, message);
+        engine.applyMessage(message);
     }
 
     @Override
@@ -145,10 +145,10 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
         switch (action) {
             case HELO:
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.session.getGreeting()));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO, this.config.getGreeting()));
                 break;
             case EHLO:
-                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, this.session.getGreeting()));
+                handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO, this.config.getGreeting()));
                 break;
 
             case STARTTLS:
