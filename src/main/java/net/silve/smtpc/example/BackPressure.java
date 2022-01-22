@@ -29,7 +29,7 @@ public class BackPressure {
             .mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
     private static final int NUMBER_OF_MESSAGES = 10000;
-    private static final int POOL_SIZE = 60;
+    private static final int POOL_SIZE = 200;
 
     private static final Logger logger = LoggerFactory.getInstance();
     private static byte[] contentBytes;
@@ -38,7 +38,7 @@ public class BackPressure {
 
     static {
         try {
-            contentBytes = BackPressure.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
+            contentBytes = BackPressure.class.getResourceAsStream("/example/fixture002.eml").readAllBytes();
         } catch (Exception e) {
             LoggerFactory.getInstance().log(Level.SEVERE, "cannot read message", e);
         }
