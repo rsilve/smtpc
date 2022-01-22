@@ -1,6 +1,8 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
+import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.client.SendStatusCode;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
@@ -53,4 +55,17 @@ class StateContentTest {
         State state = new StateContent();
         assertEquals(SmtpCommandAction.DATA_CONTENT, state.action());
     }
+
+    @Test
+    void shouldReturnSendStatus() {
+        State state = new StateContent();
+        assertNull(state.checkSentStatus(FsmEvent.newInstance()));
+        SendStatus status = state.checkSentStatus(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)));
+        assertEquals(SendStatusCode.NOT_SENT, status.getCode());
+        assertEquals(500, status.getResponseCode());
+        status = state.checkSentStatus(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)));
+        assertEquals(SendStatusCode.SENT, status.getCode());
+        assertEquals(250, status.getResponseCode());
+    }
+
 }

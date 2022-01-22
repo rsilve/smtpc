@@ -1,6 +1,10 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
+import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.client.SendStatusCode;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.client.fsm.ConstantStates.MAIL_STATE;
@@ -33,4 +37,15 @@ class GreetingStateTest {
         State state = new StateGreeting();
         assertEquals(SmtpCommandAction.HELO, state.action());
     }
+
+    @Test
+    void shouldReturnSendStatus() {
+        State state = new StateGreeting();
+        assertNull(state.checkSentStatus(FsmEvent.newInstance()));
+        assertNull(state.checkSentStatus(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250))));
+        SendStatus status = state.checkSentStatus(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)));
+        assertEquals(SendStatusCode.NOT_SENT, status.getCode());
+        assertEquals(500, status.getResponseCode());
+    }
+
 }
