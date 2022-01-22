@@ -289,4 +289,24 @@ class FsmEngineTest {
         assertEquals(GREETING_STATE, engine.getState());
     }
 
+    @Test
+    void shouldNotifySendStatus() {
+        AtomicBoolean sendStatus = new AtomicBoolean(false);
+        FsmEngine engine = new FsmEngine().setActionListener(new FsmActionListener() {
+            @Override
+            public void onSendStatusCheck(SendStatus status) {
+                sendStatus.set(true);
+            }
+
+            @Override
+            public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
+            }
+
+            @Override
+            public void onError(InvalidStateException exception) {
+            }
+        });
+        engine.notify(new DefaultSmtpResponse(250));
+        assertTrue(sendStatus.get());
+    }
 }
