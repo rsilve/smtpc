@@ -225,7 +225,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
 
     @Override
     public void onSendStatusCheck(SendStatus status) {
-        // do nothing
+        session.notifySendStatus(status);
     }
 
     private void handleData() {

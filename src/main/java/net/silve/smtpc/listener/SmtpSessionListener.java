@@ -1,6 +1,7 @@
 package net.silve.smtpc.listener;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.smtpc.client.SendStatus;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface SmtpSessionListener {
     void onResponse(String id, int code, List<CharSequence> details);
 
     void onStartTls(String id);
+
+    void onSendStatus(String id, SendStatus status);
 }

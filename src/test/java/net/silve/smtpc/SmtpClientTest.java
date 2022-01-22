@@ -66,7 +66,7 @@ class SmtpClientTest {
         SmtpClient client = new SmtpClient();
 
         client.runAndClose(session).await();
-        assertFalse(listener.isDataCompleted());
+        assertFalse(listener.isSent());
         assertTrue(listener.getLastError().getCause() instanceof ConnectException);
     }
 
@@ -88,7 +88,7 @@ class SmtpClientTest {
 
         client.runAndClose(session).await();
         assertNull(session.getHost());
-        assertTrue(listener.isDataCompleted());
+        assertTrue(listener.isSent());
         assertTrue(listener.completed);
         assertEquals(1, listener.getCount());
     }
@@ -110,7 +110,7 @@ class SmtpClientTest {
 
         client.runAndClose(session).sync();
         assertTrue(listener.getLastError().getCause() instanceof SSLHandshakeException);
-        assertFalse(listener.isDataCompleted());
+        assertFalse(listener.isSent());
     }
 
 

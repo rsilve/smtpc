@@ -15,6 +15,7 @@ public class FsmEngine {
 
     private State state;
     private final FsmEngineContext context = new FsmEngineContext();
+    private boolean sended;
 
     public FsmEngine() {
         this(INIT_STATE);
@@ -31,9 +32,12 @@ public class FsmEngine {
 
     public void notify(FsmEvent event) {
         try {
-            SendStatus status = state.checkSentStatus(event);
-            if (Objects.nonNull(status)) {
-                this.actionListener.onSendStatusCheck(status);
+            if (!sended) {
+                SendStatus status = state.checkSentStatus(event);
+                if (Objects.nonNull(status)) {
+                    this.sended = true;
+                    this.actionListener.onSendStatusCheck(status);
+                }
             }
             state = state.nextStateFromEvent(event, context);
             if (Objects.nonNull(state)) {
@@ -53,6 +57,7 @@ public class FsmEngine {
     }
 
     public FsmEngine applyMessage(Message message) {
+        sended = false;
         context.setMessage(message);
         return this;
     }
