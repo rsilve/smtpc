@@ -222,6 +222,14 @@ class FsmEngineTest {
     }
 
     @Test
+    void shouldHaveDefaultActionListener02() {
+        FsmEngine engine = new FsmEngine();
+        assertEquals(INIT_STATE, engine.getState());
+        engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
+        assertEquals(GREETING_STATE, engine.getState());
+    }
+
+    @Test
     void shouldNotifyEventOnStateError() {
         AtomicBoolean action_started = new AtomicBoolean(false);
         AtomicBoolean errorCatched = new AtomicBoolean(false);
