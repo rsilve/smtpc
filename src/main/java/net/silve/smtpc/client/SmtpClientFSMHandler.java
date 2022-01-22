@@ -223,6 +223,11 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
         }
     }
 
+    @Override
+    public void onSendStatusCheck(SendStatus status) {
+        session.notifySendStatus(status);
+    }
+
     private void handleData() {
         handleCommandRequest(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA), true);
     }

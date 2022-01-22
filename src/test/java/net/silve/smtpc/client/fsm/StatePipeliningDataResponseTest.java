@@ -1,12 +1,14 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
+import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.client.SendStatusCode;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.client.fsm.ConstantStates.CONTENT_STATE;
 import static net.silve.smtpc.client.fsm.ConstantStates.QUIT_STATE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class StatePipeliningDataResponseTest {
 
@@ -37,5 +39,10 @@ class StatePipeliningDataResponseTest {
         assertEquals(QUIT_STATE, exception.getState());
     }
 
+    @Test
+    void shouldReturnSendStatus() {
+        State state = new StatePipeliningDataResponse();
+        assertNull(state.checkSentStatus(FsmEvent.newInstance()));
+    }
 
 }

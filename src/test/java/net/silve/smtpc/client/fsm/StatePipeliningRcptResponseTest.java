@@ -34,8 +34,12 @@ class StatePipeliningRcptResponseTest {
         context = new FsmEngineContext();
         state.nextStateFromEvent(event, context);
         assertNotNull(context.getPipeliningError());
+    }
 
-
+    @Test
+    void shouldReturnSendStatus() {
+        State state = new StatePipeliningRcptResponse();
+        assertNull(state.checkSentStatus(FsmEvent.newInstance()));
     }
 
 

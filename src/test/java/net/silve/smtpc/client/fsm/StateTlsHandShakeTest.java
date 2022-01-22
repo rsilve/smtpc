@@ -3,8 +3,7 @@ package net.silve.smtpc.client.fsm;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.client.fsm.ConstantStates.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class StateTlsHandShakeTest {
 
@@ -30,5 +29,11 @@ class StateTlsHandShakeTest {
     void shouldReturnAction() {
         State state = new TlsHandshakeState();
         assertEquals(SmtpCommandAction.TLS_HANDSHAKE, state.action());
+    }
+
+    @Test
+    void shouldReturnSendStatus() {
+        State state = new TlsHandshakeState();
+        assertNull(state.checkSentStatus(FsmEvent.newInstance()));
     }
 }

@@ -1,6 +1,7 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.smtpc.client.SendStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -8,6 +9,11 @@ import java.util.Objects;
 import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
 
 public abstract class AbstractState implements State {
+
+    @Override
+    public SendStatus checkSentStatus(FsmEvent event) {
+        return null;
+    }
 
     @Override
     public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) throws InvalidStateException {

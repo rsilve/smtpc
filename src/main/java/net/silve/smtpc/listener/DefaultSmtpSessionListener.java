@@ -1,6 +1,8 @@
 package net.silve.smtpc.listener;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.client.SendStatusCode;
 
 import java.util.List;
 
@@ -9,12 +11,10 @@ import java.util.List;
  * SMTP command,
  * the fact that the DATA command is completed, the number of messages processed
  * during the SMTP transaction.
- *
  */
 public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
-    private SmtpCommand lastCommand;
-    private boolean dataCompleted;
+    private boolean sent;
     private Throwable lastError;
     private int count = 0;
 
@@ -35,12 +35,20 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     @Override
     public void onRequest(String id, SmtpCommand command, List<CharSequence> parameters) {
-        lastCommand = command;
+        // default implementation : do nothing
     }
 
     @Override
     public void onData(int size, String id) {
         // default implementation : do nothing
+    }
+
+    @Override
+    public void onSendStatus(String id, SendStatus status) {
+        sent = SendStatusCode.SENT.equals(status.getCode());
+        if (sent) {
+            count++;
+        }
     }
 
     @Override
@@ -50,13 +58,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
 
     @Override
     public void onResponse(String id, int code, List<CharSequence> details) {
-        if (SmtpCommand.DATA.equals(lastCommand) && code == 250) {
-            dataCompleted = true;
-            count++;
-        }
-        if (SmtpCommand.RSET.equals(lastCommand)) {
-            dataCompleted = false;
-        }
+        // default implementation : do nothing
     }
 
 
@@ -65,15 +67,15 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
         // default implementation : do nothing
     }
 
-    public boolean isDataCompleted() {
-        return dataCompleted;
-    }
-
     public Throwable getLastError() {
         return lastError;
     }
 
     public int getCount() {
         return count;
+    }
+
+    public boolean isSent() {
+        return sent;
     }
 }

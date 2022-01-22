@@ -30,4 +30,10 @@ class StatePipeliningMailResponseTest {
     }
 
 
+    @Test
+    void shouldReturnSendStatus() {
+        State state = new StatePipeliningMailResponse();
+        assertNull(state.checkSentStatus(FsmEvent.newInstance()));
+    }
+
 }

@@ -1,6 +1,7 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.smtpc.client.SendStatus;
 import net.silve.smtpc.message.Message;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,7 @@ public class FsmEngine {
 
     private State state;
     private final FsmEngineContext context = new FsmEngineContext();
+    private boolean sended;
 
     public FsmEngine() {
         this(INIT_STATE);
@@ -30,6 +32,13 @@ public class FsmEngine {
 
     public void notify(FsmEvent event) {
         try {
+            if (!sended) {
+                SendStatus status = state.checkSentStatus(event);
+                if (Objects.nonNull(status)) {
+                    this.sended = true;
+                    this.actionListener.onSendStatusCheck(status);
+                }
+            }
             state = state.nextStateFromEvent(event, context);
             if (Objects.nonNull(state)) {
                 this.actionListener.onAction(state.action(), event.getResponse());
@@ -48,6 +57,7 @@ public class FsmEngine {
     }
 
     public FsmEngine applyMessage(Message message) {
+        sended = false;
         context.setMessage(message);
         return this;
     }
@@ -85,6 +95,11 @@ public class FsmEngine {
     }
 
     private static class NoopActionListener implements FsmActionListener {
+        @Override
+        public void onSendStatusCheck(SendStatus status) {
+            // do nothing
+        }
+
         @Override
         public void onAction(@NotNull SmtpCommandAction action, SmtpResponse response) {
             // do nothing

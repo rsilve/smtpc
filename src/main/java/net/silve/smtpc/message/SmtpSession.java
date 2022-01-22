@@ -3,6 +3,7 @@ package net.silve.smtpc.message;
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.Recycler;
+import net.silve.smtpc.client.SendStatus;
 import net.silve.smtpc.listener.DefaultSmtpSessionListener;
 import net.silve.smtpc.listener.SmtpSessionListener;
 
@@ -108,9 +109,15 @@ public class SmtpSession {
         this.listener.onStartTls(getId());
     }
 
+    public void notifySendStatus(SendStatus status) {
+        this.listener.onSendStatus(this.id, status);
+    }
+
     public Message getMessage() {
         return messageFactory.next();
     }
+
+
 
     private static class EmptyMessageFactory implements MessageFactory {
         public Message next() {
