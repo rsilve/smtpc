@@ -3,6 +3,7 @@ package net.silve.smtpc.example;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.client.SendStatusCode;
 import net.silve.smtpc.client.fsm.InvalidStateException;
 import net.silve.smtpc.listener.SmtpSessionListener;
 
@@ -60,17 +61,14 @@ public class LogListener implements SmtpSessionListener {
         logger.log(Level.FINE, () -> ">>> ... (hidden content)");
         String format = String.format("=== message size %d", size);
         logger.log(Level.FINE, () -> format);
-        sentStatusMap.put(id, Boolean.TRUE);
         saveTransactionDetails(id, ">>> ... (hidden content)");
         saveTransactionDetails(id, format);
     }
 
     @Override
     public void onSendStatus(String id, SendStatus status) {
-        Long startedAt = globalStartedAt.get(id);
-        final long duration = startedAt != null && startedAt != 0 ? (System.nanoTime() - startedAt) / 1000000 : -1L;
-        logger.log(Level.INFO, () -> String.format("=== %s, duration=%dms, status=%s, %s", id, duration, status.getCode(), status));
-    }
+        sentStatusMap.put(id, SendStatusCode.SENT.equals(status.getCode()));
+     }
 
     @Override
     public void onCompleted(String id) {
