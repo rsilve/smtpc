@@ -25,14 +25,16 @@ public class BackPressure {
     private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
-    private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final String[] RECIPIENTS = IntStream.range(1, 5)
+            .mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
-    private static final int NUMBER_OF_MESSAGES = 1000;
-    private static final int POOL_SIZE = 300;
+    private static final int NUMBER_OF_MESSAGES = 10000;
+    private static final int POOL_SIZE = 60;
 
     private static final Logger logger = LoggerFactory.getInstance();
     private static byte[] contentBytes;
     private static BlockingDeque<Boolean> poolQueue;
+    private static final LogListener logListener = new LogListener();
 
     static {
         try {
@@ -47,7 +49,8 @@ public class BackPressure {
         initialize();
 
         DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(
+                new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         AtomicInteger max = new AtomicInteger(NUMBER_OF_MESSAGES);
         AtomicLong totalDuration = new AtomicLong(0L);
 
@@ -68,14 +71,15 @@ public class BackPressure {
             executors.shutdownGracefully();
         });
 
-        LogListener logListener = new LogListener();
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
-            sendMessage(client, max, totalDuration, promise, logListener);
+            sendMessage(client, max, totalDuration, promise);
         }
+        LoggerFactory.getInstance().log(Level.INFO, "!!! All message posted");
 
     }
 
-    private static void sendMessage(SmtpClient client, AtomicInteger max, AtomicLong totalDuration, Promise<Void> promise, LogListener logListener) throws InterruptedException {
+    private static void sendMessage(SmtpClient client, AtomicInteger max, AtomicLong totalDuration,
+            Promise<Void> promise) throws InterruptedException {
         poolQueue.take();
         final SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session
@@ -99,7 +103,7 @@ public class BackPressure {
 
     private static void initialize() {
         poolQueue = new LinkedBlockingDeque<>(POOL_SIZE);
-        IntStream.range(0,POOL_SIZE).forEach(value -> poolQueue.add(true));
+        IntStream.range(0, POOL_SIZE).forEach(value -> poolQueue.add(true));
 
     }
 }
