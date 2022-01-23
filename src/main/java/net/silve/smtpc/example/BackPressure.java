@@ -28,11 +28,12 @@ public class BackPressure {
     private static final String HOST = "smtp.black-hole.in";
     private static final int PORT = 2525;
     private static final String SENDER = "sender@domain.tld";
-    private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final String[] RECIPIENTS = IntStream.range(1, 5)
+            .mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
-    private static final int NUMBER_OF_MESSAGES = 2000;
-    private static final int BATCH_SIZE = 20;
-    private static final int POOL_SIZE = 60;
+    private static final int NUMBER_OF_MESSAGES = 50000;
+    private static final int BATCH_SIZE = 100;
+    private static final int POOL_SIZE = 300;
 
     private static final Logger logger = LoggerFactory.getInstance();
     private static byte[] contentBytes;
@@ -52,7 +53,8 @@ public class BackPressure {
         initialize();
 
         DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(
+                new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         AtomicInteger max = new AtomicInteger(NUMBER_OF_MESSAGES);
         AtomicLong totalDuration = new AtomicLong(0L);
 
@@ -67,7 +69,8 @@ public class BackPressure {
             long durationMS = duration / 1000000;
             double rate = ((double) NUMBER_OF_MESSAGES * 1000 * 1000000) / duration;
 
-            logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d", durationMS, avgDuration / 1000000, rate, avgConcurrency));
+            logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d",
+                    durationMS, avgDuration / 1000000, rate, avgConcurrency));
             client.shutdownGracefully();
             executors.shutdownGracefully();
         });
@@ -79,10 +82,13 @@ public class BackPressure {
 
     }
 
-    private static void sendMessage(SmtpClient client, AtomicInteger max, AtomicLong totalDuration, Promise<Void> promise) throws InterruptedException {
+    private static void sendMessage(SmtpClient client, AtomicInteger max, AtomicLong totalDuration,
+            Promise<Void> promise) throws InterruptedException {
         poolQueue.take();
         List<Message> messages = IntStream.range(0, BATCH_SIZE)
-                .mapToObj(value -> new Message().setSender(SENDER).setRecipients(RECIPIENTS).setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())).collect(Collectors.toList());
+                .mapToObj(value -> new Message().setSender(SENDER).setRecipients(RECIPIENTS)
+                        .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator()))
+                .collect(Collectors.toList());
         final SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session.setMessageFactory(new ListMessageFactory(messages)).setListener(logListener);
         final long startAt = System.nanoTime();
