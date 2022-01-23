@@ -44,11 +44,11 @@ public class ConcurrentRunner {
     static {
         try {
             contentBytes = Arrays.asList(
-                    BackPressure.class.getResourceAsStream("/example/fixture001.eml").readAllBytes(),
-                    BackPressure.class.getResourceAsStream("/example/fixture005.eml").readAllBytes(),
-                    BackPressure.class.getResourceAsStream("/example/fixture020.eml").readAllBytes(),
-                    BackPressure.class.getResourceAsStream("/example/fixture030.eml").readAllBytes(),
-                    BackPressure.class.getResourceAsStream("/example/fixture040.eml").readAllBytes()
+                    ConcurrentConstantConnectionsNumber.class.getResourceAsStream("/example/fixture001.eml").readAllBytes(),
+                    ConcurrentConstantConnectionsNumber.class.getResourceAsStream("/example/fixture005.eml").readAllBytes(),
+                    ConcurrentConstantConnectionsNumber.class.getResourceAsStream("/example/fixture020.eml").readAllBytes(),
+                    ConcurrentConstantConnectionsNumber.class.getResourceAsStream("/example/fixture030.eml").readAllBytes(),
+                    ConcurrentConstantConnectionsNumber.class.getResourceAsStream("/example/fixture040.eml").readAllBytes()
             );
         } catch (Exception e) {
             LoggerFactory.getInstance().log(Level.SEVERE, "cannot read message", e);
@@ -134,8 +134,8 @@ public class ConcurrentRunner {
         long durationMS = duration / 1000000;
         double rate = ((double) numberOfMessage * 1000 * 1000000) / duration;
 
-        logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d",
-                durationMS, avgDuration / 1000000, rate, avgConcurrency));
+        logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d, success=%d, failure=%d",
+                durationMS, avgDuration / 1000000, rate, avgConcurrency, logListener.getSuccessCount(), logListener.getFailureCount()));
         client.shutdownGracefully();
         executor.shutdownGracefully();
     }

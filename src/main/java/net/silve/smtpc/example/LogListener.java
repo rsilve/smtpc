@@ -11,6 +11,7 @@ import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,8 @@ public class LogListener implements SmtpSessionListener {
     private final ConcurrentMap<String, Integer> lastResponseCode = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, String> lastResponseDetails = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, StringBuffer> transactionDetails = new ConcurrentHashMap<>();
+    private final AtomicInteger successCount = new AtomicInteger(0);
+    private final AtomicInteger failureCount = new AtomicInteger(0);
 
     @Override
     public void onConnect(String host, int port) {
@@ -67,8 +70,13 @@ public class LogListener implements SmtpSessionListener {
 
     @Override
     public void onSendStatus(String id, SendStatus status) {
+        if (SendStatusCode.SENT.equals(status.getCode())) {
+            successCount.incrementAndGet();
+        } else {
+            failureCount.incrementAndGet();
+        }
         sentStatusMap.put(id, SendStatusCode.SENT.equals(status.getCode()));
-     }
+    }
 
     @Override
     public void onCompleted(String id) {
@@ -103,5 +111,13 @@ public class LogListener implements SmtpSessionListener {
 
     private void saveTransactionDetails(String id, String details) {
         transactionDetails.computeIfAbsent(id, s -> new StringBuffer()).append(details).append("\n");
+    }
+
+    public int getSuccessCount() {
+        return successCount.get();
+    }
+
+    public int getFailureCount() {
+        return failureCount.get();
     }
 }
