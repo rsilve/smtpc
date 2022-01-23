@@ -39,6 +39,8 @@ public class BackPressure {
     private static byte[] contentBytes;
     private static BlockingDeque<Boolean> poolQueue;
     private static final LogListener logListener = new LogListener();
+    private static long globalStartedAt;
+    private static final DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
 
     static {
         try {
@@ -52,15 +54,15 @@ public class BackPressure {
         LoggerFactory.configure(Level.INFO);
         initialize();
 
-        DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(2);
+
         SmtpClient client = new SmtpClient(
                 new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         AtomicInteger max = new AtomicInteger(NUMBER_OF_MESSAGES);
         AtomicLong totalDuration = new AtomicLong(0L);
 
-        final long globalStartedAt = System.nanoTime();
-        Promise<Void> promise = executors.next().newPromise();
-        promise.addListener(future -> {
+
+        Promise<Void> completedPromise = executors.next().newPromise();
+        completedPromise.addListener(future -> {
             long totalDurationNano = totalDuration.longValue();
             long duration = System.nanoTime() - globalStartedAt;
             long avgConcurrency = Math.max(1, totalDurationNano / duration);
@@ -76,7 +78,7 @@ public class BackPressure {
         });
 
         for (int i = 0; i < NUMBER_OF_MESSAGES; i += BATCH_SIZE) {
-            sendMessage(client, max, totalDuration, promise);
+            sendMessage(client, max, totalDuration, completedPromise);
         }
         LoggerFactory.getInstance().log(Level.INFO, "!!! All message posted");
 
@@ -106,6 +108,7 @@ public class BackPressure {
     private static void initialize() {
         poolQueue = new LinkedBlockingDeque<>(POOL_SIZE);
         IntStream.range(0, POOL_SIZE).forEach(value -> poolQueue.add(true));
+        globalStartedAt = System.nanoTime();
 
     }
 }
