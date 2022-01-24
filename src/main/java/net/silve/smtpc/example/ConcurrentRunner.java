@@ -138,6 +138,7 @@ public class ConcurrentRunner {
     }
 
     private void summaryLog() {
+        int bytes = logListener.getSendedBytes();
         int count = logListener.getSuccessCount() + logListener.getFailureCount();
         long totalDurationNano = totalDuration.longValue();
         long duration = System.nanoTime() - globalStartedAt;
@@ -147,8 +148,11 @@ public class ConcurrentRunner {
         long durationMS = duration / 1000000;
         double rate = ((double) count * 1000 * 1000000) / duration;
 
-        logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d, success=%d, failure=%d",
-                durationMS, avgDuration / 1000000, rate, avgConcurrency, logListener.getSuccessCount(), logListener.getFailureCount()));
+        double bytesRate = ((double) bytes * 1000 * 1000000) / (duration * 1024);
+        double avgBytes = ((double) bytes ) / (logListener.getSuccessCount() * 1024);
+
+        logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_size=%.2fK, avg_bytes_rate=%.2fK/s, avg_concurrency=%d, success=%d, failure=%d",
+                durationMS, avgDuration / 1000000, rate, avgBytes, bytesRate, avgConcurrency, logListener.getSuccessCount(), logListener.getFailureCount()));
     }
 
     public SmtpClient getClient() {
