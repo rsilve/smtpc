@@ -18,7 +18,7 @@ public class ConcurrentConstantConnectionsNumber {
     private static final String[] RECIPIENTS = IntStream.range(1, 5)
             .mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
-    private static final int NUMBER_OF_MESSAGES = 1000;
+    private static final int NUMBER_OF_MESSAGES = 10000;
     private static final int BATCH_SIZE = 4;
     private static final int POOL_SIZE = 50;
 

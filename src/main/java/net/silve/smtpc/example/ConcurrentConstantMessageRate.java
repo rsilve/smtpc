@@ -17,8 +17,8 @@ public class ConcurrentConstantMessageRate {
     private static final String SENDER = "sender@domain.tld";
     private static final String[] RECIPIENTS = IntStream.range(1, 5).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
-    private static final int NUMBER_OF_MESSAGES = 100;
-    private static final int MESSAGE_RATE_BY_SECOND = 20;
+    private static final int NUMBER_OF_MESSAGES = 3000;
+    private static final int MESSAGE_RATE_BY_SECOND = 30;
     private static final int BATCH_SIZE = 1;
 
     public static void main(String[] args) {

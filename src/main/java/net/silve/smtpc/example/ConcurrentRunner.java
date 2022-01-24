@@ -3,6 +3,7 @@ package net.silve.smtpc.example;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
+import io.netty.util.concurrent.ScheduledFuture;
 import net.silve.smtpc.SmtpClient;
 import net.silve.smtpc.SmtpContentBuilder;
 import net.silve.smtpc.message.ListMessageFactory;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.SplittableRandom;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -40,6 +42,8 @@ public class ConcurrentRunner {
     private final int batchSize;
 
     private final SplittableRandom random = new SplittableRandom();
+
+    private ScheduledFuture<?> recurrentLog;
 
     static {
         try {
@@ -83,6 +87,7 @@ public class ConcurrentRunner {
         globalStartedAt = System.nanoTime();
         completedPromise = executor.next().newPromise();
         completedPromise.addListener(this::completed);
+        recurrentLog = executor.scheduleAtFixedRate(this::summaryLog, 5000, 5000, TimeUnit.MILLISECONDS);
     }
 
 
@@ -126,18 +131,24 @@ public class ConcurrentRunner {
     }
 
     private void completed(Future<? super Void> future) {
+        summaryLog();
+        recurrentLog.cancel(false);
+        client.shutdownGracefully();
+        executor.shutdownGracefully();
+    }
+
+    private void summaryLog() {
+        int count = logListener.getSuccessCount() + logListener.getFailureCount();
         long totalDurationNano = totalDuration.longValue();
         long duration = System.nanoTime() - globalStartedAt;
         long avgConcurrency = Math.max(1, totalDurationNano / duration);
-        long avgDuration = totalDurationNano / numberOfMessage;
+        long avgDuration = count != 0 ? totalDurationNano / count : -1;
 
         long durationMS = duration / 1000000;
-        double rate = ((double) numberOfMessage * 1000 * 1000000) / duration;
+        double rate = ((double) count * 1000 * 1000000) / duration;
 
         logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_concurrency=%d, success=%d, failure=%d",
                 durationMS, avgDuration / 1000000, rate, avgConcurrency, logListener.getSuccessCount(), logListener.getFailureCount()));
-        client.shutdownGracefully();
-        executor.shutdownGracefully();
     }
 
     public SmtpClient getClient() {
