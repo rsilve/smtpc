@@ -95,7 +95,7 @@ public class ConcurrentRunner {
         consumer.run(this);
     }
 
-    public void sendMessage(String sender, String[] recipients, String host, int port) {
+    public void sendMessage(String sender, String[] recipients, String host, int port) throws InterruptedException {
         try {
             if (poolSize > 0) {
                 poolQueue.take();
@@ -121,8 +121,10 @@ public class ConcurrentRunner {
                     completedPromise.setSuccess(null);
                 }
             });
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
-
+            logger.log(Level.WARNING, "error", e);
             int step = todo.addAndGet(-batchSize);
             if (step <= 0) {
                 completedPromise.setSuccess(null);

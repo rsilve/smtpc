@@ -18,7 +18,7 @@ public class ConcurrentConstantConnectionsNumber {
     private static final String[] RECIPIENTS = IntStream.range(1, 5)
             .mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
-    private static final int NUMBER_OF_MESSAGES = 10000;
+    private static final int NUMBER_OF_MESSAGES = 1000;
     private static final int BATCH_SIZE = 6;
     private static final int POOL_SIZE = 60;
 
@@ -28,10 +28,14 @@ public class ConcurrentConstantConnectionsNumber {
         SmtpClient client = new SmtpClient(config);
         ConcurrentRunner runner = new ConcurrentRunner(client, NUMBER_OF_MESSAGES, POOL_SIZE, BATCH_SIZE);
         runner.execute(r -> {
-            for (int i = 0; i < r.getNumberOfMessage(); i += r.getBatchSize()) {
-                r.sendMessage(SENDER, RECIPIENTS, HOST, PORT);
+            try {
+                for (int i = 0; i < r.getNumberOfMessage(); i += r.getBatchSize()) {
+                    r.sendMessage(SENDER, RECIPIENTS, HOST, PORT);
+                }
+                LoggerFactory.getInstance().log(Level.INFO, "!!! All message posted");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-            LoggerFactory.getInstance().log(Level.INFO, "!!! All message posted");
         });
     }
 
