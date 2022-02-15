@@ -17,10 +17,10 @@ import java.util.stream.IntStream;
  */
 public class HelloWorldPipelining {
 
-    private static final String HOST = "smtp.black-hole.in";
-    private static final int PORT = 2525;
-    private static final String SENDER = "sender@silve.net";
-    private static final String[] RECIPIENTS = IntStream.range(1, 50).mapToObj(value -> String.format("devnull+%d@silve.net", value)).toArray(String[]::new);
+    private static final String HOST = "mx.black-hole.in";
+    private static final int PORT = 25;
+    private static final String SENDER = "sender@black-hole.in";
+    private static final String[] RECIPIENTS = IntStream.range(1, 50).mapToObj(value -> String.format("devnull+%d@mx.black-hole.in", value)).toArray(String[]::new);
 
     public static void main(String[] args) throws IOException, InterruptedException {
         LoggerFactory.configure(Level.ALL);

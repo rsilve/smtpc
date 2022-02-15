@@ -140,7 +140,7 @@ public class ConcurrentRunner {
     }
 
     private void summaryLog() {
-        int bytes = logListener.getSendedBytes();
+        long bytes = logListener.getSendedBytes();
         int count = logListener.getSuccessCount() + logListener.getFailureCount();
         long totalDurationNano = totalDuration.longValue();
         long duration = System.nanoTime() - globalStartedAt;

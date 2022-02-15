@@ -17,10 +17,10 @@ import java.util.logging.Level;
  */
 public class HelloWorldFactory {
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 2525;
+    private static final String HOST = "mx.black-hole.in";
+    private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
-    private static final String RECIPIENT = "devnull@silve.net";
+    private static final String RECIPIENT = "devnull@mx.black-hole.in";
     private static final int NUMBER_OF_MESSAGES = 10;
 
     public static void main(String[] args) {

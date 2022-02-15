@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +27,7 @@ public class LogListener implements SmtpSessionListener {
     private final ConcurrentMap<String, StringBuffer> transactionDetails = new ConcurrentHashMap<>();
     private final AtomicInteger successCount = new AtomicInteger(0);
     private final AtomicInteger failureCount = new AtomicInteger(0);
-    private final AtomicInteger sendedBytes = new AtomicInteger(0);
+    private final LongAdder sendedBytes = new LongAdder();
 
     @Override
     public void onConnect(String host, int port) {
@@ -62,7 +63,7 @@ public class LogListener implements SmtpSessionListener {
 
     @Override
     public void onData(int size, String id) {
-        sendedBytes.addAndGet(size);
+        sendedBytes.add(size);
         logger.log(Level.FINE, () -> ">>> ... (hidden content)");
         String format = String.format("=== message size %d", size);
         logger.log(Level.FINE, () -> format);
@@ -123,7 +124,7 @@ public class LogListener implements SmtpSessionListener {
         return failureCount.get();
     }
 
-    public int getSendedBytes() {
-        return sendedBytes.get();
+    public long getSendedBytes() {
+        return sendedBytes.longValue();
     }
 }
