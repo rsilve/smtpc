@@ -2,6 +2,8 @@ package net.silve.smtpc.client.fsm;
 
 public class ConstantStates {
 
+    public static final State QUIT_STATE = new StateQuit();
+    public static final State CLOSING_TRANSMISSION_STATE = new StateCloseTransmission();
     public static final State INIT_STATE = new StateInit();
     public static final State EXTENDED_GREETING_STATE = new StateExtendedGreeting();
     public static final State GREETING_STATE = new StateGreeting();
@@ -18,9 +20,7 @@ public class ConstantStates {
     public static final State DATA_STATE = new StateData();
     public static final State CONTENT_STATE = new StateContent();
     public static final State RSET_STATE = new StateRset();
-    public static final State QUIT_STATE = new StateQuit();
 
-    public static final State CLOSING_TRANSMISSION_STATE = new StateCloseTransmission();
 
     private ConstantStates() {}
 }

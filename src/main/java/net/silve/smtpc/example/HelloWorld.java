@@ -20,7 +20,7 @@ public class HelloWorld {
     private static final String HOST = "mx.black-hole.in";
     private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
-    private static final String[] RECIPIENTS = IntStream.range(1, 10).mapToObj(value -> String.format("devnull+%d@mx.black-hole.in", value)).toArray(String[]::new);
+    private static final String[] RECIPIENTS = IntStream.range(1, 2).mapToObj(value -> String.format("devnull+%d@mx.black-hole.in", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = false;
 
     public static void main(String[] args) throws IOException {
@@ -28,7 +28,7 @@ public class HelloWorld {
 
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().useTls(false).setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session
                 .setMessageFactory(
