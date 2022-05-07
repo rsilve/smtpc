@@ -8,6 +8,6 @@
         <Package name="~net\.silve\.smtpc\.example"/>
     </Match>
     <Match>
-        <Bug code="EI,EI2"/>
+        <Bug code="EI,EI2,THROWS"/>
     </Match>
 </FindBugsFilter>

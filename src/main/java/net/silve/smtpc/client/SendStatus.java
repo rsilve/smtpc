@@ -1,6 +1,7 @@
 package net.silve.smtpc.client;
 
 
+import java.util.Collections;
 import java.util.List;
 
 public class SendStatus {
@@ -24,7 +25,7 @@ public class SendStatus {
     }
 
     public List<CharSequence> getDetails() {
-        return details;
+        return Collections.unmodifiableList(details);
     }
 
     @Override
