@@ -29,6 +29,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     private Message message;
     private ChannelHandlerContext ctx;
     private int size = 0;
+    private long duration = System.nanoTime();
 
     private final FsmEngine engine = new FsmEngine();
     private SslContext sslCtx;
@@ -130,7 +131,9 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
         ctx.writeAndFlush(content).addListener(future -> {
             if (future.isSuccess()) {
                 updateEngineContext();
-                session.notifyData(size);
+                duration = System.nanoTime() - duration;
+                session.notifyData(size, duration);
+                duration = System.nanoTime();
             } else {
                 session.notifyError(future.cause());
                 ctx.close();

@@ -101,8 +101,8 @@ public class SmtpSession {
         this.listener.onResponse(this.getId(), response.code(), response.details());
     }
 
-    public void notifyData(int size) {
-        this.listener.onData(size, this.id);
+    public void notifyData(int size, long duration) {
+        this.listener.onData(this.id, size, duration);
     }
 
     public void notifyStartTls() {

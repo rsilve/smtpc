@@ -39,7 +39,7 @@ public class DefaultSmtpSessionListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onData(int size, String id) {
+    public void onData(String id, int size, long duration) {
         // default implementation : do nothing
     }
 

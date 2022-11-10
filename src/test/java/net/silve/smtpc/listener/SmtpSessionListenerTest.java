@@ -99,6 +99,7 @@ class SmtpSessionListenerTest {
         assertTrue(channel.finish());
 
         assertEquals(4, listener.data);
+        assertTrue(listener.duration > 0);
     }
 
     @Test
@@ -163,6 +164,7 @@ class SmtpSessionListenerTest {
         private int data;
         private Throwable error;
         private boolean connect;
+        private long duration = 0;
 
         @Override
         public void onRequest(String id, SmtpCommand command, List<CharSequence> parameters) {
@@ -180,8 +182,9 @@ class SmtpSessionListenerTest {
         }
 
         @Override
-        public void onData(int size, String id) {
+        public void onData(String id, int size, long duration) {
             this.data = size;
+            this.duration = duration;
         }
 
         @Override

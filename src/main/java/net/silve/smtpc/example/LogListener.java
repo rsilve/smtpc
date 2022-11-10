@@ -62,7 +62,7 @@ public class LogListener implements SmtpSessionListener {
     }
 
     @Override
-    public void onData(int size, String id) {
+    public void onData(String id, int size, long duration) {
         sendedBytes.add(size);
         logger.log(Level.FINE, () -> ">>> ... (hidden content)");
         String format = String.format("=== message size %d", size);

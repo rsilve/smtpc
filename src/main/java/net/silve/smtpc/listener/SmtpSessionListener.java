@@ -14,7 +14,7 @@ public interface SmtpSessionListener {
 
     void onRequest(String id, SmtpCommand command, List<CharSequence> parameters);
 
-    void onData(int size, String id);
+    void onData(String id, int size, long duration);
 
     void onCompleted(String id);
 
