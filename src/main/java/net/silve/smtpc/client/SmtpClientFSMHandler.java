@@ -29,7 +29,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     private Message message;
     private ChannelHandlerContext ctx;
     private int size = 0;
-    private long duration = System.nanoTime();
+    private long duration = 0;
 
     private final FsmEngine engine = new FsmEngine();
     private SslContext sslCtx;
@@ -60,6 +60,7 @@ public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpRespon
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         this.ctx = ctx;
+        duration = System.nanoTime();
         session.notifyStart();
         super.channelActive(ctx);
     }
