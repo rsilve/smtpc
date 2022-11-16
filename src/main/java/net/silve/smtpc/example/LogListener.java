@@ -28,6 +28,7 @@ public class LogListener implements SmtpSessionListener {
     private final AtomicInteger successCount = new AtomicInteger(0);
     private final AtomicInteger failureCount = new AtomicInteger(0);
     private final LongAdder sendedBytes = new LongAdder();
+    private final LongAdder messagesDuration = new LongAdder();
 
     @Override
     public void onConnect(String host, int port) {
@@ -64,8 +65,12 @@ public class LogListener implements SmtpSessionListener {
     @Override
     public void onData(String id, int size, long duration) {
         sendedBytes.add(size);
+        messagesDuration.add(duration);
+        if (duration < 0) {
+            logger.log(Level.WARNING, "duration negative {}", duration);
+        }
         logger.log(Level.FINE, () -> ">>> ... (hidden content)");
-        String format = String.format("=== message size %d", size);
+        String format = String.format("=== message size %d, %dms", size, duration/1000000);
         logger.log(Level.FINE, () -> format);
         saveTransactionDetails(id, ">>> ... (hidden content)");
         saveTransactionDetails(id, format);
@@ -126,5 +131,9 @@ public class LogListener implements SmtpSessionListener {
 
     public long getSendedBytes() {
         return sendedBytes.longValue();
+    }
+
+    public long getMessagesDuration() {
+        return messagesDuration.longValue();
     }
 }
