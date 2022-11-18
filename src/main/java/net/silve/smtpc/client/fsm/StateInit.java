@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.EXTENDED_GREETING_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.GREETING_STATE;
+import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 
 class StateInit extends AbstractState {
@@ -25,6 +24,10 @@ class StateInit extends AbstractState {
     public State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {
         if (response.code() != 220) {
             throw INVALID_STATE_EXCEPTION_QUIT;
+        }
+
+        if (context.isAllMessageCompleted()) {
+            return QUIT_STATE;
         }
 
         return context.isExtendedGreeting() ? EXTENDED_GREETING_STATE : GREETING_STATE;
