@@ -3,6 +3,7 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.smtpc.client.SendStatus;
 import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.client.fsm.ConstantStates.*;
@@ -18,7 +19,11 @@ class StateInitTest {
     @Test
     void shouldReturnNextState() throws InvalidStateException {
         StateInit state = new StateInit();
-        assertEquals(GREETING_STATE, state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()));
+        assertEquals(QUIT_STATE, state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()));
+
+        assertEquals(GREETING_STATE, state.nextStateFromEvent(
+                FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)),
+                new FsmEngineContext().setMessage(new Message())));
 
         InvalidStateException exception = assertThrows(InvalidStateException.class, () -> {
             FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500));

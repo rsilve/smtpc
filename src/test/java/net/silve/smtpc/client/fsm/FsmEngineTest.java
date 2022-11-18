@@ -224,6 +224,7 @@ class FsmEngineTest {
     @Test
     void shouldHaveDefaultActionListener02() {
         FsmEngine engine = new FsmEngine();
+        engine.applyMessage(new Message());
         assertEquals(INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
         assertEquals(GREETING_STATE, engine.getState());
@@ -276,6 +277,7 @@ class FsmEngineTest {
     @Test
     void shouldHaveExtendedHeloSetter() {
         FsmEngine engine = new FsmEngine().useExtendedHelo(true);
+        engine.applyMessage(new Message());
         assertEquals(INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
         assertEquals(EXTENDED_GREETING_STATE, engine.getState());
@@ -284,6 +286,7 @@ class FsmEngineTest {
     @Test
     void shouldHaveExtendedHeloSetter02() {
         FsmEngine engine = new FsmEngine().useExtendedHelo(false);
+        engine.applyMessage(new Message());
         assertEquals(INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
         assertEquals(GREETING_STATE, engine.getState());
@@ -292,6 +295,7 @@ class FsmEngineTest {
     @Test
     void shouldHaveExtendedHeloSetter03() {
         FsmEngine engine = new FsmEngine();
+        engine.applyMessage(new Message());
         assertEquals(INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
         assertEquals(GREETING_STATE, engine.getState());
