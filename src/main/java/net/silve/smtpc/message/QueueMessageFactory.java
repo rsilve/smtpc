@@ -70,7 +70,7 @@ public class QueueMessageFactory implements MessageFactory {
         return last;
     }
 
-    public synchronized boolean add(@NotNull Message message) {
+    public boolean add(@NotNull Message message) {
         if (isCompleted()) {
             return false;
         }
