@@ -70,7 +70,7 @@ public class HelloWorldQueueFactory {
                     completedPromise.setSuccess(null);
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
             }
 
         }, 100, DELAY_BETWEEN_MESSAGES, TimeUnit.MILLISECONDS);
