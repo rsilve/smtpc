@@ -12,16 +12,53 @@ class QueueMessageFactoryTest {
         assertNotNull(factory);
         assertEquals(QueueMessageFactory.DEFAULT_CAPACITY, factory.capacity());
         assertEquals(QueueMessageFactory.DEFAULT_TIMEOUT_MILLI, factory.timeoutMillis());
+        assertEquals(QueueMessageFactory.DEFAULT_LIMIT, factory.getLimit());
     }
 
     @Test
-    void shouldCompleteOnTimeout() {
+    void shouldHaveConstructorTimeout() {
+        QueueMessageFactory factory = new QueueMessageFactory(0L);
+        assertNotNull(factory);
+        assertEquals(QueueMessageFactory.DEFAULT_CAPACITY, factory.capacity());
+        assertEquals(0L, factory.timeoutMillis());
+        assertEquals(QueueMessageFactory.DEFAULT_LIMIT, factory.getLimit());
+    }
+
+    @Test
+    void shouldHaveConstructorLimit() {
+        QueueMessageFactory factory = new QueueMessageFactory(1);
+        assertNotNull(factory);
+        assertEquals(QueueMessageFactory.DEFAULT_CAPACITY, factory.capacity());
+        assertEquals(QueueMessageFactory.DEFAULT_TIMEOUT_MILLI, factory.timeoutMillis());
+        assertEquals(1, factory.getLimit());
+    }
+
+    @Test
+    void shouldHaveConstructorLimitAndTimeout() {
+        QueueMessageFactory factory = new QueueMessageFactory(0L, 1);
+        assertNotNull(factory);
+        assertEquals(QueueMessageFactory.DEFAULT_CAPACITY, factory.capacity());
+        assertEquals(0L, factory.timeoutMillis());
+        assertEquals(1, factory.getLimit());
+    }
+
+    @Test
+    void shouldHaveSetterForLimit() {
+        QueueMessageFactory factory = new QueueMessageFactory();
+        factory.setLimit(1);
+        assertEquals(1, factory.getLimit());
+    }
+
+    @Test
+    void shouldCompleteOnTimeout() throws InterruptedException {
         QueueMessageFactory factory = new QueueMessageFactory(0L);
         assertFalse(factory.isCompleted());
         factory.next();
         assertNull(factory.next());
         assertTrue(factory.isCompleted());
         assertNull(factory.next());
+        assertFalse(factory.offer(new Message()));
+        assertFalse(factory.offer(new Message(), 2L));
     }
 
     @Test

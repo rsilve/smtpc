@@ -83,11 +83,29 @@
                     <excludes>
                         <exclude>net/silve/smtpc/example/**/*</exclude>
                     </excludes>
+                    <rules>
+                        <rule>
+                            <element>PACKAGE</element>
+                            <limits>
+                                <limit>
+                                    <counter>LINE</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.80</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                     <execution>

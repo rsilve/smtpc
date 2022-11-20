@@ -1,0 +1,29 @@
+{
+    "configurations": [
+
+      {
+        "name": "Build",
+        "type": "jps-build",
+        "module": "smtpc",
+        "includeTests": false,
+      },
+
+      {
+      "name": "HelloWorld",
+      "type": "jps-run",
+      "dependsOn": ["Build"],
+      "mainClass": "net.silve.smtpc.example.HelloWorld",
+      "module": "smtpc",
+      "options": ["-Dfile.encoding=UTF-8","-Dsun.stdout.encoding=UTF-8","-Dsun.stderr.encoding=UTF-8"],
+    },
+
+      {
+      "name": "smtpc [spotbugs:check]",
+      "type": "maven",
+      "tasks": ["spotbugs:check"],
+      "debugJvm": "true",
+    },
+
+
+    ]
+}
