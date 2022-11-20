@@ -10,8 +10,8 @@ class QueueMessageFactoryTest {
     void shouldExists() {
         QueueMessageFactory factory = new QueueMessageFactory();
         assertNotNull(factory);
-        assertEquals(Integer.MAX_VALUE, factory.capacity());
-        assertEquals(10L, factory.timeoutMillis());
+        assertEquals(QueueMessageFactory.DEFAULT_CAPACITY, factory.capacity());
+        assertEquals(QueueMessageFactory.DEFAULT_TIMEOUT_MILLI, factory.timeoutMillis());
     }
 
     @Test
@@ -25,27 +25,41 @@ class QueueMessageFactoryTest {
     }
 
     @Test
-    void shouldCompleteOnCapacity() {
-        QueueMessageFactory factory = new QueueMessageFactory(0);
+    void shouldCompleteOnLimt() throws InterruptedException {
+        QueueMessageFactory factory = new QueueMessageFactory(QueueMessageFactory.DEFAULT_TIMEOUT_MILLI, QueueMessageFactory.DEFAULT_CAPACITY, 0);
         assertTrue(factory.isCompleted());
-        assertFalse(factory.add(new Message()));
+        assertFalse(factory.put(new Message()));
         assertNull(factory.next());
     }
 
     @Test
-    void shouldReturnNextMessage() {
+    void shouldReturnNextMessage() throws InterruptedException {
         QueueMessageFactory factory = new QueueMessageFactory();
         Message message = new Message();
-        factory.add(message);
+        factory.put(message);
         assertEquals(message, factory.next());
     }
 
     @Test
-    void shouldReturnNullIfThereIsNoNextMessage() {
+    void shouldReturnNullIfThereIsNoNextMessage() throws InterruptedException {
         QueueMessageFactory factory = new QueueMessageFactory(1L);
         Message message = new Message();
-        factory.add(message);
+        factory.put(message);
         assertEquals(message, factory.next());
         assertNull(factory.next());
+    }
+
+    @Test
+    void shouldReturnFalseIfCapacityExceeded() {
+        QueueMessageFactory factory = new QueueMessageFactory(QueueMessageFactory.DEFAULT_TIMEOUT_MILLI, 1, QueueMessageFactory.DEFAULT_LIMIT);
+        assertTrue(factory.offer(new Message()));
+        assertFalse(factory.offer(new Message()));
+    }
+
+    @Test
+    void shouldWaitToOffer() throws InterruptedException {
+        QueueMessageFactory factory = new QueueMessageFactory(QueueMessageFactory.DEFAULT_TIMEOUT_MILLI, 1, QueueMessageFactory.DEFAULT_LIMIT);
+        factory.offer(new Message());
+        assertFalse(factory.offer(new Message(), 10L));
     }
 }

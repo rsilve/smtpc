@@ -3,40 +3,47 @@ package net.silve.smtpc.message;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class QueueMessageFactory implements MessageFactory {
 
-    private static final long DEFAULT_TIMEOUT_MILLI = 10L;
-    private static final int DEFAULT_CAPACITY = Integer.MAX_VALUE;
+    public static final long DEFAULT_TIMEOUT_MILLI = 10L;
+    public static final int DEFAULT_CAPACITY = 100;
+    public static final int DEFAULT_LIMIT = Integer.MAX_VALUE;
 
     private final long timeoutMillis;
-    private final Queue<Message> messagesQueue;
+    private final BlockingQueue<Message> messagesQueue;
 
-    private int count;
+    private int count = 0;
+    private int limit;
     private final int capacity;
 
     private boolean timeout = false;
 
 
     public QueueMessageFactory() {
-        this(DEFAULT_TIMEOUT_MILLI, DEFAULT_CAPACITY);
+        this(DEFAULT_TIMEOUT_MILLI, DEFAULT_CAPACITY, DEFAULT_LIMIT);
     }
 
     public QueueMessageFactory(long timeoutMillis) {
-        this(timeoutMillis, DEFAULT_CAPACITY);
+        this(timeoutMillis, DEFAULT_CAPACITY, DEFAULT_LIMIT);
     }
 
-    public QueueMessageFactory(int capacity) {
-        this(DEFAULT_TIMEOUT_MILLI, capacity);
+    public QueueMessageFactory(int limit) {
+        this(DEFAULT_TIMEOUT_MILLI, DEFAULT_CAPACITY, limit);
     }
 
-    public QueueMessageFactory(long timeoutMillis, int capacity) {
+    public QueueMessageFactory(long timeoutMillis, int limit) {
+        this(timeoutMillis, DEFAULT_CAPACITY, limit);
+    }
+
+    public QueueMessageFactory(long timeoutMillis, int capacity, int limit) {
         this.timeoutMillis = timeoutMillis;
         this.capacity = capacity;
-        this.count = capacity;
-        messagesQueue = new ConcurrentLinkedQueue<>();
+        this.limit = limit;
+        messagesQueue = new ArrayBlockingQueue<>(capacity);
     }
 
     @Override
@@ -70,13 +77,31 @@ public class QueueMessageFactory implements MessageFactory {
         return last;
     }
 
-    public boolean add(@NotNull Message message) {
+    public boolean put(@NotNull Message message) throws InterruptedException {
         if (isCompleted()) {
             return false;
         }
-        --count;
-        messagesQueue.offer(message);
+        ++count;
+        messagesQueue.put(message);
         return true;
+    }
+
+    public boolean offer(@NotNull Message message, Long timeoutMillis) throws InterruptedException {
+        if (isCompleted()) {
+            return false;
+        }
+        boolean offer = messagesQueue.offer(message, timeoutMillis, TimeUnit.MILLISECONDS);
+        if (offer) ++count;
+        return offer;
+    }
+
+    public boolean offer(@NotNull Message message) {
+        if (isCompleted()) {
+            return false;
+        }
+        boolean offer = messagesQueue.offer(message);
+        if (offer) ++count;
+        return offer;
     }
 
     public int capacity() {
@@ -88,6 +113,15 @@ public class QueueMessageFactory implements MessageFactory {
     }
 
     public boolean isCompleted() {
-        return timeout || count <= 0;
+        return timeout || count >= limit;
+    }
+
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }

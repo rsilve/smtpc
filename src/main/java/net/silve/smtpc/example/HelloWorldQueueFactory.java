@@ -27,8 +27,8 @@ public class HelloWorldQueueFactory {
     private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@mx.black-hole.in";
-    private static final int NUMBER_OF_MESSAGES = 20;
-    private static final int DELAY_BETWEEN_MESSAGES = 300;
+    private static final int NUMBER_OF_MESSAGES = 400;
+    private static final int DELAY_BETWEEN_MESSAGES = 100;
 
     private static byte[] contentBytes;
     private static ScheduledFuture<?> schedule;
@@ -60,13 +60,19 @@ public class HelloWorldQueueFactory {
 
         AtomicInteger count = new AtomicInteger(0);
         schedule = executor.scheduleAtFixedRate(() -> {
-            boolean added = addMessage(factory);
-            if (added) {
-                int value = count.incrementAndGet();
-                logger.log(Level.INFO, () -> String.format("message added %d", value));
-            } else {
-                completedPromise.setSuccess(null);
+            boolean added;
+            try {
+                added = addMessage(factory);
+                if (added) {
+                    int value = count.incrementAndGet();
+                    logger.log(Level.INFO, () -> String.format("message added %d", value));
+                } else {
+                    completedPromise.setSuccess(null);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+
         }, 100, DELAY_BETWEEN_MESSAGES, TimeUnit.MILLISECONDS);
         client.runAndClose(session).addListener(future -> {
             executor.shutdownGracefully();
@@ -75,8 +81,8 @@ public class HelloWorldQueueFactory {
 
     }
 
-    public static boolean addMessage(QueueMessageFactory factory) {
-        return factory.add(new Message().setSender(SENDER)
+    public static boolean addMessage(QueueMessageFactory factory) throws InterruptedException {
+        return factory.put(new Message().setSender(SENDER)
                 .setRecipient(RECIPIENT)
                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator()));
     }
