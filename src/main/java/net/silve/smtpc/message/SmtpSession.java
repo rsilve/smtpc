@@ -3,7 +3,7 @@ package net.silve.smtpc.message;
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.Recycler;
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 import net.silve.smtpc.listener.DefaultSmtpSessionListener;
 import net.silve.smtpc.listener.SmtpSessionListener;
 
@@ -65,6 +65,11 @@ public class SmtpSession {
 
     public SmtpSession setMessageFactory(MessageFactory messageFactory) {
         this.messageFactory = messageFactory;
+        return this;
+    }
+
+    public SmtpSession setMessage(Message message) {
+        this.messageFactory = new SimpleMessageFactory(message);
         return this;
     }
 

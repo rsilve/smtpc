@@ -14,12 +14,13 @@ import net.silve.smtpc.client.ssl.SslUtils;
 import net.silve.smtpc.client.ssl.StartTlsHandler;
 import net.silve.smtpc.message.Message;
 import net.silve.smtpc.message.SmtpSession;
+import net.silve.smtpc.model.SendStatus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.SSLException;
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.client.fsm.StateCloseTransmission.CLOSING_TRANSMISSION_STATE;
 
 
 public class SmtpClientFSMHandler extends SimpleChannelInboundHandler<SmtpResponse> implements FsmActionListener {

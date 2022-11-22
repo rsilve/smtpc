@@ -3,8 +3,8 @@ package net.silve.smtpc.client.fsm;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_DATA_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_RCPT_STATE;
+import static net.silve.smtpc.client.fsm.StatePipeliningData.PIPELINING_DATA_STATE;
+import static net.silve.smtpc.client.fsm.StatePipeliningRcpt.PIPELINING_RCPT_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

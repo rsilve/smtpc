@@ -3,10 +3,11 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_DATA_RESPONSE_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_RCPT_RESPONSE_STATE;
+import static net.silve.smtpc.client.fsm.StatePipeliningDataResponse.PIPELINING_DATA_RESPONSE_STATE;
 
 public class StatePipeliningRcptResponse extends AbstractState {
+
+    public static final State PIPELINING_RCPT_RESPONSE_STATE = new StatePipeliningRcptResponse();
 
     @Override
     protected State nextState(@NotNull SmtpResponse response, @NotNull FsmEngineContext context) throws InvalidStateException {

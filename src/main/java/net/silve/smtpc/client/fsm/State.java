@@ -1,6 +1,6 @@
 package net.silve.smtpc.client.fsm;
 
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 
 public interface State {
     SendStatus checkSentStatus(FsmEvent event);

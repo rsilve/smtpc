@@ -1,4 +1,4 @@
-package net.silve.smtpc.client;
+package net.silve.smtpc.model;
 
 public enum SendStatusCode {
 

@@ -1,14 +1,16 @@
 package net.silve.smtpc.client.fsm;
 
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.EXTENDED_GREETING_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.GREETING_STATE;
+import static net.silve.smtpc.client.fsm.StateExtendedGreeting.EXTENDED_GREETING_STATE;
+import static net.silve.smtpc.client.fsm.StateGreeting.GREETING_STATE;
 import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 
 public class TlsHandshakeState implements State {
+
+    public static final State TLS_HANDSHAKE_STATE = new TlsHandshakeState();
 
     @Override
     public SendStatus checkSentStatus(FsmEvent event) {

@@ -2,11 +2,11 @@ package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.client.fsm.StateCloseTransmission.CLOSING_TRANSMISSION_STATE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AbstractStateTest {
@@ -71,9 +71,7 @@ class AbstractStateTest {
                 return null;
             }
         };
-        assertThrows(InvalidStateException.class, () -> {
-            state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext());
-        });
+        assertThrows(InvalidStateException.class, () -> state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()));
     }
 
     @Test

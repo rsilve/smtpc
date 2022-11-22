@@ -1,11 +1,11 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.CLOSING_TRANSMISSION_STATE;
+import static net.silve.smtpc.client.fsm.StateCloseTransmission.CLOSING_TRANSMISSION_STATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

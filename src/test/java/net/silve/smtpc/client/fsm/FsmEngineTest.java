@@ -2,7 +2,7 @@ package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 import net.silve.smtpc.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FsmEngineTest {
@@ -216,18 +215,18 @@ class FsmEngineTest {
     @Test
     void shouldHaveDefaultActionListener() {
         FsmEngine engine = new FsmEngine();
-        assertEquals(INIT_STATE, engine.getState());
+        assertEquals(StateInit.INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance());
-        assertEquals(CLOSING_TRANSMISSION_STATE, engine.getState());
+        assertEquals(StateCloseTransmission.CLOSING_TRANSMISSION_STATE, engine.getState());
     }
 
     @Test
     void shouldHaveDefaultActionListener02() {
         FsmEngine engine = new FsmEngine();
         engine.applyMessage(new Message());
-        assertEquals(INIT_STATE, engine.getState());
+        assertEquals(StateInit.INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
-        assertEquals(GREETING_STATE, engine.getState());
+        assertEquals(StateGreeting.GREETING_STATE, engine.getState());
     }
 
     @Test
@@ -242,7 +241,7 @@ class FsmEngineTest {
 
             @Override
             public State nextStateFromEvent(FsmEvent event, FsmEngineContext context) throws InvalidStateException {
-                throw new InvalidStateException(QUIT_STATE);
+                throw new InvalidStateException(StateQuit.QUIT_STATE);
             }
 
             @Override
@@ -269,7 +268,7 @@ class FsmEngineTest {
         });
 
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)));
-        assertEquals(QUIT_STATE, engine.getState());
+        assertEquals(StateQuit.QUIT_STATE, engine.getState());
         assertTrue(action_started.get());
         assertTrue(errorCatched.get());
     }
@@ -278,27 +277,27 @@ class FsmEngineTest {
     void shouldHaveExtendedHeloSetter() {
         FsmEngine engine = new FsmEngine().useExtendedHelo(true);
         engine.applyMessage(new Message());
-        assertEquals(INIT_STATE, engine.getState());
+        assertEquals(StateInit.INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
-        assertEquals(EXTENDED_GREETING_STATE, engine.getState());
+        assertEquals(StateExtendedGreeting.EXTENDED_GREETING_STATE, engine.getState());
     }
 
     @Test
     void shouldHaveExtendedHeloSetter02() {
         FsmEngine engine = new FsmEngine().useExtendedHelo(false);
         engine.applyMessage(new Message());
-        assertEquals(INIT_STATE, engine.getState());
+        assertEquals(StateInit.INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
-        assertEquals(GREETING_STATE, engine.getState());
+        assertEquals(StateGreeting.GREETING_STATE, engine.getState());
     }
 
     @Test
     void shouldHaveExtendedHeloSetter03() {
         FsmEngine engine = new FsmEngine();
         engine.applyMessage(new Message());
-        assertEquals(INIT_STATE, engine.getState());
+        assertEquals(StateInit.INIT_STATE, engine.getState());
         engine.notify(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)));
-        assertEquals(GREETING_STATE, engine.getState());
+        assertEquals(StateGreeting.GREETING_STATE, engine.getState());
     }
 
     @Test

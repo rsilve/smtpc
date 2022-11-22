@@ -1,10 +1,12 @@
 package net.silve.smtpc.client.fsm;
 
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.PIPELINING_MAIL_RESPONSE_STATE;
+import static net.silve.smtpc.client.fsm.StatePipeliningMailResponse.PIPELINING_MAIL_RESPONSE_STATE;
 
 public class StatePipeliningData implements State {
+
+    public static final State PIPELINING_DATA_STATE = new StatePipeliningData();
 
     @Override
     public SendStatus checkSentStatus(FsmEvent event) {

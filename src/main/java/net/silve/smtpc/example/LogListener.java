@@ -2,8 +2,8 @@ package net.silve.smtpc.example;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import net.silve.smtpc.client.fsm.InvalidStateException;
 import net.silve.smtpc.listener.SmtpSessionListener;
 

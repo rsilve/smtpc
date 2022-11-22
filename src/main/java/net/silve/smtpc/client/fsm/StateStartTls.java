@@ -1,16 +1,18 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.TLS_HANDSHAKE_STATE;
+import static net.silve.smtpc.client.fsm.TlsHandshakeState.TLS_HANDSHAKE_STATE;
 import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 
 public class StateStartTls extends AbstractState {
+    public static final State STARTTLS_STATE = new StateStartTls();
+
     @Override
     public SendStatus checkSentStatus(FsmEvent event) {
         SmtpResponse response = event.getResponse();

@@ -28,14 +28,13 @@ public class HelloWorld {
 
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
 
-        SmtpClient client = new SmtpClient(new SmtpClientConfig().useTls(false).setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
+        SmtpClient client = new SmtpClient(new SmtpClientConfig().useTls(true).setGreeting("greeting.tld").usePipelining(USE_PIPELINING));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session
-                .setMessageFactory(
+                .setMessage(
                         new Message().setSender(SENDER)
                                 .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
-                                .factory()
                 )
                 .setListener(new LogListener());
 

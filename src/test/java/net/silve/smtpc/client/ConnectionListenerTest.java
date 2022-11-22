@@ -13,11 +13,10 @@ class ConnectionListenerTest {
     @Test
     void shouldHandleRequestNotification() {
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
-                                .factory()
                 );
         EmbeddedChannel channel = new EmbeddedChannel();
         channel.newSucceededFuture().addListener(new ConnectionListener(session, new SmtpClientConfig()));

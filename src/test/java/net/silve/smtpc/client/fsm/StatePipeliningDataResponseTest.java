@@ -3,8 +3,8 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.CONTENT_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.QUIT_STATE;
+import static net.silve.smtpc.client.fsm.StateContent.CONTENT_STATE;
+import static net.silve.smtpc.client.fsm.StateQuit.QUIT_STATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
