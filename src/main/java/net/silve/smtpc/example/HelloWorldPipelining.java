@@ -32,11 +32,10 @@ public class HelloWorldPipelining {
         SmtpClient client = new SmtpClient(new SmtpClientConfig().usePipelining(false).setGreeting("greeting.tld"));
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         session
-                .setMessageFactory(
+                .setMessage(
                         new Message().setSender(SENDER)
                                 .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
-                                .factory()
                 )
                 .setListener(new LogListener());
 
@@ -47,11 +46,10 @@ public class HelloWorldPipelining {
         client = new SmtpClient(new SmtpClientConfig().usePipelining(true).setGreeting("greeting.tld"));
         session = SmtpSession.newInstance(HOST, PORT);
         session
-                .setMessageFactory(
+                .setMessage(
                         new Message().setSender(SENDER)
                                 .setRecipients(RECIPIENTS)
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
-                                .factory()
                 )
                 .setListener(new LogListener());
 

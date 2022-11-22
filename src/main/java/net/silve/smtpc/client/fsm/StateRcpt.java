@@ -1,17 +1,18 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.DATA_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.RCPT_STATE;
+import static net.silve.smtpc.client.fsm.StateData.DATA_STATE;
 import static net.silve.smtpc.client.fsm.InvalidStateException.INVALID_STATE_EXCEPTION_QUIT;
 
 public class StateRcpt extends AbstractState {
+    public static final State RCPT_STATE = new StateRcpt();
+
     @Override
     public SendStatus checkSentStatus(FsmEvent event) {
         SmtpResponse response = event.getResponse();

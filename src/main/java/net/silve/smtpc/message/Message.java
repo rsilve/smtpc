@@ -1,7 +1,6 @@
 package net.silve.smtpc.message;
 
 import io.netty.handler.codec.smtp.SmtpContent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -76,24 +75,4 @@ public class Message {
         return null;
     }
 
-    public MessageFactory factory() {
-        return new SimpleMessageFactory(this);
-    }
-
-    static class SimpleMessageFactory implements MessageFactory {
-        private final Iterator<Message> messageIterator;
-
-        public SimpleMessageFactory(@NotNull Message message) {
-            this.messageIterator = List.of(message).iterator();
-        }
-
-        @Override
-        public Message next() {
-            if (messageIterator.hasNext()) {
-                return messageIterator.next();
-            } else {
-                return null;
-            }
-        }
-    }
 }

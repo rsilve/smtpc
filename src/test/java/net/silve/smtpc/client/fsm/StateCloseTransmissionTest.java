@@ -1,8 +1,8 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import org.junit.jupiter.api.Test;
 
 import static net.silve.smtpc.client.fsm.SmtpCommandAction.CLOSE_TRANSMISSION;

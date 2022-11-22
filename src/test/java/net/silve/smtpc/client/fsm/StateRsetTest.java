@@ -4,8 +4,8 @@ import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.GREETING_STATE;
-import static net.silve.smtpc.client.fsm.ConstantStates.QUIT_STATE;
+import static net.silve.smtpc.client.fsm.StateGreeting.GREETING_STATE;
+import static net.silve.smtpc.client.fsm.StateQuit.QUIT_STATE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StateRsetTest {

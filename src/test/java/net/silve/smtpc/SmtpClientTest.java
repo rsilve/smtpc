@@ -55,12 +55,11 @@ class SmtpClientTest {
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
         SmtpSession session = SmtpSession.newInstance("localhost", 2526)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
-                                .factory()
                 )
                 .setListener(listener);
         SmtpClient client = new SmtpClient();
@@ -75,12 +74,11 @@ class SmtpClientTest {
         TestListener listener = new TestListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
         SmtpSession session = SmtpSession.newInstance("localhost", 2525)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
-                                .factory()
                 )
                 .setListener(listener);
         SmtpClientConfig smtpClientConfig = new SmtpClientConfig().setTrustManager(new TrustAllX509TrustManager());
@@ -98,12 +96,11 @@ class SmtpClientTest {
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         byte[] contentBytes = HelloWorld.class.getResourceAsStream("/example/fixture001.eml").readAllBytes();
         SmtpSession session = SmtpSession.newInstance("localhost", 2525)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
                                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator())
-                                .factory()
                 )
                 .setListener(listener);
         SmtpClient client = new SmtpClient();

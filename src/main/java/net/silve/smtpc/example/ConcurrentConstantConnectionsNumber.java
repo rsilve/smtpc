@@ -18,13 +18,14 @@ public class ConcurrentConstantConnectionsNumber {
     private static final String[] RECIPIENTS = IntStream.range(1, 5)
             .mapToObj(value -> String.format("devnull+%d@mx.black-hole.in", value)).toArray(String[]::new);
     private static final boolean USE_PIPELINING = true;
-    private static final int NUMBER_OF_MESSAGES = 50000;
-    private static final int BATCH_SIZE = 10;
-    private static final int POOL_SIZE = 50;
+    private static final int NUMBER_OF_MESSAGES = 5_000;
+    private static final int BATCH_SIZE = 1;
+    private static final int POOL_SIZE = 100;
 
 
     public static void main(String[] args) {
-        SmtpClientConfig config = new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING).setNumberOfThread(1).useTls(false);
+
+        SmtpClientConfig config = new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING).useTls(false);
         SmtpClient client = new SmtpClient(config);
         ConcurrentRunner runner = new ConcurrentRunner(client, NUMBER_OF_MESSAGES, POOL_SIZE, BATCH_SIZE);
         runner.execute(r -> {

@@ -3,7 +3,6 @@ package net.silve.smtpc.client.fsm;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StatePipeliningMailResponseTest {
@@ -19,7 +18,7 @@ class StatePipeliningMailResponseTest {
     void shouldReturnState() throws InvalidStateException {
         State state = new StatePipeliningMailResponse();
         FsmEngineContext context = new FsmEngineContext();
-        assertEquals(PIPELINING_RCPT_RESPONSE_STATE, state.nextStateFromEvent(
+        assertEquals(StatePipeliningRcptResponse.PIPELINING_RCPT_RESPONSE_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), context));
         assertNull(context.getPipeliningError());
 

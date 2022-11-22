@@ -1,11 +1,10 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -19,48 +18,48 @@ class StateExtendedGreetingTest {
     @Test
     void shouldReturnNextState() throws InvalidStateException {
         State state = new StateExtendedGreeting();
-        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+        assertEquals(StateMail.MAIL_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()
         ));
-        assertEquals(GREETING_STATE, state.nextStateFromEvent(
+        assertEquals(StateGreeting.GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(502)), new FsmEngineContext()
         ));
 
-        assertEquals(QUIT_STATE, state.nextStateFromEvent(
+        assertEquals(StateQuit.QUIT_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500)), new FsmEngineContext()
         ));
 
-        assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
+        assertEquals(StateStartTls.STARTTLS_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext().setTlsActive(false)
         ));
 
-        assertEquals(STARTTLS_STATE, state.nextStateFromEvent(
+        assertEquals(StateStartTls.STARTTLS_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext()
         ));
 
-        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+        assertEquals(StateMail.MAIL_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext().setUseTls(false)
         ));
 
-        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+        assertEquals(StateMail.MAIL_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "STARTTLS")),
                 new FsmEngineContext().setTlsActive(true)
         ));
 
-        assertEquals(MAIL_STATE, state.nextStateFromEvent(
+        assertEquals(StateMail.MAIL_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "PIPELINING")),
                 new FsmEngineContext()
         ));
 
-        assertEquals(PIPELINING_MAIL_STATE, state.nextStateFromEvent(
+        assertEquals(StatePipeliningMail.PIPELINING_MAIL_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance()
                         .setResponse(new DefaultSmtpResponse(250, "PIPELINING")),
                 new FsmEngineContext().setPipeliningActive(true)

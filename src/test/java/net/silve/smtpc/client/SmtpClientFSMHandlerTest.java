@@ -24,12 +24,11 @@ class SmtpClientFSMHandlerTest {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -69,13 +68,12 @@ class SmtpClientFSMHandlerTest {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .addRecipient("recipient2")
                                 .setChunks(content, content2)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -118,12 +116,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleSessionWithExtendedGreeting() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -160,12 +157,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleSessionWithoutExtendedGreeting() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -202,12 +198,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleSessionWithExtendedGreetingAndFallBack() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -248,12 +243,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleSessionWithStartTls() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -281,12 +275,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleErrorAtConnectSession() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -305,12 +298,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleErrorAtWrite() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
@@ -338,12 +330,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleErrorAtWriteOnContent() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
@@ -388,12 +379,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleErrorAtWriteOnLastContent() throws SSLException {
         RecyclableSmtpContent content = RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {
@@ -438,12 +428,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleRejectAtHELO() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -466,12 +455,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleRejectAtEHLO() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -502,10 +490,10 @@ class SmtpClientFSMHandlerTest {
                                 .setRecipient("recipient")
                                 .setChunks(content, content2),
                                 new Message()
-                                .setSender("sender")
-                                .setRecipient("recipient")
-                                .setChunks(content, content2)
-                                )
+                                        .setSender("sender")
+                                        .setRecipient("recipient")
+                                        .setChunks(content, content2)
+                        )
                 )
                 .setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
@@ -574,12 +562,11 @@ class SmtpClientFSMHandlerTest {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useTls(false).useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -619,12 +606,11 @@ class SmtpClientFSMHandlerTest {
     void shouldHandleSessionWithPipelining() throws SSLException {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().usePipelining(true).useExtendedHelo(true));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -664,12 +650,11 @@ class SmtpClientFSMHandlerTest {
         RecyclableSmtpContent content = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
-                                .factory()
                 );
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().setGreeting("greeting").useExtendedHelo(false));
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -711,12 +696,11 @@ class SmtpClientFSMHandlerTest {
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
-                                .factory()
                 )
                 .setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));
@@ -758,12 +742,11 @@ class SmtpClientFSMHandlerTest {
         RecyclableSmtpContent content2 = RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8)));
         DefaultSmtpSessionListener listener = new DefaultSmtpSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("sender")
                                 .setRecipient("recipient")
                                 .setChunks(content, content2)
-                                .factory()
                 )
                 .setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig().useExtendedHelo(false));

@@ -29,11 +29,11 @@ class SmtpSessionListenerTest {
     void shouldHandleNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory());
+                );
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -48,11 +48,11 @@ class SmtpSessionListenerTest {
     void shouldHandleRequestNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory());
+                );
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -65,11 +65,11 @@ class SmtpSessionListenerTest {
     void shouldHandleRequestNotification002() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory());
+                );
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -82,7 +82,7 @@ class SmtpSessionListenerTest {
     void shouldHandleContentNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
@@ -91,7 +91,7 @@ class SmtpSessionListenerTest {
                                                 Unpooled.copiedBuffer("bb".getBytes(StandardCharsets.UTF_8))),
                                         RecyclableLastSmtpContent.newInstance(
                                                 Unpooled.copiedBuffer("ee".getBytes(StandardCharsets.UTF_8))))
-                                .factory());
+                );
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
@@ -106,11 +106,11 @@ class SmtpSessionListenerTest {
     void shouldHandleWriteErrorNotification() throws SSLException {
         TestSessionListener listener = new TestSessionListener();
         SmtpSession session = SmtpSession.newInstance("host", 25)
-                .setMessageFactory(
+                .setMessage(
                         new Message()
                                 .setSender("smtpc.test@domain.tld")
                                 .setRecipient("devnull@silve.net")
-                                .factory());
+                );
         session.setListener(listener);
         SmtpClientFSMHandler handler = new SmtpClientFSMHandler(session, new SmtpClientConfig());
         MessageToMessageEncoder<Object> encoder = new MessageToMessageEncoder<>() {

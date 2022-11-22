@@ -1,8 +1,8 @@
 package net.silve.smtpc.listener;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 
 import java.util.List;
 

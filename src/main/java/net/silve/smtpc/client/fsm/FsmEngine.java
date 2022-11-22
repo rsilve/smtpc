@@ -1,13 +1,13 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
-import net.silve.smtpc.client.SendStatus;
+import net.silve.smtpc.model.SendStatus;
 import net.silve.smtpc.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.INIT_STATE;
+import static net.silve.smtpc.client.fsm.StateInit.INIT_STATE;
 
 public class FsmEngine {
 

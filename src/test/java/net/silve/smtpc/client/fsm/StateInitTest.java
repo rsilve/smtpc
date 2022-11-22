@@ -1,12 +1,11 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StateInitTest {
@@ -19,9 +18,9 @@ class StateInitTest {
     @Test
     void shouldReturnNextState() throws InvalidStateException {
         StateInit state = new StateInit();
-        assertEquals(QUIT_STATE, state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()));
+        assertEquals(StateQuit.QUIT_STATE, state.nextStateFromEvent(FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)), new FsmEngineContext()));
 
-        assertEquals(GREETING_STATE, state.nextStateFromEvent(
+        assertEquals(StateGreeting.GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(220)),
                 new FsmEngineContext().setMessage(new Message())));
 
@@ -29,7 +28,7 @@ class StateInitTest {
             FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(500));
             state.nextStateFromEvent(event, new FsmEngineContext());
         });
-        assertEquals(QUIT_STATE, exception.getState());
+        assertEquals(StateQuit.QUIT_STATE, exception.getState());
     }
 
     @Test

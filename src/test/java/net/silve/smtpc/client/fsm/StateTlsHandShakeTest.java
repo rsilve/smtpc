@@ -2,7 +2,6 @@ package net.silve.smtpc.client.fsm;
 
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StateTlsHandShakeTest {
@@ -10,11 +9,11 @@ class StateTlsHandShakeTest {
     @Test
     void shouldReturnNextState() throws InvalidStateException {
         State state = new TlsHandshakeState();
-        assertEquals(GREETING_STATE, state.nextStateFromEvent(
+        assertEquals(StateGreeting.GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance(), new FsmEngineContext()
         ));
 
-        assertEquals(EXTENDED_GREETING_STATE, state.nextStateFromEvent(
+        assertEquals(StateExtendedGreeting.EXTENDED_GREETING_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance(), new FsmEngineContext().setExtendedGreeting(true)
         ));
 
@@ -22,7 +21,7 @@ class StateTlsHandShakeTest {
             FsmEvent event =  FsmEvent.newInstance().setCause(new RuntimeException("ee"));
             state.nextStateFromEvent(event, null);
         });
-        assertEquals(QUIT_STATE, exception.getState());
+        assertEquals(StateQuit.QUIT_STATE, exception.getState());
     }
 
     @Test

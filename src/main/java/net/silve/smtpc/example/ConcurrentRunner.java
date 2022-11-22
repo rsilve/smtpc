@@ -144,6 +144,7 @@ public class ConcurrentRunner {
         int count = logListener.getSuccessCount() + logListener.getFailureCount();
         long totalDurationNano = totalDuration.longValue();
         long duration = System.nanoTime() - globalStartedAt;
+        long durationInternal = logListener.getMessagesDuration() / 1000000;
         long avgConcurrency = Math.max(1, totalDurationNano / duration);
         long avgDuration = count != 0 ? totalDurationNano / count : -1;
 
@@ -153,8 +154,8 @@ public class ConcurrentRunner {
         double bytesRate = ((double) bytes * 1000 * 1000000) / (duration * 1024);
         double avgBytes = ((double) bytes ) / (logListener.getSuccessCount() * 1024);
 
-        logger.info(() -> String.format("!!! total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_size=%.2fK, avg_bytes_rate=%.2fK/s, avg_concurrency=%d, success=%d, failure=%d",
-                durationMS, avgDuration / 1000000, rate, avgBytes, bytesRate, avgConcurrency, logListener.getSuccessCount(), logListener.getFailureCount()));
+        logger.info(() -> String.format("!!! total_duration=%dms, total_duration=%dms, avg=%dms, avg_rate=%.2fm/s, avg_size=%.2fK, avg_bytes_rate=%.2fK/s, avg_concurrency=%d, success=%d, failure=%d",
+                durationMS, durationInternal/count, avgDuration / 1000000, rate, avgBytes, bytesRate, avgConcurrency, logListener.getSuccessCount(), logListener.getFailureCount()));
     }
 
     public SmtpClient getClient() {

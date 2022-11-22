@@ -1,12 +1,11 @@
 package net.silve.smtpc.client.fsm;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.smtpc.client.SendStatus;
-import net.silve.smtpc.client.SendStatusCode;
+import net.silve.smtpc.model.SendStatus;
+import net.silve.smtpc.model.SendStatusCode;
 import net.silve.smtpc.message.Message;
 import org.junit.jupiter.api.Test;
 
-import static net.silve.smtpc.client.fsm.ConstantStates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StateRcptTest {
@@ -19,11 +18,11 @@ class StateRcptTest {
     @Test
     void shouldReturnNextState() throws InvalidStateException {
         State state = new StateRcpt();
-        assertEquals(RCPT_STATE, state.nextStateFromEvent(
+        assertEquals(StateRcpt.RCPT_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)),
                 new FsmEngineContext().setMessage(new Message().setRecipient("recipient"))
         ));
-        assertEquals(DATA_STATE, state.nextStateFromEvent(
+        assertEquals(StateData.DATA_STATE, state.nextStateFromEvent(
                 FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(250)), new FsmEngineContext()
         ));
 
@@ -31,7 +30,7 @@ class StateRcptTest {
             FsmEvent event = FsmEvent.newInstance().setResponse(new DefaultSmtpResponse(501));
             state.nextStateFromEvent(event, new FsmEngineContext());
         });
-        assertEquals(QUIT_STATE, exception.getState());
+        assertEquals(StateQuit.QUIT_STATE, exception.getState());
 
     }
 
