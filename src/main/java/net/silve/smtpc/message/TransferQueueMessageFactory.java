@@ -2,11 +2,12 @@ package net.silve.smtpc.message;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TransferQueue;
 
-public class TransfertQueueMessageFactory implements MessageFactory {
+public class TransferQueueMessageFactory implements MessageFactory {
 
     public static final long DEFAULT_TIMEOUT_MILLI = 10L;
     public static final int DEFAULT_LIMIT = Integer.MAX_VALUE;
@@ -20,19 +21,19 @@ public class TransfertQueueMessageFactory implements MessageFactory {
     private boolean timeout = false;
 
 
-    public TransfertQueueMessageFactory() {
+    public TransferQueueMessageFactory() {
         this(DEFAULT_TIMEOUT_MILLI, DEFAULT_LIMIT);
     }
 
-    public TransfertQueueMessageFactory(long timeoutMillis) {
+    public TransferQueueMessageFactory(long timeoutMillis) {
         this(timeoutMillis, DEFAULT_LIMIT);
     }
 
-    public TransfertQueueMessageFactory(int limit) {
+    public TransferQueueMessageFactory(int limit) {
         this(DEFAULT_TIMEOUT_MILLI, limit);
     }
 
-     public TransfertQueueMessageFactory(long timeoutMillis, int limit) {
+     public TransferQueueMessageFactory(long timeoutMillis, int limit) {
         this.timeoutMillis = timeoutMillis;
 
         this.limit = limit;
@@ -45,7 +46,11 @@ public class TransfertQueueMessageFactory implements MessageFactory {
             return null;
         }
         try {
-            return messagesQueue.poll(timeoutMillis, TimeUnit.MILLISECONDS);
+            Message message = messagesQueue.poll(timeoutMillis, TimeUnit.MILLISECONDS);
+            if (Objects.isNull(message)) {
+                timeout = true;
+            }
+            return message;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
