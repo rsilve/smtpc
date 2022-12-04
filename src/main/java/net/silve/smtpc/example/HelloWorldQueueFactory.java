@@ -61,17 +61,13 @@ public class HelloWorldQueueFactory {
         AtomicInteger count = new AtomicInteger(0);
         schedule = executor.scheduleAtFixedRate(() -> {
             boolean added;
-            try {
-                added = addMessage(factory);
-                if (added) {
-                    int value = count.incrementAndGet();
-                    logger.log(Level.INFO, () -> String.format("message added %d", value));
-                } else {
-                    logger.log(Level.INFO, () -> String.format("message not added %d", count.get()));
-                    completedPromise.setSuccess(null);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            added = addMessage(factory);
+            if (added) {
+                int value = count.incrementAndGet();
+                logger.log(Level.INFO, () -> String.format("message added %d", value));
+            } else {
+                logger.log(Level.INFO, () -> String.format("message not added %d", count.get()));
+                completedPromise.setSuccess(null);
             }
 
         }, 100, DELAY_BETWEEN_MESSAGES, TimeUnit.MILLISECONDS);

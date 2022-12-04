@@ -81,11 +81,11 @@ public class HelloWorldSmtpConnection {
 
     private static class LocalSmtpListener implements SmtpSessionListener {
 
-        private AtomicInteger connection = new AtomicInteger(0);
-        private AtomicInteger success = new AtomicInteger(0);
-        private AtomicInteger fail = new AtomicInteger(0);
-        private int limit;
-        private Promise<Void> completed;
+        private final AtomicInteger connection = new AtomicInteger(0);
+        private final AtomicInteger success = new AtomicInteger(0);
+        private final AtomicInteger fail = new AtomicInteger(0);
+        private final int limit;
+        private final Promise<Void> completed;
 
         public LocalSmtpListener(int limit, Promise<Void> completed) {
             this.limit = limit;
@@ -95,7 +95,7 @@ public class HelloWorldSmtpConnection {
         @Override
         public void onConnect(String host, int port) {
             connection.incrementAndGet();
-            System.out.println("connection " + connection.get());
+            logger.log(Level.INFO, () -> String.format("connection %d", connection.get()));
         }
 
         @Override
@@ -121,7 +121,7 @@ public class HelloWorldSmtpConnection {
         @Override
         public void onCompleted(String id) {
             int total = success.get() + fail.get();
-            System.out.println("session complete " + total);
+            logger.log(Level.INFO, () -> String.format("session complete %d", total));
             if (total >= limit) {
                 completed.setSuccess(null);
             }
