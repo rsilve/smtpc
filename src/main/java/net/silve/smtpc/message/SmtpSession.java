@@ -37,6 +37,7 @@ public class SmtpSession {
 
     private SmtpSessionListener listener;
     private String id = UUID.randomUUID().toString();
+    private boolean terminated = false;
 
     private SmtpSession(Recycler.Handle<SmtpSession> handle) {
         this.handle = handle;
@@ -48,6 +49,7 @@ public class SmtpSession {
         this.messageFactory = DEFAULT_MESSAGE_FACTORY;
         this.listener = new DefaultSmtpSessionListener();
         this.id = UUID.randomUUID().toString();
+        this.terminated = false;
         handle.recycle(this);
     }
 
@@ -83,6 +85,7 @@ public class SmtpSession {
     }
 
     public void notifyCompleted() {
+        this.terminated = true;
         this.listener.onCompleted(this.getId());
     }
 
@@ -122,7 +125,9 @@ public class SmtpSession {
         return messageFactory.next();
     }
 
-
+    public boolean isTerminated() {
+        return terminated;
+    }
 
     private static class EmptyMessageFactory implements MessageFactory {
         public Message next() {

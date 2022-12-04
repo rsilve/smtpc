@@ -54,7 +54,7 @@ public class HelloWorldQueueFactory {
         SmtpSession session = SmtpSession.newInstance(HOST, PORT);
         LogListener listener = new LogListener();
 
-        QueueMessageFactory factory = new QueueMessageFactory(NUMBER_OF_MESSAGES/2);
+        QueueMessageFactory factory = new QueueMessageFactory(1000L, NUMBER_OF_MESSAGES/2);
         session.setMessageFactory(factory)
                 .setListener(listener);
 
@@ -67,6 +67,7 @@ public class HelloWorldQueueFactory {
                     int value = count.incrementAndGet();
                     logger.log(Level.INFO, () -> String.format("message added %d", value));
                 } else {
+                    logger.log(Level.INFO, () -> String.format("message not added %d", count.get()));
                     completedPromise.setSuccess(null);
                 }
             } catch (InterruptedException e) {
@@ -76,13 +77,14 @@ public class HelloWorldQueueFactory {
         }, 100, DELAY_BETWEEN_MESSAGES, TimeUnit.MILLISECONDS);
         client.runAndClose(session).addListener(future -> {
             executor.shutdownGracefully();
-            logger.log(Level.INFO, () -> String.format("message sended %d (<= %d)", count.get(), NUMBER_OF_MESSAGES/2));
+            logger.log(Level.INFO, () -> String.format("message sended %d (<= %d), succes=%d",
+                    count.get(), NUMBER_OF_MESSAGES/2, listener.getSuccessCount()));
         });
 
     }
 
-    public static boolean addMessage(QueueMessageFactory factory) throws InterruptedException {
-        return factory.put(new Message().setSender(SENDER)
+    public static boolean addMessage(QueueMessageFactory factory) {
+        return factory.offer(new Message().setSender(SENDER)
                 .setRecipient(RECIPIENT)
                 .setChunks(SmtpContentBuilder.chunks(contentBytes).iterator()));
     }
