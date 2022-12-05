@@ -49,6 +49,21 @@ class SmtpConnectionTest {
     }
 
     @Test
+    void shouldSendOneMessageWithSpecificClient() throws InterruptedException {
+        TestListener listener = new TestListener(1);
+        SmtpConnection client = new SmtpConnection("localhost", 2526, 1, new SmtpClient());
+        client.setListener(listener);
+        listener.promise.addListener(future -> {
+            client.close();
+            assertTrue(listener.completed);
+        });
+        client.send(new Message().setSender("")
+                .setRecipient("RECIPIENT")
+                .setChunks(SmtpContentBuilder.chunks("ee".getBytes()).iterator()));
+
+    }
+
+    @Test
     void shouldSendTwoMessageWithBatchSize() throws InterruptedException {
         TestListener listener = new TestListener(2);
         SmtpConnection client = new SmtpConnection("localhost", 2526, 1);
