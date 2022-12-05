@@ -3,8 +3,10 @@ package net.silve.smtpc.example;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.Promise;
+import net.silve.smtpc.SmtpClient;
 import net.silve.smtpc.SmtpConnection;
 import net.silve.smtpc.SmtpContentBuilder;
+import net.silve.smtpc.client.SmtpClientConfig;
 import net.silve.smtpc.listener.SmtpSessionListener;
 import net.silve.smtpc.message.Message;
 import net.silve.smtpc.model.SendStatus;
@@ -26,8 +28,10 @@ public class HelloWorldSmtpConnection {
     private static final int PORT = 25;
     private static final String SENDER = "sender@domain.tld";
     private static final String RECIPIENT = "devnull@mx.black-hole.in";
-    private static final int NUMBER_OF_MESSAGES = 1000;
+    private static final int NUMBER_OF_MESSAGES = 100;
     private static final int BATCH_SIZE = 10;
+
+    private static final boolean USE_PIPELINING = true;
 
     private static byte[] contentBytes;
 
@@ -48,7 +52,9 @@ public class HelloWorldSmtpConnection {
 
         Promise<Void> connectionCompleted = executor.next().newPromise();
         LocalSmtpListener listener = new LocalSmtpListener(NUMBER_OF_MESSAGES, connectionCompleted);
-        SmtpConnection connection = new SmtpConnection(HOST, PORT, BATCH_SIZE).setListener(listener);
+        SmtpClientConfig config = new SmtpClientConfig().setGreeting("greeting.tld").usePipelining(USE_PIPELINING).useTls(true);
+        SmtpClient client = new SmtpClient(config);
+        SmtpConnection connection = new SmtpConnection(HOST, PORT, BATCH_SIZE, client).setListener(listener);
         connectionCompleted.addListener(future -> {
             connection.close();
             logger.log(Level.INFO, () -> String.format("message send/fail/connection %d/%d/%d", listener.getSuccess(), listener.getFail(), listener.getConnection()));
