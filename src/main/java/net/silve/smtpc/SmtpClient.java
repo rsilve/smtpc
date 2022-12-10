@@ -6,7 +6,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 import net.silve.smtpc.client.ConnectionListener;
 import net.silve.smtpc.client.SmtpChannelInitializer;
@@ -15,14 +14,12 @@ import net.silve.smtpc.message.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 
 /**
  * The class for SMTP client. The instances of this class use a Config object to define some constants during the
  * execution of SMTP sessions.  The methods run and runAndClose will execute the session as defined by the
  * SmtpSession object. These last two methods are asynchronous and several sessions can be executed concurrently.
- *
- *
- *
  */
 public class SmtpClient {
 
@@ -30,6 +27,7 @@ public class SmtpClient {
     private final Promise<Void> promiseShutdownRequested;
     private final Promise<Void> promiseShutdownCompleted;
     private final SmtpClientConfig smtpClientConfig;
+    private final EventLoopGroup group;
 
     /**
      * Default constructor. Use a default Config.
@@ -45,12 +43,12 @@ public class SmtpClient {
     public SmtpClient(@NotNull SmtpClientConfig smtpClientConfig) {
         this.smtpClientConfig = smtpClientConfig;
 
-        EventLoopGroup group = new NioEventLoopGroup(smtpClientConfig.getNumberOfThread());
+        group = new NioEventLoopGroup(smtpClientConfig.getNumberOfThread());
 
-        promiseShutdownRequested = GlobalEventExecutor.INSTANCE.next().newPromise();
+        promiseShutdownRequested = group.next().newPromise();
         promiseShutdownRequested.addListener(future -> group.shutdownGracefully());
 
-        promiseShutdownCompleted = GlobalEventExecutor.INSTANCE.next().newPromise();
+        promiseShutdownCompleted = group.next().newPromise();
         group.terminationFuture().addListener(future -> promiseShutdownCompleted.setSuccess(null));
 
         bootstrap = new Bootstrap();
@@ -76,7 +74,7 @@ public class SmtpClient {
             throw new IllegalArgumentException("Host must be defined");
         }
 
-        final Promise<Void> promiseClosed = GlobalEventExecutor.INSTANCE.next().newPromise();
+        final Promise<Void> promiseClosed = group.next().newPromise();
         ChannelFuture futureConnection = bootstrap.connect(session.getHost(), session.getPort());
         futureConnection.addListener(new ConnectionListener(session, smtpClientConfig));
         futureConnection.channel().closeFuture().addListener(future -> {
@@ -108,4 +106,7 @@ public class SmtpClient {
         return promiseShutdownCompleted;
     }
 
+    public ExecutorService executor() {
+        return group;
+    }
 }
