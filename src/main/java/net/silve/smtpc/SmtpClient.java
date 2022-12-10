@@ -14,7 +14,7 @@ import net.silve.smtpc.message.SmtpSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * The class for SMTP client. The instances of this class use a Config object to define some constants during the
@@ -106,7 +106,7 @@ public class SmtpClient {
         return promiseShutdownCompleted;
     }
 
-    public Executor executor() {
+    public ExecutorService executor() {
         return group;
     }
 }
